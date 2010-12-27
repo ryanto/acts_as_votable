@@ -38,11 +38,12 @@ module ActsAsVotable
             :votable => self,
             :voter => options[:voter]
           )
-          puts "new vote"
         else
           # this voter is potentially changing his vote
           vote = votes.first
         end
+
+        last_update = vote.updated_at
 
         vote.vote_flag = Vote.word_is_a_vote_for(options[:vote])
 
@@ -60,16 +61,15 @@ module ActsAsVotable
       end
 
       # results
+      def votes extra_conditions = {}
+        Vote.find(:all, :conditions => default_conditions.merge(extra_conditions))
+      end
+
       def count_votes_total extra_conditions = {}
-        votes = Vote.find(:all, :conditions => {
-          :votable_id => self.id,
-          :votable_type => self.class.name
-        }.merge(extra_conditions))
-        votes.size
+        votes(extra_conditions).size
       end
       alias :total_votes :count_votes_total
       alias :count_votes :count_votes_total
-      alias :votes :count_votes_total
 
       def count_votes_true
         count_votes_total :vote_flag => true

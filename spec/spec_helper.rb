@@ -16,6 +16,10 @@ ActiveRecord::Schema.define(:version => 1) do
   add_index :votes, [:votable_id, :votable_type]
   add_index :votes, [:voter_id, :voter_type]
 
+  create_table :voters do |t|
+    t.string :name
+  end
+
   create_table :votable_models do |t|
     t.string :name
   end
@@ -26,11 +30,24 @@ ActiveRecord::Schema.define(:version => 1) do
 
 end
 
+
+class Voter < ActiveRecord::Base
+  
+end
+
 class VotableModel < ActiveRecord::Base
   acts_as_votable
   validates_presence_of :name
 end
 
 class NotVotableModel < ActiveRecord::Base
-  
+end
+
+
+
+def clean_database
+  models = [ActsAsVotable::Vote, Voter, VotableModel, NotVotableModel]
+  models.each do |model|
+    ActiveRecord::Base.connection.execute "DELETE FROM #{model.table_name}"
+  end
 end
