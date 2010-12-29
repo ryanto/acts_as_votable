@@ -1,4 +1,5 @@
 require 'active_record'
+require 'active_support/inflector'
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 
@@ -26,6 +27,10 @@ module ActsAsVotable
 
       end
 
+      # aliasing
+      ActsAsVotable::Alias::words_to_alias self, ActsAsVotable::Vote.true_votes, :count_true_votes
+      ActsAsVotable::Alias::words_to_alias self, ActsAsVotable::Vote.false_votes, :count_false_votes
+
     end
 
 
@@ -33,11 +38,18 @@ module ActsAsVotable
 
   end
 
+  module Alias
 
+    def self.words_to_alias object, words, function
+      words.each do |word|
+        function = word.to_s.pluralize.to_sym
+        if !object.respond_to?(function)
+          object.class_eval{ alias function :count_votes_true }
+        end
+      end
+    end
 
-  # votes table
-  
-
+  end
  
   if defined?(ActiveRecord::Base)
     require 'acts_as_votable/vote'

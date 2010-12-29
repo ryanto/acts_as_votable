@@ -28,6 +28,13 @@ ActiveRecord::Schema.define(:version => 1) do
     t.string :name
   end
 
+  create_table :votable_caches do |t|
+    t.string :name
+    t.integer :cached_votes_total
+    t.integer :cached_votes_up
+    t.integer :cached_votes_down
+  end
+
 end
 
 
@@ -43,10 +50,15 @@ end
 class NotVotable < ActiveRecord::Base
 end
 
+class VotableCache < ActiveRecord::Base
+  acts_as_votable
+  validates_presence_of :name
+end
+
 
 
 def clean_database
-  models = [ActsAsVotable::Vote, Voter, Votable, NotVotable]
+  models = [ActsAsVotable::Vote, Voter, Votable, NotVotable, VotableCache]
   models.each do |model|
     ActiveRecord::Base.connection.execute "DELETE FROM #{model.table_name}"
   end
