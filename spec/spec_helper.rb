@@ -66,7 +66,7 @@ end
 
 
 def clean_database
-  models = [ActsAsVotable::Vote, Voter, Votable, NotVotable, VotableCache]
+  models = [ActsAsVotable::Vote, Voter, NotVoter, Votable, NotVotable, VotableCache]
   models.each do |model|
     ActiveRecord::Base.connection.execute "DELETE FROM #{model.table_name}"
   end
