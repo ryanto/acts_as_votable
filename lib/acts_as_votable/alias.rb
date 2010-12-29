@@ -1,8 +1,6 @@
 module ActsAsVotable::Alias
 
   def self.words_to_alias object, words, call_function
-
-
     words.each do |word|
       if word.is_a?(String)
         function = word.pluralize.to_sym
