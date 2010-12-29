@@ -1,17 +1,13 @@
 module ActsAsVotable
-  module Core
+  module Votable
 
     def self.included(base)
-      base.send :include, ActsAsVotable::Core::InstanceMethods
-      #base.extend ActsAsVotable::Core::ClassMethods
-
-
+      base.send :include, ActsAsVotable::Votable::InstanceMethods
+      # base.extend ActsAsVotable::Votable::ClassMethods
     end
 
 
     module ClassMethods
-      
-
     end
 
     module InstanceMethods
@@ -120,6 +116,11 @@ module ActsAsVotable
         find_votes(:vote_flag => false).size
       end
 
+      # voters
+      def voted_on_by? voter
+        votes = find_votes :voter_id => voter.id, :voter_type => voter.class.name
+        votes.size > 0
+      end
 
     end
 

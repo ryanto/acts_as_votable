@@ -20,6 +20,10 @@ ActiveRecord::Schema.define(:version => 1) do
     t.string :name
   end
 
+  create_table :not_voters do |t|
+    t.string :name
+  end
+
   create_table :votables do |t|
     t.string :name
   end
@@ -39,6 +43,10 @@ end
 
 
 class Voter < ActiveRecord::Base
+  acts_as_voter
+end
+
+class NotVoter < ActiveRecord::Base
   
 end
 

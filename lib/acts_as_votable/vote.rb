@@ -13,11 +13,11 @@ module ActsAsVotable
     validates_presence_of :voter_id
 
     def self.true_votes
-      ['up', 'like', 'yes', 'good', 'true', 1, true]
+      ['up', 'upvote', 'like', 'yes', 'good', 'true', 1, true]
     end
 
     def self.false_votes
-      ['down', 'dislike', 'no', 'bad', 'false', 0, false]
+      ['down', 'downvote', 'dislike', 'no', 'bad', 'false', 0, false]
     end
 
     ##

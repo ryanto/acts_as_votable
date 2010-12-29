@@ -1,7 +1,7 @@
 require 'acts_as_votable'
 require 'spec_helper'
 
-describe ActsAsVotable do
+describe ActsAsVotable::Votable do
 
   before(:each) do
     clean_database
@@ -82,6 +82,23 @@ describe ActsAsVotable do
       @votable.vote :voter => @voter, :vote => true
       @votable.vote :voter => @voter, :vote => 'dislike'
       @votable.vote_registered?.should be true
+    end
+
+    it "should be voted on by voter" do
+      @votable.vote :voter => @voter
+      @votable.voted_on_by?(@voter).should be true
+    end
+
+    it "should be thread safe" do
+      votable2 = Votable.new(:name => '2nd votable')
+      votable2.save
+      
+      @votable.vote :voter => @voter, :vote => false
+      votable2.vote :voter => @voter, :vote => true
+      votable2.vote :voter => @voter, :vote => true
+
+      @votable.vote_registered?.should be true
+      votable2.vote_registered?.should be false
     end
 
 
