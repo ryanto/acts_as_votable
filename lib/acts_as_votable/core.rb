@@ -30,7 +30,10 @@ module ActsAsVotable
         vote_registered = false
 
         # find the vote
-        votes = Vote.find(:all, :conditions => default_conditions)
+        votes = find_votes({
+          :voter_id => options[:voter].id,
+          :voter_type => options[:voter].class.name
+        })
 
         if votes.count == 0
           # this voter has never voted
@@ -61,13 +64,14 @@ module ActsAsVotable
       end
 
       # results
-      def votes extra_conditions = {}
+      def find_votes extra_conditions = {}
         Vote.find(:all, :conditions => default_conditions.merge(extra_conditions))
       end
 
       def count_votes_total extra_conditions = {}
-        votes(extra_conditions).size
+        find_votes(extra_conditions).size
       end
+      alias :votes :count_votes_total
       alias :total_votes :count_votes_total
       alias :count_votes :count_votes_total
 

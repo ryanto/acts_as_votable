@@ -20,11 +20,11 @@ ActiveRecord::Schema.define(:version => 1) do
     t.string :name
   end
 
-  create_table :votable_models do |t|
+  create_table :votables do |t|
     t.string :name
   end
 
-  create_table :not_votable_models do |t|
+  create_table :not_votables do |t|
     t.string :name
   end
 
@@ -35,18 +35,18 @@ class Voter < ActiveRecord::Base
   
 end
 
-class VotableModel < ActiveRecord::Base
+class Votable < ActiveRecord::Base
   acts_as_votable
   validates_presence_of :name
 end
 
-class NotVotableModel < ActiveRecord::Base
+class NotVotable < ActiveRecord::Base
 end
 
 
 
 def clean_database
-  models = [ActsAsVotable::Vote, Voter, VotableModel, NotVotableModel]
+  models = [ActsAsVotable::Vote, Voter, Votable, NotVotable]
   models.each do |model|
     ActiveRecord::Base.connection.execute "DELETE FROM #{model.table_name}"
   end
