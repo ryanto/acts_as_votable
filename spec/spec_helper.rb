@@ -63,6 +63,11 @@ class VotableCache < ActiveRecord::Base
   validates_presence_of :name
 end
 
+class ABoringClass
+  def self.hw
+    'hello world'
+  end
+end
 
 
 def clean_database

@@ -7,6 +7,9 @@ describe ActsAsVotable::Alias do
     clean_database
     @votable = Votable.new(:name => 'votable with aliases')
     @votable.save
+
+    @voter = Voter.new(:name => 'a voter')
+    @voter.save
   end
 
   it "should alias a bunch of functions" do
@@ -19,8 +22,10 @@ describe ActsAsVotable::Alias do
     @votable.respond_to?('1s'.to_sym).should be false
   end
 
-
-
+  it "should add callable functions" do
+    @votable.vote :voter => @voter
+    @votable.likes.should == 1
+  end
 
 
 end

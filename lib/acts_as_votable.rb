@@ -5,6 +5,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 
 require 'acts_as_votable/votable'
 require 'acts_as_votable/voter'
+require 'acts_as_votable/alias'
 
 module ActsAsVotable
 
@@ -36,7 +37,7 @@ module ActsAsVotable
 
   end
 
-  # votable
+  # voter
   module AcceptVoter
 
     def voter?
@@ -60,21 +61,6 @@ module ActsAsVotable
 
   end
 
-
-  module Alias
-
-    def self.words_to_alias object, words, call_function
-      words.each do |word|
-        if word.is_a?(String)
-          function = word.pluralize.to_sym
-          if !object.respond_to?(function)
-            object.send(:alias_method, function, call_function)
-          end
-        end
-      end
-    end
-
-  end
  
   if defined?(ActiveRecord::Base)
     require 'acts_as_votable/vote'
