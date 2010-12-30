@@ -43,6 +43,14 @@ module ActsAsVotable
         args[:votable].vote args.merge({:voter => self})
       end
 
+      def vote_true_for model
+        vote :votable => model, :vote => true
+      end
+
+      def vote_false_for model
+        vote :votable => model, :vote => false
+      end
+
     end
 
   end
