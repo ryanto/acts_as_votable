@@ -25,6 +25,7 @@ module ActsAsVotable
         }
       end
 
+      # voting
       def vote args = {}
 
         options = ActsAsVotable::Vote.default_voting_args.merge(args)
@@ -67,6 +68,14 @@ module ActsAsVotable
        
       end
 
+      def vote_up voter
+        self.vote :voter => voter, :vote => true
+      end
+
+      def vote_down voter
+        self.vote :voter => voter, :vote => false
+      end
+
       # caching
       def update_cached_votes
 
@@ -77,11 +86,11 @@ module ActsAsVotable
         end
 
         if self.respond_to?(:cached_votes_up=)
-          updates[:cached_votes_up] = count_votes_true(true)
+          updates[:cached_votes_up] = count_votes_up(true)
         end
 
         if self.respond_to?(:cached_votes_down=)
-          updates[:cached_votes_down] = count_votes_false(true)
+          updates[:cached_votes_down] = count_votes_down(true)
         end
 
         self.update_attributes(updates) if updates.size > 0
@@ -93,27 +102,37 @@ module ActsAsVotable
       def find_votes extra_conditions = {}
         ActsAsVotable::Vote.find(:all, :conditions => default_conditions.merge(extra_conditions))
       end
+      alias :votes :find_votes
 
+      def up_votes
+        find_votes(:vote_flag => true)
+      end
+
+      def down_votes
+        find_votes(:vote_flag => false)
+      end
+
+
+      # counting
       def count_votes_total skip_cache = false
         if !skip_cache && self.respond_to?(:cached_votes_total)
           return self.send(:cached_votes_total)
         end
         find_votes.size
       end
-      alias :votes :count_votes_total
 
-      def count_votes_true skip_cache = false
+      def count_votes_up skip_cache = false
         if !skip_cache && self.respond_to?(:cached_votes_up)
           return self.send(:cached_votes_up)
         end
-        find_votes(:vote_flag => true).size
+        up_votes.size
       end
 
-      def count_votes_false skip_cache = false
+      def count_votes_down skip_cache = false
         if !skip_cache && self.respond_to?(:cached_votes_down)
           return self.send(:cached_votes_down)
         end
-        find_votes(:vote_flag => false).size
+        down_votes.size
       end
 
       # voters

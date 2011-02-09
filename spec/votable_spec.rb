@@ -35,31 +35,41 @@ describe ActsAsVotable::Votable do
 
     it "should have one vote when saved" do
       @votable.vote :voter => @voter, :vote => 'yes'
-      @votable.votes.should == 1
+      @votable.votes.size.should == 1
     end
     
     it "should have one vote when voted on twice by the same person" do
       @votable.vote :voter => @voter, :vote => 'yes'
       @votable.vote :voter => @voter, :vote => 'no'
-      @votable.votes.should == 1
+      @votable.votes.size.should == 1
+    end
+
+    it "should be callable with vote_up" do
+      @votable.vote_up @voter
+      @votable.up_votes.first.voter.should == @voter
+    end
+
+    it "should be callable with vote_down" do
+      @votable.vote_down @voter
+      @votable.down_votes.first.voter.should == @voter
     end
 
     it "should have 2 votes when voted on once by two different people" do
       @votable.vote :voter => @voter
       @votable.vote :voter => @voter2
-      @votable.votes.should == 2
+      @votable.votes.size.should == 2
     end
 
     it "should have one true vote" do
       @votable.vote :voter => @voter
       @votable.vote :voter => @voter2, :vote => 'dislike'
-      @votable.count_votes_true.should == 1
+      @votable.up_votes.size.should == 1
     end
 
     it "should have 2 false votes" do
       @votable.vote :voter => @voter, :vote => 'no'
       @votable.vote :voter => @voter2, :vote => 'dislike'
-      @votable.count_votes_false.should == 2
+      @votable.down_votes.size.should == 2
     end
 
     it "should have been voted on by voter2" do
@@ -102,6 +112,7 @@ describe ActsAsVotable::Votable do
     end
 
 
+
     describe "with cached votes" do
 
       before(:each) do
@@ -142,19 +153,19 @@ describe ActsAsVotable::Votable do
       it "should select from cached total votes if there a total column" do
         @votable_cache.vote :voter => @voter
         @votable_cache.cached_votes_total = 50
-        @votable_cache.votes.should == 50
+        @votable_cache.count_votes_total.should == 50
       end
 
       it "should select from cached up votes if there is an up vote column" do
         @votable_cache.vote :voter => @voter
         @votable_cache.cached_votes_up = 50
-        @votable_cache.count_votes_true.should == 50
+        @votable_cache.count_votes_up.should == 50
       end
 
       it "should select from cached down votes if there is a down vote column" do
         @votable_cache.vote :voter => @voter, :vote => 'false'
         @votable_cache.cached_votes_down = 50
-        @votable_cache.count_votes_false.should == 50
+        @votable_cache.count_votes_down.should == 50
       end
 
     end
