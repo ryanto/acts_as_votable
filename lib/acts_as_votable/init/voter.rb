@@ -18,8 +18,8 @@ module ActsAsVotable::Init
 
         include ActsAsVotable::Voter
 
-        ActsAsVotable::Alias::words_to_alias self, %w(likes upvotes), :vote_up_for
-        ActsAsVotable::Alias::words_to_alias self, %w(dislikes downvotes), :vote_down_for
+        ActsAsVotable::Alias::words_to_alias self, %w(likes upvotes up_votes), :vote_up_for
+        ActsAsVotable::Alias::words_to_alias self, %w(dislikes downvotes down_votes), :vote_down_for
 
       end
 

@@ -1,3 +1,16 @@
+### Major Updates
+
+Version 0.1.0 introduces new and refactored function calls that improve the
+natural language syntax of this gem.  Certain calls that were compatible with
+version 0.0.5 will now be broken.  Remember to specify a the version in your
+Gemfile to prevent functionality breakdowns between versions.
+
+In version 0.1.0 functions like ``@post.votes`` return an array of all of the vote
+records for @post.  In order to count the number of votes simply use
+``@post.votes.size`` now.
+
+- - -
+
 # Acts As Votable (aka Acts As Likeable)
 
 Acts As Votable is a Ruby Gem specifically written for Rails/ActiveRecord models.
@@ -41,58 +54,69 @@ caching section of this document for more information.
     @post = Post.new(:name => 'my post!')
     @post.save
 
-    @post.vote :voter => @user
-    @post.votes # => 1
+    @post.liked_by @user
+    @post.votes.size # => 1
 
 ### Like/Dislike Yes/No Up/Down
 
-    @post.vote :voter => @user1
-    @post.vote :voter => @user2, :vote => 'bad'
-    @post.vote :voter => @user3, :vote => 'like'
+Here are some voting examples.  All of these calls are valid and acceptable.  The
+more natural calls are the first few examples.
 
-By default all votes are positive, so @user1 has cast a 'good' vote for @post.
+    @post.liked_by @user1
+    @post.downvote_from @user2
+    @post.vote :voter => @user3
+    @post.vote :voter => @user4, :vote => 'bad'
+    @post.vote :voter => @user5, :vote => 'like'
 
-@user2 on the other had has voted against @post.  This is a 'bad' vote.
 
-@user3 has voted in favor of @post.
+By default all votes are positive, so @user3 has cast a 'good' vote for @post.
 
-Just about any word works for casting a vote in favor or against post.  Good/Bad,
-Up/Down, Like/Dislike, the list goes on-and-on.  Boolean flags ``true`` and
+@user1, @user3, and @user5 all voted in favor of @post.
+
+@user2 and @user4 on the other had has voted against @post.
+
+
+Just about any word works for casting a vote in favor or against post.  Up/Down,
+Like/Dislike, Positive/Negative... the list goes on-and-on.  Boolean flags ``true`` and
 ``false`` are also applicable.
 
 Revisiting the previous example of code.
 
-    @post.vote :voter => @user1
-    @post.vote :voter => @user2, :vote => 'bad'
-    @post.vote :voter => @user3, :vote => 'like'
+    # positive votes
+    @post.liked_by @user1
+    @post.vote :voter => @user3
+    @post.vote :voter => @user5, :vote => 'like'
 
-    @post.votes # => 3
-    @post.likes # => 2
-    @post.upvotes # => 2
-    @post.dislikes # => 1
-    @post.downvotes # => 1
+    # negative votes
+    @post.downvote_from @user2
+    @post.vote :voter => @user2, :vote => 'bad'
+    
+    # tally them up!
+    @post.votes.size # => 5
+    @post.likes.size # => 3
+    @post.upvotes.size # => 3
+    @post.dislikes.size # => 2
+    @post.downvotes.size # => 2
 
 ### The Voter
 
-When voting on a model you need to provide a ``:voter => @the_voter_model``.  95%
-of the time, this will be @user.  You can have your voters ``acts_as_voter``
-to provide some reserve functionality.
+You can have your voters ``acts_as_voter`` to provide some reserve functionality.
 
     class User < ActiveRecord::Base
       acts_as_voter
     end
 
-    @user.vote :votable => @article
+    @user.likes @article
 
-    @article.votes # => 1
-    @article.ups # => 1
-    @article.downs # => 0
+    @article.votes.size # => 1
+    @article.likes.size # => 1
+    @article.downvotes.size # => 0
 
 To check if a voter has voted on a model, you can use ``voted_for?``.  You can
 check how the voter voted by using ``voted_as_when_voted_for``.
 
-    @user.vote :votable => @comment1, :vote => 'yes'
-    @user.vote :votable => @comment2, :vote => 'dislike'
+    @user.likes @comment1
+    @user.up_votes @comment2
     # user has not voted on @comment3
 
     @user.voted_for? @comment1 # => true
@@ -108,8 +132,8 @@ check how the voter voted by using ``voted_as_when_voted_for``.
 Voters can only vote once per model.  In this example the 2nd vote does not count
 because @user has already voted for @shoe.
 
-    @shoe.vote :voter => @user, :vote => 'like'
-    @shoe.vote :voter => @user, :vote => 'yes'
+    @user.likes @shoe
+    @user.upvotes @shoe
 
     @shoe.votes # => 1
     @shoe.likes # => 1
@@ -117,18 +141,18 @@ because @user has already voted for @shoe.
 To check if a vote counted, or registered, use vote_registered? on your model
 directly after voting.  For example:
 
-    @hat.vote :voter => @user
+    @hat.liked_by @user
     @hat.vote_registered? # => true
 
-    @hat.vote :voter => @user
+    @hat.liked_by => @user
     @hat.vote_registered? # => false, because @user has already voted this way
 
-    @hat.vote :voter => @user, :vote => 'bad'
+    @hat.disliked_by @user
     @hat.vote_registered? # => true, because user changed their vote
 
-    @hat.votes # => 1
-    @hat.goods # => 0
-    @hat.bads # => 1
+    @hat.votes.size # => 1
+    @hat.positives.size # => 0
+    @hat.negatives.size # => 1
 
 ## Caching
 
@@ -161,3 +185,16 @@ All tests follow the RSpec format and are located in the spec directory
 
 A huge thank you to Michael Bleigh and his Acts-As-Taggable-On gem.  I learned
 how to write gems by following his source code.
+
+## TODO
+
+- Smarter language syntax.  Example: ``@user.likes`` will return all of the votables
+that the user likes, while ``@user.likes @model`` will cast a vote for @model by
+@user.
+
+- Need to test a model that is votable as well as a voter
+
+- The aliased functions are referred to by using the terms 'up/down' amd/or
+'true/false'.  Need to come up with guidelines for naming these function.
+
+- Create more aliases. Specifically for counting votes and finding votes.
