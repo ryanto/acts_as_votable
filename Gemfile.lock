@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    acts_as_votable (0.0.5)
+    acts_as_votable (0.1.0)
       rails (>= 3.0.0)
 
 GEM
