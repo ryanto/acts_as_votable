@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(:version => 1) do
 
   create_table :votables do |t|
     t.string :name
+    t.string :type
   end
 
   create_table :not_votables do |t|
@@ -61,6 +62,12 @@ end
 class VotableCache < ActiveRecord::Base
   acts_as_votable
   validates_presence_of :name
+end
+
+class SpecialVotable < Votable; end
+
+class StiVotable < Votable
+  self.abstract_class = true
 end
 
 class ABoringClass
