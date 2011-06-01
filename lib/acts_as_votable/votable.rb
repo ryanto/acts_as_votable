@@ -21,7 +21,7 @@ module ActsAsVotable
       def default_conditions
         {
           :votable_id => self.id,
-          :votable_type => self.class.name
+          :votable_type => self.class.base_class.name.to_s
         }
       end
 
