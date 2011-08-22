@@ -93,6 +93,20 @@ describe ActsAsVotable::Votable do
       @votable.vote :voter => @voter, :vote => 'dislike'
       @votable.vote_registered?.should be true
     end
+    
+    it "should allow to get total rating (zero)" do
+      @votable.vote :voter => @voter, :vote => true
+      @votable.vote :voter => @voter2, :vote => false
+      
+      @votable.rating.should == 0
+    end
+    
+    it "should allow to get total rating (non-zero)" do
+      @votable.vote :voter => @voter, :vote => true
+      @votable.vote :voter => @voter2, :vote => true
+      
+      @votable.rating.should == 2
+    end
 
     it "should be voted on by voter" do
       @votable.vote :voter => @voter
