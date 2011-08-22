@@ -6,6 +6,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'acts_as_votable/init/init'
 require 'acts_as_votable/init/votable'
 require 'acts_as_votable/init/voter'
+require 'acts_as_votable/searchable'
 require 'acts_as_votable/votable'
 require 'acts_as_votable/voter'
 require 'acts_as_votable/alias'

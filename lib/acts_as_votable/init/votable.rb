@@ -16,6 +16,7 @@ module ActsAsVotable::Init
         end
 
         include ActsAsVotable::Votable
+        include ActsAsVotable::Searchable
 
       end
 
