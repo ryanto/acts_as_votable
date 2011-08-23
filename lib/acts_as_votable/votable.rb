@@ -114,6 +114,11 @@ module ActsAsVotable
 
 
       # counting
+      
+      def rating skip_cache = false
+        count_votes_up(skip_cache) - count_votes_down(skip_cache)
+      end
+       
       def count_votes_total skip_cache = false
         if !skip_cache && self.respond_to?(:cached_votes_total)
           return self.send(:cached_votes_total)
