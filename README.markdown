@@ -1,16 +1,3 @@
-### Major Updates
-
-Version 0.1.0 introduces new and refactored function calls that improve the
-natural language syntax of this gem.  Certain calls that were compatible with
-version 0.0.5 will now be broken.  Remember to specify a the version in your
-Gemfile to prevent functionality breakdowns between versions.
-
-In version 0.1.0 functions like ``@post.votes`` return an array of all of the vote
-records for @post.  In order to count the number of votes simply use
-``@post.votes.size`` now.
-
-- - -
-
 # Acts As Votable (aka Acts As Likeable)
 
 Acts As Votable is a Ruby Gem specifically written for Rails/ActiveRecord models.
@@ -19,7 +6,7 @@ The main goals of this gem are:
 - Allow any model to be voted on, like/dislike, upvote/downvote, etc.
 - Allow any model to vote.  In other words, votes do not have to come from a user,
   they can come from any model (such as a Group or Team).
-- Provide an easy to write natural language syntax.
+- Provide an easy to write/read syntax.
 
 ## Installation
 
@@ -110,7 +97,7 @@ You can have your voters ``acts_as_voter`` to provide some reserve functionality
 
     @article.votes.size # => 1
     @article.likes.size # => 1
-    @article.downvotes.size # => 0
+    @article.dislikes.size # => 0
 
 To check if a voter has voted on a model, you can use ``voted_for?``.  You can
 check how the voter voted by using ``voted_as_when_voted_for``.
@@ -133,13 +120,13 @@ Voters can only vote once per model.  In this example the 2nd vote does not coun
 because @user has already voted for @shoe.
 
     @user.likes @shoe
-    @user.upvotes @shoe
+    @user.likes @shoe
 
     @shoe.votes # => 1
     @shoe.likes # => 1
 
 To check if a vote counted, or registered, use vote_registered? on your model
-directly after voting.  For example:
+after voting.  For example:
 
     @hat.liked_by @user
     @hat.vote_registered? # => true
@@ -181,15 +168,10 @@ to speed up @post we would use the following migration:
 
 All tests follow the RSpec format and are located in the spec directory
 
-## Thanks
-
-A huge thank you to Michael Bleigh and his Acts-As-Taggable-On gem.  I learned
-how to write gems by following his source code.
-
 ## TODO
 
 - Pass in a block of options when creating acts_as.  Allow for things
-  like disabling the aliasing, etc
+  like disabling the aliasing
 
 - Smarter language syntax.  Example: ``@user.likes`` will return all of the votables
 that the user likes, while ``@user.likes @model`` will cast a vote for @model by
@@ -197,7 +179,7 @@ that the user likes, while ``@user.likes @model`` will cast a vote for @model by
 
 - Need to test a model that is votable as well as a voter
 
-- The aliased functions are referred to by using the terms 'up/down' amd/or
-'true/false'.  Need to come up with guidelines for naming these function.
+- The aliased methods are referred to by using the terms 'up/down' and/or
+'true/false'.  Need to come up with guidelines for naming these methods.
 
 - Create more aliases. Specifically for counting votes and finding votes.
