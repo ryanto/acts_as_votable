@@ -188,6 +188,9 @@ how to write gems by following his source code.
 
 ## TODO
 
+- Pass in a block of options when creating acts_as.  Allow for things
+  like disabling the aliasing, etc
+
 - Smarter language syntax.  Example: ``@user.likes`` will return all of the votables
 that the user likes, while ``@user.likes @model`` will cast a vote for @model by
 @user.
