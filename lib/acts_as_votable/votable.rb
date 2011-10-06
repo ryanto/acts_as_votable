@@ -1,5 +1,9 @@
+require 'acts_as_votable/helpers/words'
+
 module ActsAsVotable
   module Votable
+
+    include Helpers::Words
 
     def self.included base
  
@@ -55,7 +59,10 @@ module ActsAsVotable
     # voting
     def vote args = {}
 
-      options = ActsAsVotable::Vote.default_voting_args.merge(args)
+      options = {
+        :vote => true,
+      }.merge(args)
+
       self.vote_registered = false
 
       if options[:voter].nil?
@@ -84,7 +91,7 @@ module ActsAsVotable
 
       last_update = vote.updated_at
 
-      vote.vote_flag = ActsAsVotable::Vote.word_is_a_vote_for(options[:vote])
+      vote.vote_flag = votable_words.meaning_of(options[:vote])
 
       if vote.save
         self.vote_registered = true if last_update != vote.updated_at
