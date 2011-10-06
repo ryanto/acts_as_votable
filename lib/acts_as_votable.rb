@@ -7,7 +7,6 @@ require 'acts_as_votable/extenders/votable'
 require 'acts_as_votable/extenders/voter'
 require 'acts_as_votable/votable'
 require 'acts_as_votable/voter'
-require 'acts_as_votable/alias'
 
 module ActsAsVotable
 
