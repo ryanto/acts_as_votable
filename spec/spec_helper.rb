@@ -28,6 +28,16 @@ ActiveRecord::Schema.define(:version => 1) do
     t.string :name
   end
 
+  create_table :sti_votables do |t|
+    t.string :name
+    t.string :type
+  end
+
+  create_table :sti_not_votables do |t|
+    t.string :name
+    t.string :type
+  end
+
   create_table :not_votables do |t|
     t.string :name
   end
@@ -53,6 +63,21 @@ end
 class Votable < ActiveRecord::Base
   acts_as_votable
   validates_presence_of :name
+end
+
+class StiVotable < ActiveRecord::Base
+  acts_as_votable
+end
+
+class ChildOfStiVotable < StiVotable
+end
+
+class StiNotVotable < ActiveRecord::Base
+  validates_presence_of :name
+end
+
+class VotableChildOfStiNotVotable < StiNotVotable
+  acts_as_votable
 end
 
 class NotVotable < ActiveRecord::Base

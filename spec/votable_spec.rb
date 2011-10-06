@@ -111,8 +111,6 @@ describe ActsAsVotable::Votable do
       votable2.vote_registered?.should be false
     end
 
-
-
     describe "with cached votes" do
 
       before(:each) do
@@ -166,6 +164,33 @@ describe ActsAsVotable::Votable do
         @votable_cache.vote :voter => @voter, :vote => 'false'
         @votable_cache.cached_votes_down = 50
         @votable_cache.count_votes_down.should == 50
+      end
+
+    end
+
+    describe "sti models" do
+
+      before(:each) do
+        clean_database
+        @voter = Voter.create(:name => 'i can vote!')
+      end
+
+      it "should be able to vote on a votable child of a non votable sti model" do
+        votable = VotableChildOfStiNotVotable.create(:name => 'sti child')
+
+        votable.vote :voter => @voter, :vote => 'yes'
+        votable.votes.size.should == 1
+      end
+
+      it "should not be able to vote on a parent non votable" do
+        StiNotVotable.should_not be_votable
+      end
+
+      it "should be able to vote on a child when its parent is votable" do
+        votable = ChildOfStiVotable.create(:name => 'sti child')
+
+        votable.vote :voter => @voter, :vote => 'yes'
+        votable.votes.size.should == 1
       end
 
     end

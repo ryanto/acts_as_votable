@@ -64,9 +64,9 @@ module ActsAsVotable
 
       # find the vote
       votes = find_votes({
-          :voter_id => options[:voter].id,
-          :voter_type => options[:voter].class.name
-        })
+        :voter_id => options[:voter].id,
+        :voter_type => options[:voter].class.name
+      })
 
       if votes.count == 0
         # this voter has never voted
@@ -74,6 +74,9 @@ module ActsAsVotable
           :votable => self,
           :voter => options[:voter]
         )
+        # redefine type if this object has a type.  this is to deal
+        # with sti classes
+        vote.votable_type = type if respond_to?(:type) && !type.blank?
       else
         # this voter is potentially changing his vote
         vote = votes.first
@@ -92,7 +95,6 @@ module ActsAsVotable
         return false
       end
 
-     
     end
 
     def vote_up voter
