@@ -1,4 +1,4 @@
-module ActsAsVotable::Init
+module ActsAsVotable::Extenders
 
   module Votable
 

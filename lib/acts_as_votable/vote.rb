@@ -25,7 +25,7 @@ module ActsAsVotable
     # if the word is unknown, then it counts it as a true/good
     # vote.  this exists to allow all voting to be good by default
     def self.word_is_a_vote_for word
-      !false_votes.include? word
+      !false_votes.include?(word)
     end
 
     def self.default_voting_args

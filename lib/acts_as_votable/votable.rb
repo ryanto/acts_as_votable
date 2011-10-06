@@ -2,7 +2,8 @@ module ActsAsVotable
   module Votable
 
     def self.included base
-  
+ 
+      # allow the user to define these himself 
       aliases = {
 
         :vote_up => [
@@ -28,20 +29,17 @@ module ActsAsVotable
       base.class_eval do
 
         belongs_to :votable, :polymorphic => true
-        attr_accessor :vote_registered
 
         aliases.each do |method, links|
-
           links.each do |new_method|
             alias_method(new_method, method)
           end
-
         end
 
       end
-
     end
 
+    attr_accessor :vote_registered
 
     def vote_registered?
       return self.vote_registered
