@@ -52,7 +52,7 @@ module ActsAsVotable
     def default_conditions
       {
         :votable_id => self.id,
-        :votable_type => self.class.name
+        :votable_type => self.class.base_class.name.to_s
       }
     end
 
@@ -81,9 +81,6 @@ module ActsAsVotable
           :votable => self,
           :voter => options[:voter]
         )
-        # redefine type if this object has a type.  this is to deal
-        # with sti classes
-        vote.votable_type = type if respond_to?(:type) && !type.blank?
       else
         # this voter is potentially changing his vote
         vote = votes.first
