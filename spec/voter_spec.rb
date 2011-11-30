@@ -43,12 +43,12 @@ describe ActsAsVotable::Voter do
 
     it "should be voted as true when a voter has voted true" do
       @votable.vote :voter => @voter
-      @voter.voted_as_when_voting_on(@votable).should be true
+      @voter.voted_as_when_voted_for(@votable).should be true
     end
 
     it "should be voted as false when a voter has voted false" do
       @votable.vote :voter => @voter, :vote => false
-      @voter.voted_as_when_voting_on(@votable).should be false
+      @voter.voted_as_when_voted_for(@votable).should be false
     end
 
     it "should be voted as nil when a voter has never voted" do
@@ -103,7 +103,7 @@ describe ActsAsVotable::Voter do
       @voter.find_down_votes_for_class(Votable).size.should == 1
     end
 
-    it "should be thread safe" do
+    it "should be contained to instances" do
       @voter.vote :votable => @votable, :vote => false
       @voter2.vote :votable => @votable
 

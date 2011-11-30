@@ -99,7 +99,7 @@ describe ActsAsVotable::Votable do
       @votable.voted_on_by?(@voter).should be true
     end
 
-    it "should be thread safe" do
+    it "should be contained to instances" do
       votable2 = Votable.new(:name => '2nd votable')
       votable2.save
       

@@ -55,7 +55,7 @@ module ActsAsVotable
       return nil if votes.size == 0
       return votes.first.vote_flag
     end
-    alias :voted_as_when_voting_for :voted_as_when_voting_on
+    alias :voted_as_when_voted_for :voted_as_when_voting_on
 
     def find_votes extra_conditions = {}
       ActsAsVotable::Vote.find(:all, :conditions => default_conditions.merge(extra_conditions))
