@@ -12,12 +12,12 @@ module ActsAsVotable
 
         :vote_up => [
           :up_by, :upvote_by, :like_by, :liked_by, :vote_by, 
-          :up_from, :upvote_from, :like_from, :liked_from, :vote_from 
+          :up_from, :upvote_from, :upvote_by, :like_from, :liked_from, :vote_from 
         ],
 
         :vote_down => [
           :down_by, :downvote_by, :dislike_by, :disliked_by,
-          :down_from, :downvote_by, :dislike_by, :disliked_by
+          :down_from, :downvote_from, :downvote_by, :dislike_by, :disliked_by
         ],
 
         :up_votes => [
