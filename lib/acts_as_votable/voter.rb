@@ -13,6 +13,7 @@ module ActsAsVotable
       base.class_eval do
 
         belongs_to :voter, :polymorphic => true
+        has_many   :votes, :class_name => "ActsAsVotable::Vote"
 
         aliases.each do |method, links|
           links.each do |new_method|
@@ -36,7 +37,7 @@ module ActsAsVotable
       args[:votable].vote args.merge({:voter => self})
     end
 
-    def vote_up_for model
+    def vote_up_for model=nil
       vote :votable => model, :vote => true
     end
 
@@ -63,9 +64,8 @@ module ActsAsVotable
     alias :voted_as_when_voted_for :voted_as_when_voting_on
 
     def find_votes extra_conditions = {}
-      ActsAsVotable::Vote.find(:all, :conditions => default_conditions.merge(extra_conditions))
+      votes.where(extra_conditions)
     end
-    alias :votes :find_votes
 
     def find_up_votes
       find_votes :vote_flag => true
@@ -86,7 +86,5 @@ module ActsAsVotable
     def find_down_votes_for_class klass
       find_votes_for_class klass, :vote_flag => false
     end
-
- 
   end
 end
