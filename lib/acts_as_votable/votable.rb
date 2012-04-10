@@ -26,8 +26,10 @@ module ActsAsVotable
 
         :down_votes => [
           :false_votes, :downs, :downvotes, :dislikes, :negatives
+        ],
+        :unvote => [
+          :unliked_by, :undisliked_by
         ]
-
       }
 
       base.class_eval do
@@ -101,6 +103,17 @@ module ActsAsVotable
 
     end
 
+    def unvote args = {}
+      return false if args[:voter].nil?
+      _votes_ = find_votes(:voter_id => args[:voter].id, :voter_type => args[:voter].class.name)
+
+      return true if _votes_.size == 0
+      _votes_.each(&:destroy)
+      update_cached_votes
+      self.vote_registered = false if votes.count == 0
+      return true
+    end
+
     def vote_up voter
       self.vote :voter => voter, :vote => true
     end
@@ -151,27 +164,27 @@ module ActsAsVotable
       if !skip_cache && self.respond_to?(:cached_votes_total)
         return self.send(:cached_votes_total)
       end
-      find_votes.size
+      find_votes.count
     end
 
     def count_votes_up skip_cache = false
       if !skip_cache && self.respond_to?(:cached_votes_up)
         return self.send(:cached_votes_up)
       end
-      up_votes.size
+      up_votes.count
     end
 
     def count_votes_down skip_cache = false
       if !skip_cache && self.respond_to?(:cached_votes_down)
         return self.send(:cached_votes_down)
       end
-      down_votes.size
+      down_votes.count
     end
 
     # voters
     def voted_on_by? voter
       votes = find_votes :voter_id => voter.id, :voter_type => voter.class.name
-      votes.size > 0
+      votes.count > 0
     end
 
   end

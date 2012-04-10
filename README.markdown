@@ -77,13 +77,23 @@ Revisiting the previous example of code.
     # negative votes
     @post.downvote_from @user2
     @post.vote :voter => @user2, :vote => 'bad'
-    
+
     # tally them up!
     @post.votes.size # => 5
     @post.likes.size # => 3
     @post.upvotes.size # => 3
     @post.dislikes.size # => 2
     @post.downvotes.size # => 2
+
+You can also 'unvote' a model to remove a previous vote.
+
+    @post.liked_by @user1
+    @post.unlike_by @user1
+
+    @post.disliked_by @user1
+    @post.undisliked_by @user1
+
+Unvoting works for both positive and negative votes.
 
 ### The Voter
 

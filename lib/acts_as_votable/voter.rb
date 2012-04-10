@@ -5,8 +5,9 @@ module ActsAsVotable
 
       # allow user to define these
       aliases = {
-        :vote_up_for => [:likes, :upvotes, :up_votes],
-        :vote_down_for => [:dislikes, :downvotes, :down_votes]
+        :vote_up_for   => [:likes, :upvotes, :up_votes],
+        :vote_down_for => [:dislikes, :downvotes, :down_votes],
+        :unvote_for    => [:unlike, :undislike]
       }
 
       base.class_eval do
@@ -41,6 +42,10 @@ module ActsAsVotable
 
     def vote_down_for model
       vote :votable => model, :vote => false
+    end
+
+    def unvote_for model
+      model.unvote :voter => self
     end
 
     # results

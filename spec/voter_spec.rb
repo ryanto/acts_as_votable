@@ -14,7 +14,7 @@ describe ActsAsVotable::Voter do
   it "should be a voter" do
     Votable.should be_votable
   end
- 
+
   describe "voting by a voter" do
 
     before(:each) do
@@ -24,7 +24,7 @@ describe ActsAsVotable::Voter do
 
       @voter2 = Voter.new(:name => 'a new person')
       @voter2.save
-      
+
       @votable = Votable.new(:name => 'a voting model')
       @votable.save
 
@@ -70,6 +70,12 @@ describe ActsAsVotable::Voter do
       @votable.down_votes.first.voter.should == @voter
     end
 
+    it "should allow the voter to unvote a model" do
+      @voter.vote_up_for @votable
+      @voter.unvote_for @votable
+      @votable.find_votes.size.should == 0
+    end
+
     it "should get all of the voters votes" do
       @voter.vote_up_for @votable
       @voter.find_votes.size.should == 1
@@ -111,6 +117,4 @@ describe ActsAsVotable::Voter do
     end
 
   end
-
-
 end
