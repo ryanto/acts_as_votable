@@ -26,13 +26,20 @@ module ActsAsVotable
 
         :down_votes => [
           :false_votes, :downs, :downvotes, :dislikes, :negatives
+        ],
+        :unvote => [
+          :unliked_by, :undisliked_by
         ]
-
       }
 
       base.class_eval do
 
         belongs_to :votable, :polymorphic => true
+        has_many   :votes, :class_name => "ActsAsVotable::Vote", :as => :votable do
+          def voters
+            includes(:voter).map(&:voter)
+          end
+        end
 
         aliases.each do |method, links|
           links.each do |new_method|
@@ -70,12 +77,12 @@ module ActsAsVotable
       end
 
       # find the vote
-      votes = find_votes({
+      _votes_ = find_votes({
         :voter_id => options[:voter].id,
         :voter_type => options[:voter].class.name
       })
 
-      if votes.count == 0
+      if _votes_.count == 0
         # this voter has never voted
         vote = ActsAsVotable::Vote.new(
           :votable => self,
@@ -83,7 +90,7 @@ module ActsAsVotable
         )
       else
         # this voter is potentially changing his vote
-        vote = votes.first
+        vote = _votes_.first
       end
 
       last_update = vote.updated_at
@@ -99,6 +106,17 @@ module ActsAsVotable
         return false
       end
 
+    end
+
+    def unvote args = {}
+      return false if args[:voter].nil?
+      _votes_ = find_votes(:voter_id => args[:voter].id, :voter_type => args[:voter].class.name)
+
+      return true if _votes_.size == 0
+      _votes_.each(&:destroy)
+      update_cached_votes
+      self.vote_registered = false if votes.count == 0
+      return true
     end
 
     def vote_up voter
@@ -133,9 +151,8 @@ module ActsAsVotable
 
     # results
     def find_votes extra_conditions = {}
-      ActsAsVotable::Vote.find(:all, :conditions => default_conditions.merge(extra_conditions))
+      votes.where(extra_conditions)
     end
-    alias :votes :find_votes
 
     def up_votes
       find_votes(:vote_flag => true)
@@ -151,27 +168,27 @@ module ActsAsVotable
       if !skip_cache && self.respond_to?(:cached_votes_total)
         return self.send(:cached_votes_total)
       end
-      find_votes.size
+      find_votes.count
     end
 
     def count_votes_up skip_cache = false
       if !skip_cache && self.respond_to?(:cached_votes_up)
         return self.send(:cached_votes_up)
       end
-      up_votes.size
+      up_votes.count
     end
 
     def count_votes_down skip_cache = false
       if !skip_cache && self.respond_to?(:cached_votes_down)
         return self.send(:cached_votes_down)
       end
-      down_votes.size
+      down_votes.count
     end
 
     # voters
     def voted_on_by? voter
       votes = find_votes :voter_id => voter.id, :voter_type => voter.class.name
-      votes.size > 0
+      votes.count > 0
     end
 
   end
