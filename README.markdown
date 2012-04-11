@@ -85,6 +85,23 @@ Revisiting the previous example of code.
     @post.dislikes.size # => 2
     @post.downvotes.size # => 2
 
+Active Record scopes are provided to make life easier.
+
+    @post.votes.up.by_type(User)
+    @post.votes.down
+    @user1.votes.up
+    @user1.votes.down
+    @user1.votes.up.by_type(Post)
+
+Once scoping is complete, you can also trigger a get for the
+voter/votable
+
+    @post.votes.up.by_type(User).voters
+    @post.votes.down.by_type(User).voters
+
+    @user.votes.up.for_type(Post).votables
+    @user.votes.up.votables
+
 You can also 'unvote' a model to remove a previous vote.
 
     @post.liked_by @user1

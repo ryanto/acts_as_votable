@@ -35,6 +35,11 @@ module ActsAsVotable
       base.class_eval do
 
         belongs_to :votable, :polymorphic => true
+        has_many   :votes, :class_name => "ActsAsVotable::Vote", :as => :votable do
+          def voters
+            includes(:voter).map(&:voter)
+          end
+        end
 
         aliases.each do |method, links|
           links.each do |new_method|
@@ -72,12 +77,12 @@ module ActsAsVotable
       end
 
       # find the vote
-      votes = find_votes({
+      _votes_ = find_votes({
         :voter_id => options[:voter].id,
         :voter_type => options[:voter].class.name
       })
 
-      if votes.count == 0
+      if _votes_.count == 0
         # this voter has never voted
         vote = ActsAsVotable::Vote.new(
           :votable => self,
@@ -85,7 +90,7 @@ module ActsAsVotable
         )
       else
         # this voter is potentially changing his vote
-        vote = votes.first
+        vote = _votes_.first
       end
 
       last_update = vote.updated_at
@@ -146,9 +151,8 @@ module ActsAsVotable
 
     # results
     def find_votes extra_conditions = {}
-      ActsAsVotable::Vote.find(:all, :conditions => default_conditions.merge(extra_conditions))
+      votes.where(extra_conditions)
     end
-    alias :votes :find_votes
 
     def up_votes
       find_votes(:vote_flag => true)

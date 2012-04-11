@@ -13,7 +13,11 @@ module ActsAsVotable
       base.class_eval do
 
         belongs_to :voter, :polymorphic => true
-        has_many   :votes, :class_name => "ActsAsVotable::Vote"
+        has_many :votes, :class_name => "ActsAsVotable::Vote", :as => :voter do
+          def votables
+            includes(:votable).map(&:votable)
+          end
+        end
 
         aliases.each do |method, links|
           links.each do |new_method|
@@ -23,13 +27,6 @@ module ActsAsVotable
 
       end
 
-    end
-
-    def default_conditions
-      {
-        :voter_id => self.id,
-        :voter_type => self.class.name
-      }
     end
 
     # voting
@@ -86,5 +83,6 @@ module ActsAsVotable
     def find_down_votes_for_class klass
       find_votes_for_class klass, :vote_flag => false
     end
+
   end
 end
