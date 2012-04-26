@@ -141,6 +141,21 @@ check how the voter voted by using ``voted_as_when_voted_for``.
     @user.voted_as_when_voted_for @comment2 # => false, he didnt like it
     @user.voted_as_when_voted_for @comment3 # => nil, he has yet to vote
 
+You can also check whether the voter has voted up or down.
+
+    @user.likes @comment1
+    @user.dislikes @comment2
+    # user has not voted on @comment3
+
+    @user.voted_up_on? @comment1 # => true
+    @user.voted_down_on? @comment1 # => false
+
+    @user.voted_down_on? @comment2 # => true
+    @user.voted_up_on? @comment2 # => false
+
+    @user.voted_up_on? @comment3 # => false
+    @user.voted_down_on? @comment3 # => false
+
 ### Registered Votes
 
 Voters can only vote once per model.  In this example the 2nd vote does not count

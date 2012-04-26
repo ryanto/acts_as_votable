@@ -55,6 +55,26 @@ describe ActsAsVotable::Voter do
       @voter.voted_as_when_voting_on(@votable).should be nil
     end
 
+    it "should return true if voter has voted true" do
+      @votable.vote :voter => @voter
+      @voter.voted_up_on?(@votable).should be true
+    end
+
+    it "should return false if voter has not voted true" do
+      @votable.vote :voter => @voter, :vote => false
+      @voter.voted_up_on?(@votable).should be false
+    end
+
+    it "should return true if the voter has voted false" do
+      @votable.vote :voter => @voter, :vote => false
+      @voter.voted_down_on?(@votable).should be true
+    end
+
+    it "should return false if the voter has not voted false" do
+      @votable.vote :voter => @voter, :vote => true
+      @voter.voted_down_on?(@votable).should be false
+    end
+
     it "should provide reserve functionality, voter can vote on votable" do
       @voter.vote :votable => @votable, :vote => 'bad'
       @voter.voted_as_when_voting_on(@votable).should be false
