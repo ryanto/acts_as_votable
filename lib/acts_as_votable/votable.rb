@@ -144,7 +144,7 @@ module ActsAsVotable
         updates[:cached_votes_down] = count_votes_down(true)
       end
 
-      self.update_attributes(updates) if updates.size > 0
+      self.update_attributes(updates, :without_protection => true) if updates.size > 0
 
     end
 
