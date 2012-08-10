@@ -48,25 +48,25 @@ module ActsAsVotable
 
     # results
     def voted_on? votable
-      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.name)
+      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.base_class.name)
       votes.size > 0
     end
     alias :voted_for? :voted_on?
 
     def voted_up_on? votable
-      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.name, :vote_flag => true)
+      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.base_class.name, :vote_flag => true)
       votes.size > 0
     end
     alias :voted_up_for? :voted_up_on?
 
     def voted_down_on? votable
-      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.name, :vote_flag => false)
+      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.base_class.name, :vote_flag => false)
       votes.size > 0
     end
     alias :voted_down_for? :voted_down_on?
 
     def voted_as_when_voting_on votable
-      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.name)
+      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.base_class.name)
       return nil if votes.size == 0
       return votes.first.vote_flag
     end
