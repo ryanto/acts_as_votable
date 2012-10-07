@@ -156,6 +156,16 @@ You can also check whether the voter has voted up or down.
     @user.voted_up_on? @comment3 # => false
     @user.voted_down_on? @comment3 # => false
 
+Also, you can obtain a list of all the objects a user has voted for.
+This returns the actual objects instead of instances of the Vote model.
+All objects are eager loaded
+
+    @user.find_vote_items
+
+    @user.find_up_vote_items
+
+    @user.find_down_vote_items
+
 ### Registered Votes
 
 Voters can only vote once per model.  In this example the 2nd vote does not count
