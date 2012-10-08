@@ -101,18 +101,20 @@ module ActsAsVotable
       ActsAsVotable::Vote.includes(:votable)
     end
 
-    def find_vote_items extra_conditions = {}
+    def find_voted_items extra_conditions = {}
       options = extra_conditions.merge :voter_id => id, :voter_type => self.class.name
       include_objects.where(options).collect(&:votable)
     end
 
-    def find_up_vote_items extra_conditions = {}
-      find_vote_items extra_conditions.merge(:vote_flag => true)
+    def find_up_voted_items extra_conditions = {}
+      find_voted_items extra_conditions.merge(:vote_flag => true)
     end
+    alias_method :find_liked_items, :find_up_voted_items
 
-    def find_down_vote_items extra_conditions = {}
-      find_vote_items extra_conditions.merge(:vote_flag => false)
+    def find_down_voted_items extra_conditions = {}
+      find_voted_items extra_conditions.merge(:vote_flag => false)
     end
+    alias_method :find_disliked_items, :find_down_voted_items
 
   end
 end

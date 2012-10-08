@@ -145,47 +145,47 @@ describe ActsAsVotable::Voter do
       @voter.voted_as_when_voting_on(@votable).should be false
     end
 
-    describe '#find_vote_items' do
+    describe '#find_voted_items' do
       it 'returns objects that a user has upvoted for' do
         @votable.vote :voter => @voter
         @votable2.vote :voter => @voter2
-        @voter.find_vote_items.should include @votable
-        @voter.find_vote_items.size.should == 1
+        @voter.find_voted_items.should include @votable
+        @voter.find_voted_items.size.should == 1
       end
 
       it 'returns objects that a user has downvoted for' do
         @votable.vote_down @voter
         @votable2.vote_down @voter2
-        @voter.find_vote_items.should include @votable
-        @voter.find_vote_items.size.should == 1
+        @voter.find_voted_items.should include @votable
+        @voter.find_voted_items.size.should == 1
       end
     end
 
-    describe '#find_up_vote_items' do
+    describe '#find_up_voted_items' do
       it 'returns objects that a user has upvoted for' do
         @votable.vote :voter => @voter
         @votable2.vote :voter => @voter2
-        @voter.find_up_vote_items.should include @votable
-        @voter.find_up_vote_items.size.should == 1
+        @voter.find_up_voted_items.should include @votable
+        @voter.find_up_voted_items.size.should == 1
       end
 
       it 'does not return objects that a user has downvoted for' do
         @votable.vote_down @voter
-        @voter.find_up_vote_items.size.should == 0
+        @voter.find_up_voted_items.size.should == 0
       end
     end
 
-    describe '#find_down_vote_items' do
+    describe '#find_down_voted_items' do
       it 'does not return objects that a user has upvoted for' do
         @votable.vote :voter => @voter
-        @voter.find_down_vote_items.size.should == 0
+        @voter.find_down_voted_items.size.should == 0
       end
 
       it 'returns objects that a user has downvoted for' do
         @votable.vote_down @voter
         @votable2.vote_down @voter2
-        @voter.find_down_vote_items.should include @votable
-        @voter.find_down_vote_items.size.should == 1
+        @voter.find_down_voted_items.should include @votable
+        @voter.find_down_voted_items.size.should == 1
       end
     end
 
