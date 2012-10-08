@@ -160,11 +160,13 @@ Also, you can obtain a list of all the objects a user has voted for.
 This returns the actual objects instead of instances of the Vote model.
 All objects are eager loaded
 
-    @user.find_vote_items
+    @user.find_voted_items
 
-    @user.find_up_vote_items
+    @user.find_up_voted_items
+    @user.find_liked_items
 
-    @user.find_down_vote_items
+    @user.find_down_voted_items
+    @user.find_disliked_items
 
 ### Registered Votes
 
