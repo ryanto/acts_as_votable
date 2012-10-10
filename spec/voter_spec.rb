@@ -145,5 +145,96 @@ describe ActsAsVotable::Voter do
       @voter.voted_as_when_voting_on(@votable).should be false
     end
 
+    describe '#find_voted_items' do
+      it 'returns objects that a user has upvoted for' do
+        @votable.vote :voter => @voter
+        @votable2.vote :voter => @voter2
+        @voter.find_voted_items.should include @votable
+        @voter.find_voted_items.size.should == 1
+      end
+
+      it 'returns objects that a user has downvoted for' do
+        @votable.vote_down @voter
+        @votable2.vote_down @voter2
+        @voter.find_voted_items.should include @votable
+        @voter.find_voted_items.size.should == 1
+      end
+    end
+
+    describe '#find_up_voted_items' do
+      it 'returns objects that a user has upvoted for' do
+        @votable.vote :voter => @voter
+        @votable2.vote :voter => @voter2
+        @voter.find_up_voted_items.should include @votable
+        @voter.find_up_voted_items.size.should == 1
+      end
+
+      it 'does not return objects that a user has downvoted for' do
+        @votable.vote_down @voter
+        @voter.find_up_voted_items.size.should == 0
+      end
+    end
+
+    describe '#find_down_voted_items' do
+      it 'does not return objects that a user has upvoted for' do
+        @votable.vote :voter => @voter
+        @voter.find_down_voted_items.size.should == 0
+      end
+
+      it 'returns objects that a user has downvoted for' do
+        @votable.vote_down @voter
+        @votable2.vote_down @voter2
+        @voter.find_down_voted_items.should include @votable
+        @voter.find_down_voted_items.size.should == 1
+      end
+    end
+
+    describe '#get_voted' do
+      subject { @voter.get_voted(@votable.class) }
+
+      it 'returns objects of a class that a voter has voted for' do
+        @votable.vote :voter => @voter
+        @votable2.vote_down @voter
+        subject.should include @votable
+        subject.should include @votable2
+        subject.size.should == 2
+      end
+
+      it 'does not return objects of a class that a voter has voted for' do
+        @votable.vote :voter => @voter2
+        @votable2.vote :voter => @voter2
+        subject.size.should == 0
+      end
+    end
+
+    describe '#get_up_voted' do
+      subject { @voter.get_up_voted(@votable.class) }
+
+      it 'returns up voted items that a voter has voted for' do
+        @votable.vote :voter => @voter
+        subject.should include @votable
+        subject.size.should == 1
+      end
+
+      it 'does not return down voted items a voter has voted for' do
+        @votable.vote_down @voter
+        subject.size.should == 0
+      end
+    end
+
+    describe '#get_down_voted' do
+      subject { @voter.get_down_voted(@votable.class) }
+
+      it 'does not return up voted items that a voter has voted for' do
+        @votable.vote :voter => @voter
+        subject.size.should == 0
+      end
+
+      it 'returns down voted items a voter has voted for' do
+        @votable.vote_down @voter
+        subject.should include @votable
+        subject.size.should == 1
+      end
+    end
   end
 end
