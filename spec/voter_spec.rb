@@ -189,5 +189,52 @@ describe ActsAsVotable::Voter do
       end
     end
 
+    describe '#get_voted' do
+      subject { @voter.get_voted(@votable.class) }
+
+      it 'returns objects of a class that a voter has voted for' do
+        @votable.vote :voter => @voter
+        @votable2.vote_down @voter
+        subject.should include @votable
+        subject.should include @votable2
+        subject.size.should == 2
+      end
+
+      it 'does not return objects of a class that a voter has voted for' do
+        @votable.vote :voter => @voter2
+        @votable2.vote :voter => @voter2
+        subject.size.should == 0
+      end
+    end
+
+    describe '#get_up_voted' do
+      subject { @voter.get_up_voted(@votable.class) }
+
+      it 'returns up voted items that a voter has voted for' do
+        @votable.vote :voter => @voter
+        subject.should include @votable
+        subject.size.should == 1
+      end
+
+      it 'does not return down voted items a voter has voted for' do
+        @votable.vote_down @voter
+        subject.size.should == 0
+      end
+    end
+
+    describe '#get_down_voted' do
+      subject { @voter.get_down_voted(@votable.class) }
+
+      it 'does not return up voted items that a voter has voted for' do
+        @votable.vote :voter => @voter
+        subject.size.should == 0
+      end
+
+      it 'returns down voted items a voter has voted for' do
+        @votable.vote_down @voter
+        subject.should include @votable
+        subject.size.should == 1
+      end
+    end
   end
 end

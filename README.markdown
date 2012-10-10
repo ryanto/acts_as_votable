@@ -168,6 +168,15 @@ All objects are eager loaded
     @user.find_down_voted_items
     @user.find_disliked_items
 
+Members of an individual model that a user has voted for can also be
+displayed. The result is an ActiveRecord Relation.
+
+    @user.get_voted Comment
+
+    @user.get_up_voted Comment
+
+    @user.get_down_voted Comment
+
 ### Registered Votes
 
 Voters can only vote once per model.  In this example the 2nd vote does not count

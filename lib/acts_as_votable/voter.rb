@@ -116,5 +116,16 @@ module ActsAsVotable
     end
     alias_method :find_disliked_items, :find_down_voted_items
 
+    def get_voted klass, extra_conditions = {}
+      klass.joins(:votes).merge find_votes(extra_conditions)
+    end
+
+    def get_up_voted klass
+      klass.joins(:votes).merge find_up_votes
+    end
+
+    def get_down_voted klass
+      klass.joins(:votes).merge find_down_votes
+    end
   end
 end
