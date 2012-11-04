@@ -96,5 +96,36 @@ module ActsAsVotable
       find_votes_for_class klass, :vote_flag => false
     end
 
+    # Including polymporphic relations for eager loading
+    def include_objects
+      ActsAsVotable::Vote.includes(:votable)
+    end
+
+    def find_voted_items extra_conditions = {}
+      options = extra_conditions.merge :voter_id => id, :voter_type => self.class.name
+      include_objects.where(options).collect(&:votable)
+    end
+
+    def find_up_voted_items extra_conditions = {}
+      find_voted_items extra_conditions.merge(:vote_flag => true)
+    end
+    alias_method :find_liked_items, :find_up_voted_items
+
+    def find_down_voted_items extra_conditions = {}
+      find_voted_items extra_conditions.merge(:vote_flag => false)
+    end
+    alias_method :find_disliked_items, :find_down_voted_items
+
+    def get_voted klass, extra_conditions = {}
+      klass.joins(:votes).merge find_votes(extra_conditions)
+    end
+
+    def get_up_voted klass
+      klass.joins(:votes).merge find_up_votes
+    end
+
+    def get_down_voted klass
+      klass.joins(:votes).merge find_down_votes
+    end
   end
 end
