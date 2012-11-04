@@ -14,7 +14,7 @@ The main goals of this gem are:
 
 Just add the following to your Gemfile.
 
-    gem 'acts_as_votable'
+    gem 'acts_as_votable', '~> 0.4.0'
 
 And follow that up with a ``bundle install``.
 
