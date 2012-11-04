@@ -155,6 +155,9 @@ You can also check whether the voter has voted up or down.
 
     @user.voted_up_on? @comment3 # => false
     @user.voted_down_on? @comment3 # => false
+    
+Aliases for methods ``voted_up_on?`` and ``voted_down_on?`` are: ``voted_up_for?``, ``voted_down_for?``,
+``liked?`` and ``disliked?``.
 
 Also, you can obtain a list of all the objects a user has voted for.
 This returns the actual objects instead of instances of the Vote model.
