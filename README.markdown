@@ -105,7 +105,7 @@ voter/votable
 You can also 'unvote' a model to remove a previous vote.
 
     @post.liked_by @user1
-    @post.unlike_by @user1
+    @post.unliked_by @user1
 
     @post.disliked_by @user1
     @post.undisliked_by @user1
