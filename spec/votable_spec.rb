@@ -221,7 +221,8 @@ describe ActsAsVotable::Votable do
 
       before(:each) do
         clean_database
-        @voter = Voter.create(:name => 'i can vote!')
+        @voter = StiVoter.create(:name => 'i can vote!')
+        @sti_voter = ChildOfStiVoter.create(:name => "I still live with my parents.")
       end
 
       it "should be able to vote on a votable child of a non votable sti model" do
@@ -239,6 +240,14 @@ describe ActsAsVotable::Votable do
         votable = ChildOfStiVotable.create(:name => 'sti child')
 
         votable.vote :voter => @voter, :vote => 'yes'
+        votable.votes.size.should == 1
+      end
+
+      it "should only allow a child voter to vote once" do
+        votable = ChildOfStiVotable.create(:name => 'sti child')
+
+        votable.vote :voter => @sti_voter
+        votable.vote :voter => @sti_voter
         votable.votes.size.should == 1
       end
 

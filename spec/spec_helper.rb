@@ -20,6 +20,11 @@ ActiveRecord::Schema.define(:version => 1) do
     t.string :name
   end
 
+  create_table :sti_voters do |t|
+    t.string :name
+    t.string :type
+  end
+
   create_table :not_voters do |t|
     t.string :name
   end
@@ -54,6 +59,13 @@ end
 
 class Voter < ActiveRecord::Base
   acts_as_voter
+end
+
+class StiVoter < ActiveRecord::Base
+  acts_as_voter
+end
+
+class ChildOfStiVoter < StiVoter
 end
 
 class NotVoter < ActiveRecord::Base
@@ -96,7 +108,7 @@ end
 
 
 def clean_database
-  models = [ActsAsVotable::Vote, Voter, NotVoter, Votable, NotVotable, VotableCache]
+  models = [ActsAsVotable::Vote, Voter, StiVoter, NotVoter, Votable, StiVotable, NotVotable, StiNotVotable, VotableCache]
   models.each do |model|
     ActiveRecord::Base.connection.execute "DELETE FROM #{model.table_name}"
   end
