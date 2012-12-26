@@ -45,6 +45,7 @@ ActiveRecord::Schema.define(:version => 1) do
   create_table :votable_caches do |t|
     t.string :name
     t.integer :cached_votes_total
+    t.integer :cached_votes_score
     t.integer :cached_votes_up
     t.integer :cached_votes_down
   end
