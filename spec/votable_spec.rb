@@ -172,6 +172,30 @@ describe ActsAsVotable::Votable do
         @votable_cache.cached_votes_total.should == 0
       end
 
+      it "should update cached score votes if there is a score column" do
+        @votable_cache.cached_votes_score = 50
+        @votable_cache.vote :voter => @voter
+        @votable_cache.cached_votes_score.should == 1
+        @votable_cache.vote :voter => @voter2, :vote => 'false'
+        @votable_cache.cached_votes_score.should == 0
+        @votable_cache.vote :voter => @voter, :vote => 'false'
+        @votable_cache.cached_votes_score.should == -2
+      end
+
+      it "should update cached score votes when a vote up is removed" do
+        @votable_cache.vote :voter => @voter, :vote => 'true'
+        @votable_cache.cached_votes_score.should == 1
+        @votable_cache.unvote :voter => @voter
+        @votable_cache.cached_votes_score.should == 0
+      end
+
+      it "should update cached score votes when a vote down is removed" do
+        @votable_cache.vote :voter => @voter, :vote => 'false'
+        @votable_cache.cached_votes_score.should == -1
+        @votable_cache.unvote :voter => @voter
+        @votable_cache.cached_votes_score.should == 0
+      end
+
       it "should update cached up votes if there is an up vote column" do
         @votable_cache.cached_votes_up = 50
         @votable_cache.vote :voter => @voter
