@@ -135,6 +135,12 @@ describe ActsAsVotable::Votable do
       @votable.vote_registered?.should be true
       votable2.vote_registered?.should be false
     end
+    
+    it "should update its updated_at timestamp" do
+      original_updated_at = @votable.updated_at
+      @votable.vote :voter => @voter
+      @votable.updated_at.should_not equal original_updated_at
+    end
 
     describe "with cached votes" do
 

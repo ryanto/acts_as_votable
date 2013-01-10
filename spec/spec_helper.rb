@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(:version => 1) do
 
   create_table :voters do |t|
     t.string :name
+    t.timestamps
   end
 
   create_table :sti_voters do |t|
@@ -31,6 +32,7 @@ ActiveRecord::Schema.define(:version => 1) do
 
   create_table :votables do |t|
     t.string :name
+    t.timestamps
   end
 
   create_table :sti_votables do |t|
