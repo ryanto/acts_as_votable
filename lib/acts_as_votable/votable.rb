@@ -89,7 +89,7 @@ module ActsAsVotable
         vote = ActsAsVotable::Vote.new(
           :votable => self,
           :voter => options[:voter],
-          :vote_scope => options[:scope]
+          :vote_scope => options[:vote_scope]
         )
       else
         # this voter is potentially changing his vote
@@ -113,7 +113,7 @@ module ActsAsVotable
 
     def unvote args = {}
       return false if args[:voter].nil?
-      _votes_ = find_votes(:voter_id => args[:voter].id, :voter_type => args[:voter].class.name)
+      _votes_ = find_votes(:voter_id => args[:voter].id, :vote_scope => ars[:vote_scope], :voter_type => args[:voter].class.name)
 
       return true if _votes_.size == 0
       _votes_.each(&:destroy)
@@ -122,12 +122,12 @@ module ActsAsVotable
       return true
     end
 
-    def vote_up voter, scope=nil
-      self.vote :voter => voter, :vote => true, :scope => scope
+    def vote_up voter, options={}
+      self.vote :voter => voter, :vote => true, :vote_scope => options[:vote_scope]
     end
 
-    def vote_down voter, scope=nil
-      self.vote :voter => voter, :vote => false, :scope => scope
+    def vote_down voter, options={}
+      self.vote :voter => voter, :vote => false, :vote_scope => options[:vote_scope]
     end
 
     # caching
@@ -157,12 +157,12 @@ module ActsAsVotable
       votes.where(extra_conditions)
     end
 
-    def up_votes scope=nil
-      find_votes(:vote_flag => true, :scope => scope)
+    def up_votes options={}
+      find_votes(:vote_flag => true, :vote_scope => options[:vote_scope])
     end
 
-    def down_votes scope=nil
-      find_votes(:vote_flag => false, :scope => scope)
+    def down_votes options={}
+      find_votes(:vote_flag => false, :vote_scope => options[:vote_scope])
     end
 
 
