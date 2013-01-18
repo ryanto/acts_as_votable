@@ -157,12 +157,12 @@ module ActsAsVotable
       votes.where(extra_conditions)
     end
 
-    def up_votes
-      find_votes(:vote_flag => true)
+    def up_votes scope=nil
+      find_votes(:vote_flag => true, :scope => scope)
     end
 
-    def down_votes
-      find_votes(:vote_flag => false)
+    def down_votes scope=nil
+      find_votes(:vote_flag => false, :scope => scope)
     end
 
 
