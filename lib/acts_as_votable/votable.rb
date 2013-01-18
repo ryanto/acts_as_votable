@@ -113,7 +113,7 @@ module ActsAsVotable
 
     def unvote args = {}
       return false if args[:voter].nil?
-      _votes_ = find_votes(:voter_id => args[:voter].id, :vote_scope => ars[:vote_scope], :voter_type => args[:voter].class.name)
+      _votes_ = find_votes(:voter_id => args[:voter].id, :vote_scope => args[:vote_scope], :voter_type => args[:voter].class.name)
 
       return true if _votes_.size == 0
       _votes_.each(&:destroy)
