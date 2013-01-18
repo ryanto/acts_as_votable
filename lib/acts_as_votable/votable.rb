@@ -68,6 +68,7 @@ module ActsAsVotable
 
       options = {
         :vote => true,
+        :vote_scope => nil
       }.merge(args)
 
       self.vote_registered = false
@@ -79,6 +80,7 @@ module ActsAsVotable
       # find the vote
       _votes_ = find_votes({
         :voter_id => options[:voter].id,
+        :vote_scope => options[:vote_scope],
         :voter_type => options[:voter].class.name
       })
 
@@ -86,7 +88,8 @@ module ActsAsVotable
         # this voter has never voted
         vote = ActsAsVotable::Vote.new(
           :votable => self,
-          :voter => options[:voter]
+          :voter => options[:voter],
+          :vote_scope => options[:scope]
         )
       else
         # this voter is potentially changing his vote
@@ -119,12 +122,12 @@ module ActsAsVotable
       return true
     end
 
-    def vote_up voter
-      self.vote :voter => voter, :vote => true
+    def vote_up voter, scope=nil
+      self.vote :voter => voter, :vote => true, :scope => scope
     end
 
-    def vote_down voter
-      self.vote :voter => voter, :vote => false
+    def vote_down voter, scope=nil
+      self.vote :voter => voter, :vote => false, :scope => scope
     end
 
     # caching
