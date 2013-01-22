@@ -135,6 +135,12 @@ describe ActsAsVotable::Votable do
       @votable.vote_registered?.should be true
       votable2.vote_registered?.should be false
     end
+    
+    it "should update its updated_at timestamp" do
+      original_updated_at = @votable.updated_at
+      @votable.vote :voter => @voter
+      @votable.updated_at.should_not equal original_updated_at
+    end
 
     describe "with cached votes" do
 
@@ -245,7 +251,8 @@ describe ActsAsVotable::Votable do
 
       before(:each) do
         clean_database
-        @voter = Voter.create(:name => 'i can vote!')
+        @voter = StiVoter.create(:name => 'i can vote!')
+        @sti_voter = ChildOfStiVoter.create(:name => "I still live with my parents.")
       end
 
       it "should be able to vote on a votable child of a non votable sti model" do
@@ -263,6 +270,14 @@ describe ActsAsVotable::Votable do
         votable = ChildOfStiVotable.create(:name => 'sti child')
 
         votable.vote :voter => @voter, :vote => 'yes'
+        votable.votes.size.should == 1
+      end
+
+      it "should only allow a child voter to vote once" do
+        votable = ChildOfStiVotable.create(:name => 'sti child')
+
+        votable.vote :voter => @sti_voter
+        votable.vote :voter => @sti_voter
         votable.votes.size.should == 1
       end
 

@@ -34,7 +34,6 @@ module ActsAsVotable
 
       base.class_eval do
 
-        belongs_to :votable, :polymorphic => true
         has_many   :votes, :class_name => "ActsAsVotable::Vote", :as => :votable do
           def voters
             includes(:voter).map(&:voter)
@@ -79,7 +78,7 @@ module ActsAsVotable
       # find the vote
       _votes_ = find_votes({
         :voter_id => options[:voter].id,
-        :voter_type => options[:voter].class.name
+        :voter_type => options[:voter].class.base_class.name
       })
 
       if _votes_.count == 0
@@ -110,7 +109,7 @@ module ActsAsVotable
 
     def unvote args = {}
       return false if args[:voter].nil?
-      _votes_ = find_votes(:voter_id => args[:voter].id, :voter_type => args[:voter].class.name)
+      _votes_ = find_votes(:voter_id => args[:voter].id, :voter_type => args[:voter].class.base_class.name)
 
       return true if _votes_.size == 0
       _votes_.each(&:destroy)
@@ -194,7 +193,7 @@ module ActsAsVotable
 
     # voters
     def voted_on_by? voter
-      votes = find_votes :voter_id => voter.id, :voter_type => voter.class.name
+      votes = find_votes :voter_id => voter.id, :voter_type => voter.class.base_class.name
       votes.count > 0
     end
 

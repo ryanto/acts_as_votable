@@ -10,8 +10,8 @@ module ActsAsVotable
       :votable, :voter,
       :vote_flag
 
-    belongs_to :votable, :polymorphic => true
-    belongs_to :voter, :polymorphic => true
+    belongs_to :votable, :polymorphic => true, :touch => true
+    belongs_to :voter, :polymorphic => true, :touch => true
 
     scope :up, where(:vote_flag => true)
     scope :down, where(:vote_flag => false)
