@@ -44,6 +44,23 @@ describe ActsAsVotable::Votable do
       @votable.votes.size.should == 1
     end
 
+    it "should have one scoped vote when voting under an scope" do
+      @votable.vote :voter => @voter, :vote => 'yes', :vote_scope => 'rank'
+      @votable.find_votes(:vote_scope => 'rank').size.should == 1
+    end
+
+    it "should have one vote when voted on twice using scope by the same person" do
+      @votable.vote :voter => @voter, :vote => 'yes', :vote_scope => 'rank'
+      @votable.vote :voter => @voter, :vote => 'no', :vote_scope => 'rank'
+      @votable.find_votes(:vote_scope => 'rank').size.should == 1
+    end
+
+    it "should have two votes when voting on two different scopes by the same person" do
+      @votable.vote :voter => @voter, :vote => 'yes', :vote_scope => 'weekly_rank'
+      @votable.vote :voter => @voter, :vote => 'no', :vote_scope => 'monthly_rank'
+      @votable.votes.size.should == 2
+    end
+
     it "should be callable with vote_up" do
       @votable.vote_up @voter
       @votable.up_votes.first.voter.should == @voter

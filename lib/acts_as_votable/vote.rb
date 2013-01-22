@@ -8,7 +8,7 @@ module ActsAsVotable
     attr_accessible :votable_id, :votable_type,
       :voter_id, :voter_type,
       :votable, :voter,
-      :vote_flag
+      :vote_flag, :vote_scope
 
     belongs_to :votable, :polymorphic => true
     belongs_to :voter, :polymorphic => true

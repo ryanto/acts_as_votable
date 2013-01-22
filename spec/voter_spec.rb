@@ -41,9 +41,24 @@ describe ActsAsVotable::Voter do
       @voter.voted_on?(@votable).should be false
     end
 
+    it "should be voted on after a voter has voted under scope" do
+      @votable.vote :voter => @voter, :vote_scope => 'rank'
+      @voter.voted_on?(@votable, :vote_scope => 'rank').should be true
+    end
+
+    it "should not be voted on other scope after a voter has voted under one scope" do
+      @votable.vote :voter => @voter, :vote_scope => 'rank'
+      @voter.voted_on?(@votable).should be false
+    end
+
     it "should be voted as true when a voter has voted true" do
       @votable.vote :voter => @voter
       @voter.voted_as_when_voted_for(@votable).should be true
+    end
+
+    it "should be voted as true when a voter has voted true under scope" do
+      @votable.vote :voter => @voter, :vote_scope => 'rank'
+      @voter.voted_as_when_voted_for(@votable, :vote_scope => 'rank').should be true
     end
 
     it "should be voted as false when a voter has voted false" do
@@ -51,7 +66,17 @@ describe ActsAsVotable::Voter do
       @voter.voted_as_when_voted_for(@votable).should be false
     end
 
+    it "should be voted as false when a voter has voted false under scope" do
+      @votable.vote :voter => @voter, :vote => false, :vote_scope => 'rank'
+      @voter.voted_as_when_voted_for(@votable, :vote_scope => 'rank').should be false
+    end
+
     it "should be voted as nil when a voter has never voted" do
+      @voter.voted_as_when_voting_on(@votable).should be nil
+    end
+
+    it "should be voted as nil when a voter has never voted under the scope" do
+      @votable.vote :voter => @voter, :vote => false, :vote_scope => 'rank'
       @voter.voted_as_when_voting_on(@votable).should be nil
     end
 
@@ -153,11 +178,25 @@ describe ActsAsVotable::Voter do
         @voter.find_voted_items.size.should == 1
       end
 
+      it 'returns objects that a user has upvoted for, using scope' do
+        @votable.vote :voter => @voter, :vote_scope => 'rank'
+        @votable2.vote :voter => @voter2, :vote_scope => 'rank'
+        @voter.find_voted_items(:vote_scope => 'rank').should include @votable
+        @voter.find_voted_items(:vote_scope => 'rank').size.should == 1
+      end
+
       it 'returns objects that a user has downvoted for' do
         @votable.vote_down @voter
         @votable2.vote_down @voter2
         @voter.find_voted_items.should include @votable
         @voter.find_voted_items.size.should == 1
+      end
+
+      it 'returns objects that a user has downvoted for, using scope' do
+        @votable.vote_down @voter, :vote_scope => 'rank'
+        @votable2.vote_down @voter2, :vote_scope => 'rank'
+        @voter.find_voted_items(:vote_scope => 'rank').should include @votable
+        @voter.find_voted_items(:vote_scope => 'rank').size.should == 1
       end
     end
 
@@ -169,9 +208,21 @@ describe ActsAsVotable::Voter do
         @voter.find_up_voted_items.size.should == 1
       end
 
+      it 'returns objects that a user has upvoted for, using scope' do
+        @votable.vote :voter => @voter, :vote_scope => 'rank'
+        @votable2.vote :voter => @voter2, :vote_scope => 'rank'
+        @voter.find_up_voted_items(:vote_scope => 'rank').should include @votable
+        @voter.find_up_voted_items(:vote_scope => 'rank').size.should == 1
+      end
+
       it 'does not return objects that a user has downvoted for' do
         @votable.vote_down @voter
         @voter.find_up_voted_items.size.should == 0
+      end
+
+      it 'does not return objects that a user has downvoted for, using scope' do
+        @votable.vote_down @voter, :vote_scope => 'rank'
+        @voter.find_up_voted_items(:vote_scope => 'rank').size.should == 0
       end
     end
 
@@ -181,13 +232,26 @@ describe ActsAsVotable::Voter do
         @voter.find_down_voted_items.size.should == 0
       end
 
+      it 'does not return objects that a user has upvoted for, using scope' do
+        @votable.vote :voter => @voter, :vote_scope => 'rank'
+        @voter.find_down_voted_items(:vote_scope => 'rank').size.should == 0
+      end
+
       it 'returns objects that a user has downvoted for' do
         @votable.vote_down @voter
         @votable2.vote_down @voter2
         @voter.find_down_voted_items.should include @votable
         @voter.find_down_voted_items.size.should == 1
       end
-    end
+
+      it 'returns objects that a user has downvoted for, using scope' do
+        @votable.vote_down @voter, :vote_scope => 'rank'
+        @votable2.vote_down @voter2, :vote_scope => 'rank'
+        @voter.find_down_voted_items(:vote_scope => 'rank').should include @votable
+        @voter.find_down_voted_items(:vote_scope => 'rank').size.should == 1
+      end
+
+   end
 
     describe '#get_voted' do
       subject { @voter.get_voted(@votable.class) }

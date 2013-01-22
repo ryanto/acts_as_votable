@@ -68,6 +68,7 @@ module ActsAsVotable
 
       options = {
         :vote => true,
+        :vote_scope => nil
       }.merge(args)
 
       self.vote_registered = false
@@ -79,6 +80,7 @@ module ActsAsVotable
       # find the vote
       _votes_ = find_votes({
         :voter_id => options[:voter].id,
+        :vote_scope => options[:vote_scope],
         :voter_type => options[:voter].class.name
       })
 
@@ -86,7 +88,8 @@ module ActsAsVotable
         # this voter has never voted
         vote = ActsAsVotable::Vote.new(
           :votable => self,
-          :voter => options[:voter]
+          :voter => options[:voter],
+          :vote_scope => options[:vote_scope]
         )
       else
         # this voter is potentially changing his vote
@@ -110,7 +113,7 @@ module ActsAsVotable
 
     def unvote args = {}
       return false if args[:voter].nil?
-      _votes_ = find_votes(:voter_id => args[:voter].id, :voter_type => args[:voter].class.name)
+      _votes_ = find_votes(:voter_id => args[:voter].id, :vote_scope => args[:vote_scope], :voter_type => args[:voter].class.name)
 
       return true if _votes_.size == 0
       _votes_.each(&:destroy)
@@ -119,12 +122,12 @@ module ActsAsVotable
       return true
     end
 
-    def vote_up voter
-      self.vote :voter => voter, :vote => true
+    def vote_up voter, options={}
+      self.vote :voter => voter, :vote => true, :vote_scope => options[:vote_scope]
     end
 
-    def vote_down voter
-      self.vote :voter => voter, :vote => false
+    def vote_down voter, options={}
+      self.vote :voter => voter, :vote => false, :vote_scope => options[:vote_scope]
     end
 
     # caching
@@ -161,12 +164,12 @@ module ActsAsVotable
       votes.where(extra_conditions)
     end
 
-    def up_votes
-      find_votes(:vote_flag => true)
+    def up_votes options={}
+      find_votes(:vote_flag => true, :vote_scope => options[:vote_scope])
     end
 
-    def down_votes
-      find_votes(:vote_flag => false)
+    def down_votes options={}
+      find_votes(:vote_flag => false, :vote_scope => options[:vote_scope])
     end
 
 
