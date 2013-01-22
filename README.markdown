@@ -11,11 +11,11 @@ The main goals of this gem are:
 
 ## Installation
 
-### Rails 3
+### Rails 3+
 
 Just add the following to your Gemfile.
 
-    gem 'acts_as_votable', '~> 0.4.0'
+    gem 'acts_as_votable', '~> 0.5.0'
 
 And follow that up with a ``bundle install``.
 
