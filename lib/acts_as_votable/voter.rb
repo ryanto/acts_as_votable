@@ -7,7 +7,9 @@ module ActsAsVotable
       aliases = {
         :vote_up_for   => [:likes, :upvotes, :up_votes],
         :vote_down_for => [:dislikes, :downvotes, :down_votes],
-        :unvote_for    => [:unlike, :undislike]
+        :unvote_for    => [:unlike, :undislike],
+        :voted_up_on?   => [:voted_up_for?, :liked?],
+        :voted_down_on? => [:voted_down_for?, :disliked?]
       }
 
       base.class_eval do
@@ -51,13 +53,11 @@ module ActsAsVotable
       votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.name)
       votes.size > 0
     end
-    alias :voted_for? :voted_on?
 
     def voted_up_on? votable
       votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.name, :vote_flag => true)
       votes.size > 0
     end
-    alias :voted_up_for? :voted_up_on?
 
     def voted_down_on? votable
       votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.name, :vote_flag => false)
