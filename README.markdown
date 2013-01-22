@@ -1,5 +1,7 @@
 # Acts As Votable (aka Acts As Likeable)
 
+![Build Status](https://travis-ci.org/ryanto/acts_as_votable.png?branch=master)
+
 Acts As Votable is a Ruby Gem specifically written for Rails/ActiveRecord models.
 The main goals of this gem are:
 
