@@ -4,6 +4,7 @@ Acts As Votable is a Ruby Gem specifically written for Rails/ActiveRecord models
 The main goals of this gem are:
 
 - Allow any model to be voted on, like/dislike, upvote/downvote, etc.
+- Allow any model to be voted under arbitrary scopes.
 - Allow any model to vote.  In other words, votes do not have to come from a user,
   they can come from any model (such as a Group or Team).
 - Provide an easy to write/read syntax.
@@ -111,6 +112,35 @@ You can also 'unvote' a model to remove a previous vote.
     @post.undisliked_by @user1
 
 Unvoting works for both positive and negative votes.
+
+### Examples with scopes
+
+You can add an scope to your vote
+
+    # positive votes
+    @post.liked_by @user1, :vote_scope => 'rank'
+    @post.vote :voter => @user3, :vote_scope => 'rank'
+    @post.vote :voter => @user5, :vote => 'like', :vote_scope => 'rank'
+
+    # negative votes
+    @post.downvote_from @user2, :vote_scope => 'rank'
+    @post.vote :voter => @user2, :vote => 'bad', :vote_scope => 'rank'
+
+    # tally them up!
+    @post.find_votes(:vote_scope => 'rank').size # => 5
+    @post.likes(:vote_scope => 'rank').size # => 3
+    @post.upvotes(:vote_scope => 'rank').size # => 3
+    @post.dislikes(:vote_scope => 'rank').size # => 2
+    @post.downvotes(:vote_scope => 'rank').size # => 2
+
+    # votable model can be voted under different scopes
+    # by the same user
+    @post.vote :voter => @user1, :vote_scope => 'week'
+    @post.vote :voter => @user1, :vote_scope => 'month'
+
+    @post.votes.size # => 2
+    @post.find_votes(:vote_scope => 'week').size # => 1
+    @post.find_votes(:vote_scope => 'month').size # => 1
 
 ### The Voter
 
