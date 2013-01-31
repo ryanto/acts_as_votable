@@ -81,7 +81,7 @@ module ActsAsVotable
       _votes_ = find_votes({
         :voter_id => options[:voter].id,
         :vote_scope => options[:vote_scope],
-        :voter_type => options[:voter].class.name
+        :voter_type => options[:voter].class.base_class.name
       })
 
       if _votes_.count == 0

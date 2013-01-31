@@ -64,6 +64,10 @@ class NotVoter < ActiveRecord::Base
   
 end
 
+class StiVoter < Voter
+
+end
+
 class Votable < ActiveRecord::Base
   acts_as_votable
   validates_presence_of :name
