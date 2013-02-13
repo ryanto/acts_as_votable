@@ -158,16 +158,16 @@ You can have your voters ``acts_as_voter`` to provide some reserve functionality
     @article.likes.size # => 1
     @article.dislikes.size # => 0
 
-To check if a voter has voted on a model, you can use ``voted_for?``.  You can
+To check if a voter has voted on a model, you can use ``voted_on?``.  You can
 check how the voter voted by using ``voted_as_when_voted_for``.
 
     @user.likes @comment1
     @user.up_votes @comment2
     # user has not voted on @comment3
 
-    @user.voted_for? @comment1 # => true
-    @user.voted_for? @comment2 # => true
-    @user.voted_for? @comment3 # => false
+    @user.voted_on? @comment1 # => true
+    @user.voted_on? @comment2 # => true
+    @user.voted_on? @comment3 # => false
 
     @user.voted_as_when_voted_for @comment1 # => true, he liked it
     @user.voted_as_when_voted_for @comment2 # => false, he didnt like it
