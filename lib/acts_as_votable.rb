@@ -14,3 +14,7 @@ module ActsAsVotable
   end
 
 end
+
+ActiveSupport.on_load(:action_controller) do
+  include ActsAsVotable::Extenders::Controller
+end

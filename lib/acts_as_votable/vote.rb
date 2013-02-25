@@ -4,11 +4,14 @@ module ActsAsVotable
   class Vote < ::ActiveRecord::Base
 
     include Helpers::Words
-
-    attr_accessible :votable_id, :votable_type,
-      :voter_id, :voter_type,
-      :votable, :voter,
-      :vote_flag, :vote_scope
+    
+    
+    # Rails 4 style strong_parameters
+    # the conditional can be removed for a pure-rails4-version,
+    # it just inludes strong_paramters for rails < 4 models
+    unless self.ancestors.include?(ActiveModel::ForbiddenAttributesProtection)
+      include ActiveModel::ForbiddenAttributesProtection
+    end
 
     belongs_to :votable, :polymorphic => true
     belongs_to :voter, :polymorphic => true
