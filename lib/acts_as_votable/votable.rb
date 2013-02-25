@@ -50,12 +50,7 @@ module ActsAsVotable
       end
     end
 
-    # Rails 4 style strong_parameters
-    # the conditional can be removed for a pure-rails4-version,
-    # it just inludes strong_paramters for rails < 4 models
-    unless self.ancestors.include?(ActiveModel::ForbiddenAttributesProtection)
-      include ActiveModel::ForbiddenAttributesProtection
-    end
+    attr_accessor :vote_registered
 
     def vote_registered?
       return self.vote_registered
