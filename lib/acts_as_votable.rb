@@ -1,6 +1,5 @@
 require 'active_record'
 require 'active_support/inflector'
-require 'active_model/forbidden_attributes_protection'
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 
