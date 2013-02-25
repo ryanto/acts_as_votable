@@ -299,9 +299,46 @@ describe ActsAsVotable::Votable do
         votable.votes.size.should == 1
       end
 
+      describe '#voted_on?' do
+        it "should return true if the voter has voted" do
+          votable = ChildOfStiVotable.create(:name => 'sti child')
+          votable.vote :voter => @voter, :vote => 'yes'
+          @voter.voted_on?(votable).should be_true
+        end
+      end
 
+      describe '#voted_up_on?' do
+        it "should return true if the voter has voted true" do
+          votable = ChildOfStiVotable.create(:name => 'sti child')
+          votable.vote :voter => @voter, :vote => 'yes'
+          @voter.voted_up_on?(votable).should be_true
+        end
+      end
+
+      describe '#voted_down_on?' do
+        it "should return true if the voter has voted false" do
+          votable = ChildOfStiVotable.create(:name => 'sti child')
+          votable.vote :voter => @voter, :vote => 'no'
+          @voter.voted_down_on?(votable).should be_true
+        end
+      end
+
+      describe '#find_votes_for_class' do
+        it "should get all of the votes votes for a sti class" do
+          votable = ChildOfStiVotable.create(:name => 'sti child')
+          votable.vote :voter => @voter, :vote => 'no'
+          @voter.find_votes_for_class(ChildOfStiVotable).size.should == 1
+        end
+      end
+
+      describe '#find_voted_items' do
+        it "returns objects that a user has upvoted for" do
+          votable = ChildOfStiVotable.create(:name => 'sti child')
+          votable.vote :voter => @voter, :vote => 'no'
+          @voter.find_voted_items.should include votable
+        end
+      end
     end
-
   end
 
 
