@@ -16,8 +16,8 @@ module ActsAsVotable
     belongs_to :votable, :polymorphic => true
     belongs_to :voter, :polymorphic => true
 
-    scope :up, where(:vote_flag => true)
-    scope :down, where(:vote_flag => false)
+    scope :up, -> { where(:vote_flag => true) }
+    scope :down, -> { where(:vote_flag => false) }
     scope :for_type, lambda{ |klass| where(:votable_type => klass) }
     scope :by_type,  lambda{ |klass| where(:voter_type => klass) }
 
