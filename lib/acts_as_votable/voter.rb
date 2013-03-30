@@ -50,26 +50,26 @@ module ActsAsVotable
 
     # results
     def voted_on? votable, args={}
-      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.name,
+      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.base_class.name,
                          :vote_scope => args[:vote_scope])
       votes.size > 0
     end
 
     def voted_up_on? votable, args={}
-      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.name,
+      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.base_class.name,
                          :vote_scope => args[:vote_scope], :vote_flag => true)
       votes.size > 0
     end
 
     def voted_down_on? votable, args={}
-      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.name,
+      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.base_class.name,
                          :vote_scope => args[:vote_scope], :vote_flag => false)
       votes.size > 0
     end
     alias :voted_down_for? :voted_down_on?
 
     def voted_as_when_voting_on votable, args={}
-      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.name,
+      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.base_class.name,
                          :vote_scope => args[:vote_scope])
       return nil if votes.size == 0
       return votes.first.vote_flag
@@ -89,7 +89,7 @@ module ActsAsVotable
     end
 
     def find_votes_for_class klass, extra_conditions = {}
-      find_votes extra_conditions.merge({:votable_type => klass.name})
+      find_votes extra_conditions.merge({:votable_type => klass.base_class.name})
     end
 
     def find_up_votes_for_class klass, args={}
@@ -106,7 +106,7 @@ module ActsAsVotable
     end
 
     def find_voted_items extra_conditions = {}
-      options = extra_conditions.merge :voter_id => id, :voter_type => self.class.name
+      options = extra_conditions.merge :voter_id => id, :voter_type => self.class.base_class.name
       include_objects.where(options).collect(&:votable)
     end
 

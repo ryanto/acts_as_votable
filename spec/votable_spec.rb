@@ -282,10 +282,6 @@ describe ActsAsVotable::Votable do
         votable.vote :voter => @voter, :vote => 'yes'
         votable.votes.size.should == 1
       end
-
     end
-
   end
-
-
 end
