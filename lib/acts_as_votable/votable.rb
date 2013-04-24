@@ -154,7 +154,11 @@ module ActsAsVotable
         )
       end
 
-      self.update_attributes(updates, :without_protection => true) if updates.size > 0
+      if ::ActiveRecord::VERSION::MAJOR < 4
+        self.update_attributes(updates, :without_protection => true) if updates.size > 0
+      else
+        self.update_attributes(updates) if updates.size > 0
+      end
 
     end
 
