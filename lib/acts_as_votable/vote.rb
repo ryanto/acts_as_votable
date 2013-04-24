@@ -5,16 +5,18 @@ module ActsAsVotable
 
     include Helpers::Words
 
-    attr_accessible :votable_id, :votable_type,
-      :voter_id, :voter_type,
-      :votable, :voter,
-      :vote_flag, :vote_scope
+    if ::ActiveRecord::VERSION::MAJOR < 4
+      attr_accessible :votable_id, :votable_type,
+        :voter_id, :voter_type,
+        :votable, :voter,
+        :vote_flag, :vote_scope
+    end
 
     belongs_to :votable, :polymorphic => true
     belongs_to :voter, :polymorphic => true
 
-    scope :up, where(:vote_flag => true)
-    scope :down, where(:vote_flag => false)
+    scope :up, lambda{ where(:vote_flag => true) }
+    scope :down, lambda{ where(:vote_flag => false) }
     scope :for_type, lambda{ |klass| where(:votable_type => klass) }
     scope :by_type,  lambda{ |klass| where(:voter_type => klass) }
 
