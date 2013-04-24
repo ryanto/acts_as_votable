@@ -1,4 +1,5 @@
 $LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
+require 'sqlite3'
 require 'acts_as_votable'
 
 ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:")
