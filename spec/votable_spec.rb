@@ -258,6 +258,107 @@ describe ActsAsVotable::Votable do
 
     end
 
+    describe "with scoped cached votes" do
+
+      before(:each) do
+        clean_database
+        @voter = Voter.new(:name => 'i can vote!')
+        @voter.save
+
+        @votable = Votable.new(:name => 'a voting model without a cache')
+        @votable.save
+
+        @votable_cache = VotableCache.new(:name => 'voting model with cache')
+        @votable_cache.save
+      end
+
+      it "should update cached total votes if there is a total column" do
+        @votable_cache.cached_scoped_test_votes_total = 50
+        @votable_cache.vote :voter => @voter, :vote_scope => "test"
+        @votable_cache.cached_scoped_test_votes_total.should == 1
+      end
+
+      it "should update cached total votes when a vote up is removed" do
+        @votable_cache.vote :voter => @voter, :vote => 'true', :vote_scope => "test"
+        @votable_cache.unvote :voter => @voter, :vote_scope => "test"
+        @votable_cache.cached_scoped_test_votes_total.should == 0
+      end
+
+      it "should update cached total votes when a vote down is removed" do
+        @votable_cache.vote :voter => @voter, :vote => 'false', :vote_scope => "test"
+        @votable_cache.unvote :voter => @voter, :vote_scope => "test"
+        @votable_cache.cached_scoped_test_votes_total.should == 0
+      end
+
+      it "should update cached score votes if there is a score column" do
+        @votable_cache.cached_scoped_test_votes_score = 50
+        @votable_cache.vote :voter => @voter, :vote_scope => "test"
+        @votable_cache.cached_scoped_test_votes_score.should == 1
+        @votable_cache.vote :voter => @voter2, :vote => 'false', :vote_scope => "test"
+        @votable_cache.cached_scoped_test_votes_score.should == 0
+        @votable_cache.vote :voter => @voter, :vote => 'false', :vote_scope => "test"
+        @votable_cache.cached_scoped_test_votes_score.should == -2
+      end
+
+      it "should update cached score votes when a vote up is removed" do
+        @votable_cache.vote :voter => @voter, :vote => 'true', :vote_scope => "test"
+        @votable_cache.cached_scoped_test_votes_score.should == 1
+        @votable_cache.unvote :voter => @voter, :vote_scope => "test"
+        @votable_cache.cached_scoped_test_votes_score.should == 0
+      end
+
+      it "should update cached score votes when a vote down is removed" do
+        @votable_cache.vote :voter => @voter, :vote => 'false', :vote_scope => "test"
+        @votable_cache.cached_scoped_test_votes_score.should == -1
+        @votable_cache.unvote :voter => @voter, :vote_scope => "test"
+        @votable_cache.cached_scoped_test_votes_score.should == 0
+      end
+
+      it "should update cached up votes if there is an up vote column" do
+        @votable_cache.cached_scoped_test_votes_up = 50
+        @votable_cache.vote :voter => @voter, :vote_scope => "test"
+        @votable_cache.vote :voter => @voter, :vote_scope => "test"
+        @votable_cache.cached_scoped_test_votes_up.should == 1
+      end
+
+      it "should update cached down votes if there is a down vote column" do
+        @votable_cache.cached_scoped_test_votes_down = 50
+        @votable_cache.vote :voter => @voter, :vote => 'false', :vote_scope => "test"
+        @votable_cache.cached_scoped_test_votes_down.should == 1
+      end
+
+      it "should update cached up votes when a vote up is removed" do
+        @votable_cache.vote :voter => @voter, :vote => 'true', :vote_scope => "test"
+        @votable_cache.unvote :voter => @voter, :vote_scope => "test"
+        @votable_cache.cached_scoped_test_votes_up.should == 0
+      end
+
+      it "should update cached down votes when a vote down is removed" do
+        @votable_cache.vote :voter => @voter, :vote => 'false', :vote_scope => "test"
+        @votable_cache.unvote :voter => @voter, :vote_scope => "test"
+        @votable_cache.cached_scoped_test_votes_down.should == 0
+      end
+
+      it "should select from cached total votes if there a total column" do
+        @votable_cache.vote :voter => @voter, :vote_scope => "test"
+        @votable_cache.cached_scoped_test_votes_total = 50
+        @votable_cache.count_votes_total(false, "test").should == 50
+      end
+
+      it "should select from cached up votes if there is an up vote column" do
+        @votable_cache.vote :voter => @voter, :vote_scope => "test"
+        @votable_cache.cached_scoped_test_votes_up = 50
+        @votable_cache.count_votes_up(false, "test").should == 50
+      end
+
+      it "should select from cached down votes if there is a down vote column" do
+        @votable_cache.vote :voter => @voter, :vote => 'false', :vote_scope => "test"
+        @votable_cache.cached_scoped_test_votes_down = 50
+        @votable_cache.count_votes_down(false, "test").should == 50
+      end
+
+    end
+
     describe "sti models" do
 
       before(:each) do
