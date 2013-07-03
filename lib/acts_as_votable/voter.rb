@@ -15,7 +15,7 @@ module ActsAsVotable
       base.class_eval do
 
         belongs_to :voter, :polymorphic => true
-        has_many :votes, :class_name => "ActsAsVotable::Vote", :as => :voter do
+        has_many :votes, :class_name => 'ActsAsVotable::Vote', :as => :voter, :dependent => :destroy do
           def votables
             includes(:votable).map(&:votable)
           end
@@ -69,10 +69,10 @@ module ActsAsVotable
     alias :voted_down_for? :voted_down_on?
 
     def voted_as_when_voting_on votable, args={}
-      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.name,
-                         :vote_scope => args[:vote_scope])
-      return nil if votes.size == 0
-      return votes.first.vote_flag
+      vote = find_votes(:votable_id => votable.id, :votable_type => votable.class.name,
+                         :vote_scope => args[:vote_scope]).select(:vote_flag).first
+      return nil unless vote
+      return vote.vote_flag
     end
     alias :voted_as_when_voted_for :voted_as_when_voting_on
 
