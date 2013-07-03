@@ -15,7 +15,7 @@ module ActsAsVotable
       base.class_eval do
 
         belongs_to :voter, :polymorphic => true
-        has_many :votes, :class_name => "ActsAsVotable::Vote", :as => :voter do
+        has_many :votes, :class_name => 'ActsAsVotable::Vote', :as => :voter, :dependent => :destroy do
           def votables
             includes(:votable).map(&:votable)
           end
