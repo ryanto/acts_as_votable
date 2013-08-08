@@ -2,4 +2,5 @@ pkg/*
 *.gem
 .bundle
 nbproject/*
+Gemfile.lock
 bin
