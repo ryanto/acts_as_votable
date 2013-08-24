@@ -297,7 +297,17 @@ end
 
 ## Testing
 
-All tests follow the RSpec format and are located in the spec directory
+All tests follow the RSpec format and are located in the spec directory.
+They can be run with:
+
+```
+rake spec
+```
+
+## License
+
+Acts as votable is released under the [MIT
+License](http://www.opensource.org/licenses/MIT).
 
 ## TODO
 
