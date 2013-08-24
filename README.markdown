@@ -18,7 +18,7 @@ The main goals of this gem are:
 Just add the following to your Gemfile.
 
 ```ruby
-gem 'acts_as_votable', '~> 0.6.0'
+gem 'acts_as_votable', '~> 0.7.0'
 ```
 
 And follow that up with a ``bundle install``.
