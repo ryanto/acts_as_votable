@@ -5,11 +5,15 @@ module ActsAsVotable
 
       # allow user to define these
       aliases = {
-        :vote_up_for   => [:likes, :upvotes, :up_votes],
-        :vote_down_for => [:dislikes, :downvotes, :down_votes],
-        :unvote_for    => [:unlike, :undislike],
+        :vote_up_for    => [:likes, :upvotes, :up_votes],
+        :vote_down_for  => [:dislikes, :downvotes, :down_votes],
+        :unvote_for     => [:unlike, :undislike],
+        :voted_on?      => [:voted_for?],
         :voted_up_on?   => [:voted_up_for?, :liked?],
-        :voted_down_on? => [:voted_down_for?, :disliked?]
+        :voted_down_on? => [:voted_down_for?, :disliked?],
+        :voted_as_when_voting_on => [:voted_as_when_voted_on, :voted_as_when_voting_for, :voted_as_when_voted_for],
+        :find_up_voted_items   => [:find_liked_items],
+        :find_down_voted_items => [:find_disliked_items]
       }
 
       base.class_eval do
@@ -66,7 +70,6 @@ module ActsAsVotable
                          :vote_scope => args[:vote_scope], :vote_flag => false)
       votes.size > 0
     end
-    alias :voted_down_for? :voted_down_on?
 
     def voted_as_when_voting_on votable, args={}
       votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.name,
@@ -74,7 +77,6 @@ module ActsAsVotable
       return nil if votes.size == 0
       return votes.first.vote_flag
     end
-    alias :voted_as_when_voted_for :voted_as_when_voting_on
 
     def find_votes extra_conditions = {}
       votes.where(extra_conditions)
@@ -113,12 +115,10 @@ module ActsAsVotable
     def find_up_voted_items extra_conditions = {}
       find_voted_items extra_conditions.merge(:vote_flag => true)
     end
-    alias_method :find_liked_items, :find_up_voted_items
 
     def find_down_voted_items extra_conditions = {}
       find_voted_items extra_conditions.merge(:vote_flag => false)
     end
-    alias_method :find_disliked_items, :find_down_voted_items
 
     def get_voted klass, extra_conditions = {}
       klass.joins(:votes).merge find_votes(extra_conditions)

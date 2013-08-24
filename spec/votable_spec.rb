@@ -116,6 +116,12 @@ describe ActsAsVotable::Votable do
       @votable.voted_on_by?(@voter).should be true
     end
 
+    it "should be able to unvote a voter" do
+      @votable.liked_by(@voter)
+      @votable.unliked_by(@voter)
+      @votable.voted_on_by?(@voter).should be false
+    end
+
     it "should unvote a positive vote" do
       @votable.vote :voter => @voter
       @votable.unvote :voter => @voter

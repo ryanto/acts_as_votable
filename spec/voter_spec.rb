@@ -35,6 +35,7 @@ describe ActsAsVotable::Voter do
     it "should be voted on after a voter has voted" do
       @votable.vote :voter => @voter
       @voter.voted_on?(@votable).should be true
+      @voter.voted_for?(@votable).should be true
     end
 
     it "should not be voted on if a voter has not voted" do
@@ -53,6 +54,7 @@ describe ActsAsVotable::Voter do
 
     it "should be voted as true when a voter has voted true" do
       @votable.vote :voter => @voter
+      @voter.voted_as_when_voted_on(@votable).should be true
       @voter.voted_as_when_voted_for(@votable).should be true
     end
 
@@ -206,6 +208,8 @@ describe ActsAsVotable::Voter do
         @votable2.vote :voter => @voter2
         @voter.find_up_voted_items.should include @votable
         @voter.find_up_voted_items.size.should == 1
+        @voter.find_liked_items.should include @votable
+        @voter.find_liked_items.size.should == 1
       end
 
       it 'returns objects that a user has upvoted for, using scope' do
@@ -242,6 +246,8 @@ describe ActsAsVotable::Voter do
         @votable2.vote_down @voter2
         @voter.find_down_voted_items.should include @votable
         @voter.find_down_voted_items.size.should == 1
+        @voter.find_disliked_items.should include @votable
+        @voter.find_disliked_items.size.should == 1
       end
 
       it 'returns objects that a user has downvoted for, using scope' do
