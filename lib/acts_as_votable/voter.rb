@@ -18,7 +18,7 @@ module ActsAsVotable
 
       base.class_eval do
 
-        has_many :votes, :class_name => "ActsAsVotable::Vote", :as => :voter do
+        has_many :votes, :class_name => 'ActsAsVotable::Vote', :as => :voter, :dependent => :destroy do
           def votables
             includes(:votable).map(&:votable)
           end
@@ -71,10 +71,10 @@ module ActsAsVotable
     end
 
     def voted_as_when_voting_on votable, args={}
-      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.name,
-                         :vote_scope => args[:vote_scope])
-      return nil if votes.size == 0
-      return votes.first.vote_flag
+      vote = find_votes(:votable_id => votable.id, :votable_type => votable.class.name,
+                         :vote_scope => args[:vote_scope]).select(:vote_flag).first
+      return nil unless vote
+      return vote.vote_flag
     end
 
     def find_votes extra_conditions = {}
