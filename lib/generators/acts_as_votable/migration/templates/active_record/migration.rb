@@ -7,6 +7,7 @@ class ActsAsVotableMigration < ActiveRecord::Migration
 
       t.boolean :vote_flag
       t.string :vote_scope
+      t.integer :vote_weight
 
       t.timestamps
     end

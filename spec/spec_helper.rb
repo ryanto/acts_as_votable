@@ -11,6 +11,7 @@ ActiveRecord::Schema.define(:version => 1) do
 
     t.boolean :vote_flag
     t.string :vote_scope
+    t.integer :vote_weight
 
     t.timestamps
   end
@@ -52,6 +53,7 @@ ActiveRecord::Schema.define(:version => 1) do
     t.integer :cached_votes_score
     t.integer :cached_votes_up
     t.integer :cached_votes_down
+    t.integer :cached_weighted_score
   end
 
 end

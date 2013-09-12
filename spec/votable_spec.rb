@@ -219,6 +219,30 @@ describe ActsAsVotable::Votable do
         @votable_cache.cached_votes_score.should == 0
       end
 
+      it "should update cached weighted score if there is a weighted score column" do
+        @votable_cache.cached_weighted_score = 50
+        @votable_cache.vote :voter => @voter
+        @votable_cache.cached_weighted_score.should == 1
+        @votable_cache.vote :voter => @voter2, :vote => 'false'
+        @votable_cache.cached_weighted_score.should == 0
+        @votable_cache.vote :voter => @voter, :vote => 'false'
+        @votable_cache.cached_weighted_score.should == -2
+      end
+
+      it "should update cached weighted score votes when a vote up is removed" do
+        @votable_cache.vote :voter => @voter, :vote => 'true', :vote_weight => 3
+        @votable_cache.cached_weighted_score.should == 3
+        @votable_cache.unvote :voter => @voter
+        @votable_cache.cached_weighted_score.should == 0
+      end
+
+      it "should update cached weighted score votes when a vote down is removed" do
+        @votable_cache.vote :voter => @voter, :vote => 'false', :vote_weight => 4
+        @votable_cache.cached_weighted_score.should == -4
+        @votable_cache.unvote :voter => @voter
+        @votable_cache.cached_weighted_score.should == 0
+      end
+
       it "should update cached up votes if there is an up vote column" do
         @votable_cache.cached_votes_up = 50
         @votable_cache.vote :voter => @voter
@@ -260,6 +284,12 @@ describe ActsAsVotable::Votable do
         @votable_cache.vote :voter => @voter, :vote => 'false'
         @votable_cache.cached_votes_down = 50
         @votable_cache.count_votes_down.should == 50
+      end
+
+      it "should select from cached weighted score if there is a weighted score column" do
+        @votable_cache.vote :voter => @voter, :vote => 'false'
+        @votable_cache.cached_weighted_score = 50
+        @votable_cache.weighted_score.should == 50
       end
 
     end
