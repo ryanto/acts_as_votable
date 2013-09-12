@@ -89,6 +89,8 @@ module ActsAsVotable
           :voter => options[:voter],
           :vote_scope => options[:vote_scope]
         )
+        #Allowing for a vote_weight to be associated with every vote. Could change with every voter object
+        vote.vote_weight = (options[:vote_weight].to_i if options[:vote_weight].present?) || 1
       else
         # this voter is potentially changing his vote
         vote = _votes_.first
@@ -121,15 +123,15 @@ module ActsAsVotable
     end
 
     def vote_up voter, options={}
-      self.vote :voter => voter, :vote => true, :vote_scope => options[:vote_scope]
+      self.vote :voter => voter, :vote => true, :vote_scope => options[:vote_scope], :vote_weight => options[:vote_weight]
     end
 
     def vote_down voter, options={}
-      self.vote :voter => voter, :vote => false, :vote_scope => options[:vote_scope]
+      self.vote :voter => voter, :vote => false, :vote_scope => options[:vote_scope], :vote_weight => options[:vote_weight]
     end
 
     def unvote_for  voter, options = {}
-      self.unvote :voter => voter, :vote_scope => options[:vote_scope]
+      self.unvote :voter => voter, :vote_scope => options[:vote_scope] #Does not need vote_weight since the votes are anyway getting destroyed
     end
 
     # caching
@@ -154,6 +156,10 @@ module ActsAsVotable
           (updates[:cached_votes_up] || count_votes_up(true)) -
           (updates[:cached_votes_down] || count_votes_down(true))
         )
+      end
+
+      if self.respond_to?(:cached_weighted_score=)
+        updates[:cached_weighted_score] = weighted_score(true)
       end
 
       if (::ActiveRecord::VERSION::MAJOR == 3) && (::ActiveRecord::VERSION::MINOR != 0)
@@ -199,6 +205,13 @@ module ActsAsVotable
         return self.send(:cached_votes_down)
       end
       down_votes.count
+    end
+
+    def weighted_score skip_cache = false
+      if !skip_cache && self.respond_to?(:cached_weighted_score)
+        return self.send(:cached_weighted_score)
+      end
+      up_votes.sum(:vote_weight) - down_votes.sum(:vote_weight)
     end
 
     # voters
