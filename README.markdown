@@ -284,6 +284,9 @@ class AddCachedVotesToPosts < ActiveRecord::Migration
     add_index  :posts, :cached_votes_score
     add_index  :posts, :cached_votes_up
     add_index  :posts, :cached_votes_down
+    
+    # Uncomment this line to force caching of existing votes
+    # Post.find_each(&:update_cached_votes)
   end
 
   def self.down
