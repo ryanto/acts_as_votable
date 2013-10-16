@@ -72,7 +72,7 @@ module ActsAsVotable
 
     def voted_as_when_voting_on votable, args={}
       vote = find_votes(:votable_id => votable.id, :votable_type => votable.class.name,
-                         :vote_scope => args[:vote_scope]).select(:vote_flag).first
+                         :vote_scope => args[:vote_scope]).select(:vote_flag).last
       return nil unless vote
       return vote.vote_flag
     end

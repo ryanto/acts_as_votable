@@ -82,7 +82,7 @@ module ActsAsVotable
         :voter_type => options[:voter].class.name
       })
 
-      if _votes_.count == 0
+      if _votes_.count == 0 or options[:duplicate]
         # this voter has never voted
         vote = ActsAsVotable::Vote.new(
           :votable => self,
@@ -91,7 +91,7 @@ module ActsAsVotable
         )
       else
         # this voter is potentially changing his vote
-        vote = _votes_.first
+        vote = _votes_.last
       end
 
       last_update = vote.updated_at
