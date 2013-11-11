@@ -100,7 +100,7 @@ module ActsAsVotable
 
       if vote.save
         self.vote_registered = true if last_update != vote.updated_at
-        update_cached_votes
+        update_cached_votes options[:vote_scope]
         return true
       else
         self.vote_registered = false
@@ -115,7 +115,7 @@ module ActsAsVotable
 
       return true if _votes_.size == 0
       _votes_.each(&:destroy)
-      update_cached_votes
+      update_cached_votes args[:vote_scope]
       self.vote_registered = false if votes.count == 0
       return true
     end
@@ -132,8 +132,31 @@ module ActsAsVotable
       self.unvote :voter => voter, :vote_scope => options[:vote_scope]
     end
 
+    def scope_cache_field field, vote_scope
+      return field if vote_scope.nil?
+
+      case field
+      when :cached_votes_total=
+        "cached_scoped_#{vote_scope}_votes_total="
+      when :cached_votes_total
+        "cached_scoped_#{vote_scope}_votes_total"
+      when :cached_votes_up=
+        "cached_scoped_#{vote_scope}_votes_up="
+      when :cached_votes_up
+        "cached_scoped_#{vote_scope}_votes_up"
+      when :cached_votes_down=
+        "cached_scoped_#{vote_scope}_votes_down="
+      when :cached_votes_down
+        "cached_scoped_#{vote_scope}_votes_down"
+      when :cached_votes_score=
+        "cached_scoped_#{vote_scope}_votes_score="
+      when :cached_votes_score
+        "cached_scoped_#{vote_scope}_votes_score"
+      end
+    end 
+
     # caching
-    def update_cached_votes
+    def update_cached_votes vote_scope = nil
 
       updates = {}
 
@@ -154,6 +177,27 @@ module ActsAsVotable
           (updates[:cached_votes_up] || count_votes_up(true)) -
           (updates[:cached_votes_down] || count_votes_down(true))
         )
+      end
+
+      if vote_scope
+        if self.respond_to?(scope_cache_field :cached_votes_total=, vote_scope)
+          updates[scope_cache_field :cached_votes_total, vote_scope] = count_votes_total(true, vote_scope)
+        end
+
+        if self.respond_to?(scope_cache_field :cached_votes_up=, vote_scope)
+          updates[scope_cache_field :cached_votes_up, vote_scope] = count_votes_up(true, vote_scope)
+        end
+
+        if self.respond_to?(scope_cache_field :cached_votes_down=, vote_scope)
+          updates[scope_cache_field :cached_votes_down, vote_scope] = count_votes_down(true, vote_scope)
+        end
+
+        if self.respond_to?(scope_cache_field :cached_votes_score=, vote_scope)
+          updates[scope_cache_field :cached_votes_score, vote_scope] = (
+            (updates[scope_cache_field :cached_votes_up, vote_scope] || count_votes_up(true, vote_scope)) -
+            (updates[scope_cache_field :cached_votes_down, vote_scope] || count_votes_down(true, vote_scope))
+          )
+        end
       end
 
       if (::ActiveRecord::VERSION::MAJOR == 3) && (::ActiveRecord::VERSION::MINOR != 0)
@@ -180,25 +224,25 @@ module ActsAsVotable
 
 
     # counting
-    def count_votes_total skip_cache = false
-      if !skip_cache && self.respond_to?(:cached_votes_total)
-        return self.send(:cached_votes_total)
+    def count_votes_total skip_cache = false, vote_scope = nil
+      if !skip_cache && self.respond_to?(scope_cache_field :cached_votes_total, vote_scope)
+        return self.send(scope_cache_field :cached_votes_total, vote_scope)
       end
-      find_votes.count
+      find_votes(:vote_scope => vote_scope).count
     end
 
-    def count_votes_up skip_cache = false
-      if !skip_cache && self.respond_to?(:cached_votes_up)
-        return self.send(:cached_votes_up)
+    def count_votes_up skip_cache = false, vote_scope = nil
+      if !skip_cache && self.respond_to?(scope_cache_field :cached_votes_up, vote_scope)
+        return self.send(scope_cache_field :cached_votes_up, vote_scope)
       end
-      up_votes.count
+      up_votes(:vote_scope => vote_scope).count
     end
 
-    def count_votes_down skip_cache = false
-      if !skip_cache && self.respond_to?(:cached_votes_down)
-        return self.send(:cached_votes_down)
+    def count_votes_down skip_cache = false, vote_scope = nil
+      if !skip_cache && self.respond_to?(scope_cache_field :cached_votes_down, vote_scope)
+        return self.send(scope_cache_field :cached_votes_down, vote_scope)
       end
-      down_votes.count
+      down_votes(:vote_scope => vote_scope).count
     end
 
     # voters
