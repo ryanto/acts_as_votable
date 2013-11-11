@@ -89,6 +89,8 @@ module ActsAsVotable
           :voter => options[:voter],
           :vote_scope => options[:vote_scope]
         )
+        #Allowing for a vote_weight to be associated with every vote. Could change with every voter object
+        vote.vote_weight = options.fetch(:vote_weight, 1).to_i
       else
         # this voter is potentially changing his vote
         vote = _votes_.last
@@ -121,15 +123,15 @@ module ActsAsVotable
     end
 
     def vote_up voter, options={}
-      self.vote :voter => voter, :vote => true, :vote_scope => options[:vote_scope]
+      self.vote :voter => voter, :vote => true, :vote_scope => options[:vote_scope], :vote_weight => options[:vote_weight]
     end
 
     def vote_down voter, options={}
-      self.vote :voter => voter, :vote => false, :vote_scope => options[:vote_scope]
+      self.vote :voter => voter, :vote => false, :vote_scope => options[:vote_scope], :vote_weight => options[:vote_weight]
     end
 
     def unvote_for  voter, options = {}
-      self.unvote :voter => voter, :vote_scope => options[:vote_scope]
+      self.unvote :voter => voter, :vote_scope => options[:vote_scope] #Does not need vote_weight since the votes are anyway getting destroyed
     end
 
     def scope_cache_field field, vote_scope
@@ -152,8 +154,12 @@ module ActsAsVotable
         "cached_scoped_#{vote_scope}_votes_score="
       when :cached_votes_score
         "cached_scoped_#{vote_scope}_votes_score"
+      when :cached_weighted_scope
+        "cached_weighted_#{vote_scope}_score"
+      when :cached_weighted_score=
+        "cached_weighted_#{vote_scope}_score="
       end
-    end 
+    end
 
     # caching
     def update_cached_votes vote_scope = nil
@@ -179,6 +185,10 @@ module ActsAsVotable
         )
       end
 
+      if self.respond_to?(:cached_weighted_score=)
+        updates[:cached_weighted_score] = weighted_score(true)
+      end
+
       if vote_scope
         if self.respond_to?(scope_cache_field :cached_votes_total=, vote_scope)
           updates[scope_cache_field :cached_votes_total, vote_scope] = count_votes_total(true, vote_scope)
@@ -190,6 +200,10 @@ module ActsAsVotable
 
         if self.respond_to?(scope_cache_field :cached_votes_down=, vote_scope)
           updates[scope_cache_field :cached_votes_down, vote_scope] = count_votes_down(true, vote_scope)
+        end
+
+        if self.respond_to?(scope_cache_field :cached_weighted_score=, vote_scope)
+          updates[scope_cache_field :cached_weighted_score, vote_scope] = weighted_score(true, vote_scope)
         end
 
         if self.respond_to?(scope_cache_field :cached_votes_score=, vote_scope)
@@ -243,6 +257,15 @@ module ActsAsVotable
         return self.send(scope_cache_field :cached_votes_down, vote_scope)
       end
       down_votes(:vote_scope => vote_scope).count
+    end
+
+    def weighted_score skip_cache = false, vote_scope = nil
+      if !skip_cache && self.respond_to?(scope_cache_field :cached_weighted_score, vote_scope)
+        return self.send(scope_cache_field :cached_weighted_score, vote_scope)
+      end
+      ups = up_votes(:vote_scope => vote_scope).sum(:vote_weight)
+      downs = down_votes(:vote_scope => vote_scope).sum(:vote_weight)
+      ups - downs
     end
 
     # voters

@@ -158,6 +158,26 @@ You can add an scope to your vote
 @post.find_votes(:vote_scope => 'week').size # => 1
 @post.find_votes(:vote_scope => 'month').size # => 1
 ```
+### Adding weights to your votes
+
+You can add weight to your vote. The default value is 1.
+
+```ruby
+# positive votes
+@post.liked_by @user1, :vote_weight => 1
+@post.vote :voter => @user3, :vote_weight => 2
+@post.vote :voter => @user5, :vote => 'like', :vote_scope => 'rank', :vote_weight => 3
+
+# negative votes
+@post.downvote_from @user2, :vote_scope => 'rank', :vote_weight => 1
+@post.vote :voter => @user2, :vote => 'bad', :vote_scope => 'rank', :vote_weight => 3
+
+# tally them up!
+@post.find_votes(:vote_scope => 'rank').sum(:vote_weight) # => 6
+@post.likes(:vote_scope => 'rank').sum(:vote_weight) # => 6
+@post.upvotes(:vote_scope => 'rank').sum(:vote_weight) # => 6
+@post.dislikes(:vote_scope => 'rank').sum(:vote_weight) # => 4
+@post.downvotes(:vote_scope => 'rank').sum(:vote_weight) # => 4
 
 ### The Voter
 
@@ -287,10 +307,12 @@ class AddCachedVotesToPosts < ActiveRecord::Migration
     add_column :posts, :cached_votes_score, :integer, :default => 0
     add_column :posts, :cached_votes_up, :integer, :default => 0
     add_column :posts, :cached_votes_down, :integer, :default => 0
+    add_column :posts, :cached_weighted_score, :integer, :default => 0
     add_index  :posts, :cached_votes_total
     add_index  :posts, :cached_votes_score
     add_index  :posts, :cached_votes_up
     add_index  :posts, :cached_votes_down
+    add_index  :posts, :cached_weighted_score
 
     # Uncomment this line to force caching of existing votes
     # Post.find_each(&:update_cached_votes)
@@ -301,6 +323,7 @@ class AddCachedVotesToPosts < ActiveRecord::Migration
     remove_column :posts, :cached_votes_score
     remove_column :posts, :cached_votes_up
     remove_column :posts, :cached_votes_down
+    remove_column  :posts, :cached_weighted_score
   end
 end
 ```
