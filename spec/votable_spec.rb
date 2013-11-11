@@ -44,6 +44,12 @@ describe ActsAsVotable::Votable do
       @votable.votes.size.should == 1
     end
 
+    it "should have two votes when voted on twice by the same person with duplicate paramenter" do
+      @votable.vote :voter => @voter, :vote => 'yes'
+      @votable.vote :voter => @voter, :vote => 'no', :duplicate => true
+      @votable.votes.size.should == 2
+    end
+
     it "should have one scoped vote when voting under an scope" do
       @votable.vote :voter => @voter, :vote => 'yes', :vote_scope => 'rank'
       @votable.find_votes(:vote_scope => 'rank').size.should == 1

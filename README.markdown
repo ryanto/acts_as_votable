@@ -267,6 +267,13 @@ after voting.  For example:
 @hat.negatives.size # => 1
 ```
 
+To permit duplicates entries of a same voter, use option duplicate. Also notice that this
+will limit some other methods that didn't deal with multiples votes, in this case, the last vote will be considered.
+
+```ruby
+@hat.vote voter: @user, :duplicate => true
+```
+
 ## Caching
 
 To speed up perform you can add cache columns to your votable model's table.  These
@@ -284,7 +291,7 @@ class AddCachedVotesToPosts < ActiveRecord::Migration
     add_index  :posts, :cached_votes_score
     add_index  :posts, :cached_votes_up
     add_index  :posts, :cached_votes_down
-    
+
     # Uncomment this line to force caching of existing votes
     # Post.find_each(&:update_cached_votes)
   end
