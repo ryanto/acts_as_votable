@@ -178,6 +178,7 @@ You can add weight to your vote. The default value is 1.
 @post.upvotes(:vote_scope => 'rank').sum(:vote_weight) # => 6
 @post.dislikes(:vote_scope => 'rank').sum(:vote_weight) # => 4
 @post.downvotes(:vote_scope => 'rank').sum(:vote_weight) # => 4
+```
 
 ### The Voter
 

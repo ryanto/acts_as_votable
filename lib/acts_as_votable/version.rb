@@ -1,3 +1,3 @@
 module ActsAsVotable
-  VERSION = "0.7.1.patched"
+  VERSION = "0.8.0"
 end
