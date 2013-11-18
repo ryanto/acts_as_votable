@@ -90,7 +90,7 @@ module ActsAsVotable
           :vote_scope => options[:vote_scope]
         )
         #Allowing for a vote_weight to be associated with every vote. Could change with every voter object
-        vote.vote_weight = options.fetch(:vote_weight, 1).to_i
+        vote.vote_weight = (options[:vote_weight].to_i if options[:vote_weight].present?) || 1
       else
         # this voter is potentially changing his vote
         vote = _votes_.last
