@@ -165,6 +165,11 @@ describe ActsAsVotable::Votable do
       votable2.vote_registered?.should be false
     end
 
+    it "should set default vote weight to 1 if not specified" do
+      @votable.upvote_by @voter
+      @votable.find_votes.first.vote_weight.should == 1
+    end
+
     describe "with cached votes" do
 
       before(:each) do
