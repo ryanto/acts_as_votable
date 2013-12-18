@@ -110,20 +110,20 @@ describe ActsAsVotable::Voter do
     it "should allow the voter to vote up a model" do
       @voter.vote_up_for @votable
       @votable.up_votes.first.voter.should == @voter
-      @votable.votes.up.first.voter.should == @voter
+      @votable.voted_by.up.first.voter.should == @voter
     end
 
     it "should allow the voter to vote down a model" do
       @voter.vote_down_for @votable
       @votable.down_votes.first.voter.should == @voter
-      @votable.votes.down.first.voter.should == @voter
+      @votable.voted_by.down.first.voter.should == @voter
     end
 
     it "should allow the voter to unvote a model" do
       @voter.vote_up_for @votable
       @voter.unvote_for @votable
       @votable.find_votes.size.should == 0
-      @votable.votes.count.should == 0
+      @votable.voted_by.count.should == 0
     end
 
     it "should get all of the voters votes" do

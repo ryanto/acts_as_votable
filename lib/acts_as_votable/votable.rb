@@ -33,7 +33,7 @@ module ActsAsVotable
       }
 
       base.class_eval do
-        has_many :votes, :class_name => 'ActsAsVotable::Vote', :as => :votable, :dependent => :destroy do
+        has_many :voted_by, :class_name => 'ActsAsVotable::Vote', :as => :votable, :dependent => :destroy do
           def voters
             includes(:voter).map(&:voter)
           end
@@ -118,7 +118,7 @@ module ActsAsVotable
       return true if _votes_.size == 0
       _votes_.each(&:destroy)
       update_cached_votes args[:vote_scope]
-      self.vote_registered = false if votes.count == 0
+      self.vote_registered = false if voted_by.count == 0
       return true
     end
 
@@ -131,7 +131,7 @@ module ActsAsVotable
     end
 
     def unvote_for  voter, options = {}
-      self.unvote :voter => voter, :vote_scope => options[:vote_scope] #Does not need vote_weight since the votes are anyway getting destroyed
+      self.unvote :voter => voter, :vote_scope => options[:vote_scope] #Does not need vote_weight since the voted_by are anyway getting destroyed
     end
 
     def scope_cache_field field, vote_scope
@@ -225,7 +225,7 @@ module ActsAsVotable
 
     # results
     def find_votes extra_conditions = {}
-      votes.where(extra_conditions)
+      voted_by.where(extra_conditions)
     end
 
     def up_votes options={}

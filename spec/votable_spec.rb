@@ -35,19 +35,19 @@ describe ActsAsVotable::Votable do
 
     it "should have one vote when saved" do
       @votable.vote :voter => @voter, :vote => 'yes'
-      @votable.votes.size.should == 1
+      @votable.voted_by.size.should == 1
     end
 
     it "should have one vote when voted on twice by the same person" do
       @votable.vote :voter => @voter, :vote => 'yes'
       @votable.vote :voter => @voter, :vote => 'no'
-      @votable.votes.size.should == 1
+      @votable.voted_by.size.should == 1
     end
 
-    it "should have two votes when voted on twice by the same person with duplicate paramenter" do
+    it "should have two voted_by when voted on twice by the same person with duplicate paramenter" do
       @votable.vote :voter => @voter, :vote => 'yes'
       @votable.vote :voter => @voter, :vote => 'no', :duplicate => true
-      @votable.votes.size.should == 2
+      @votable.voted_by.size.should == 2
     end
 
     it "should have one scoped vote when voting under an scope" do
@@ -61,10 +61,10 @@ describe ActsAsVotable::Votable do
       @votable.find_votes(:vote_scope => 'rank').size.should == 1
     end
 
-    it "should have two votes when voting on two different scopes by the same person" do
+    it "should have two voted_by when voting on two different scopes by the same person" do
       @votable.vote :voter => @voter, :vote => 'yes', :vote_scope => 'weekly_rank'
       @votable.vote :voter => @voter, :vote => 'no', :vote_scope => 'monthly_rank'
-      @votable.votes.size.should == 2
+      @votable.voted_by.size.should == 2
     end
 
     it "should be callable with vote_up" do
@@ -77,10 +77,10 @@ describe ActsAsVotable::Votable do
       @votable.down_votes.first.voter.should == @voter
     end
 
-    it "should have 2 votes when voted on once by two different people" do
+    it "should have 2 voted_by when voted on once by two different people" do
       @votable.vote :voter => @voter
       @votable.vote :voter => @voter2
-      @votable.votes.size.should == 2
+      @votable.voted_by.size.should == 2
     end
 
     it "should have one true vote" do
@@ -89,7 +89,7 @@ describe ActsAsVotable::Votable do
       @votable.up_votes.size.should == 1
     end
 
-    it "should have 2 false votes" do
+    it "should have 2 false voted_by" do
       @votable.vote :voter => @voter, :vote => 'no'
       @votable.vote :voter => @voter2, :vote => 'dislike'
       @votable.down_votes.size.should == 2
@@ -170,7 +170,7 @@ describe ActsAsVotable::Votable do
       @votable.find_votes.first.vote_weight.should == 1
     end
 
-    describe "with cached votes" do
+    describe "with cached voted_by" do
 
       before(:each) do
         clean_database
@@ -184,29 +184,29 @@ describe ActsAsVotable::Votable do
         @votable_cache.save
       end
 
-      it "should not update cached votes if there are no columns" do
+      it "should not update cached voted_by if there are no columns" do
         @votable.vote :voter => @voter
       end
 
-      it "should update cached total votes if there is a total column" do
+      it "should update cached total voted_by if there is a total column" do
         @votable_cache.cached_votes_total = 50
         @votable_cache.vote :voter => @voter
         @votable_cache.cached_votes_total.should == 1
       end
 
-      it "should update cached total votes when a vote up is removed" do
+      it "should update cached total voted_by when a vote up is removed" do
         @votable_cache.vote :voter => @voter, :vote => 'true'
         @votable_cache.unvote :voter => @voter
         @votable_cache.cached_votes_total.should == 0
       end
 
-      it "should update cached total votes when a vote down is removed" do
+      it "should update cached total voted_by when a vote down is removed" do
         @votable_cache.vote :voter => @voter, :vote => 'false'
         @votable_cache.unvote :voter => @voter
         @votable_cache.cached_votes_total.should == 0
       end
 
-      it "should update cached score votes if there is a score column" do
+      it "should update cached score voted_by if there is a score column" do
         @votable_cache.cached_votes_score = 50
         @votable_cache.vote :voter => @voter
         @votable_cache.cached_votes_score.should == 1
@@ -216,14 +216,14 @@ describe ActsAsVotable::Votable do
         @votable_cache.cached_votes_score.should == -2
       end
 
-      it "should update cached score votes when a vote up is removed" do
+      it "should update cached score voted_by when a vote up is removed" do
         @votable_cache.vote :voter => @voter, :vote => 'true'
         @votable_cache.cached_votes_score.should == 1
         @votable_cache.unvote :voter => @voter
         @votable_cache.cached_votes_score.should == 0
       end
 
-      it "should update cached score votes when a vote down is removed" do
+      it "should update cached score voted_by when a vote down is removed" do
         @votable_cache.vote :voter => @voter, :vote => 'false'
         @votable_cache.cached_votes_score.should == -1
         @votable_cache.unvote :voter => @voter
@@ -240,58 +240,58 @@ describe ActsAsVotable::Votable do
         @votable_cache.cached_weighted_score.should == -2
       end
 
-      it "should update cached weighted score votes when a vote up is removed" do
+      it "should update cached weighted score voted_by when a vote up is removed" do
         @votable_cache.vote :voter => @voter, :vote => 'true', :vote_weight => 3
         @votable_cache.cached_weighted_score.should == 3
         @votable_cache.unvote :voter => @voter
         @votable_cache.cached_weighted_score.should == 0
       end
 
-      it "should update cached weighted score votes when a vote down is removed" do
+      it "should update cached weighted score voted_by when a vote down is removed" do
         @votable_cache.vote :voter => @voter, :vote => 'false', :vote_weight => 4
         @votable_cache.cached_weighted_score.should == -4
         @votable_cache.unvote :voter => @voter
         @votable_cache.cached_weighted_score.should == 0
       end
 
-      it "should update cached up votes if there is an up vote column" do
+      it "should update cached up voted_by if there is an up vote column" do
         @votable_cache.cached_votes_up = 50
         @votable_cache.vote :voter => @voter
         @votable_cache.vote :voter => @voter
         @votable_cache.cached_votes_up.should == 1
       end
 
-      it "should update cached down votes if there is a down vote column" do
+      it "should update cached down voted_by if there is a down vote column" do
         @votable_cache.cached_votes_down = 50
         @votable_cache.vote :voter => @voter, :vote => 'false'
         @votable_cache.cached_votes_down.should == 1
       end
 
-      it "should update cached up votes when a vote up is removed" do
+      it "should update cached up voted_by when a vote up is removed" do
         @votable_cache.vote :voter => @voter, :vote => 'true'
         @votable_cache.unvote :voter => @voter
         @votable_cache.cached_votes_up.should == 0
       end
 
-      it "should update cached down votes when a vote down is removed" do
+      it "should update cached down voted_by when a vote down is removed" do
         @votable_cache.vote :voter => @voter, :vote => 'false'
         @votable_cache.unvote :voter => @voter
         @votable_cache.cached_votes_down.should == 0
       end
 
-      it "should select from cached total votes if there a total column" do
+      it "should select from cached total voted_by if there a total column" do
         @votable_cache.vote :voter => @voter
         @votable_cache.cached_votes_total = 50
         @votable_cache.count_votes_total.should == 50
       end
 
-      it "should select from cached up votes if there is an up vote column" do
+      it "should select from cached up voted_by if there is an up vote column" do
         @votable_cache.vote :voter => @voter
         @votable_cache.cached_votes_up = 50
         @votable_cache.count_votes_up.should == 50
       end
 
-      it "should select from cached down votes if there is a down vote column" do
+      it "should select from cached down voted_by if there is a down vote column" do
         @votable_cache.vote :voter => @voter, :vote => 'false'
         @votable_cache.cached_votes_down = 50
         @votable_cache.count_votes_down.should == 50
@@ -305,7 +305,7 @@ describe ActsAsVotable::Votable do
 
     end
 
-    describe "with scoped cached votes" do
+    describe "with scoped cached voted_by" do
 
       before(:each) do
         clean_database
@@ -319,25 +319,25 @@ describe ActsAsVotable::Votable do
         @votable_cache.save
       end
 
-      it "should update cached total votes if there is a total column" do
+      it "should update cached total voted_by if there is a total column" do
         @votable_cache.cached_scoped_test_votes_total = 50
         @votable_cache.vote :voter => @voter, :vote_scope => "test"
         @votable_cache.cached_scoped_test_votes_total.should == 1
       end
 
-      it "should update cached total votes when a vote up is removed" do
+      it "should update cached total voted_by when a vote up is removed" do
         @votable_cache.vote :voter => @voter, :vote => 'true', :vote_scope => "test"
         @votable_cache.unvote :voter => @voter, :vote_scope => "test"
         @votable_cache.cached_scoped_test_votes_total.should == 0
       end
 
-      it "should update cached total votes when a vote down is removed" do
+      it "should update cached total voted_by when a vote down is removed" do
         @votable_cache.vote :voter => @voter, :vote => 'false', :vote_scope => "test"
         @votable_cache.unvote :voter => @voter, :vote_scope => "test"
         @votable_cache.cached_scoped_test_votes_total.should == 0
       end
 
-      it "should update cached score votes if there is a score column" do
+      it "should update cached score voted_by if there is a score column" do
         @votable_cache.cached_scoped_test_votes_score = 50
         @votable_cache.vote :voter => @voter, :vote_scope => "test"
         @votable_cache.cached_scoped_test_votes_score.should == 1
@@ -347,58 +347,58 @@ describe ActsAsVotable::Votable do
         @votable_cache.cached_scoped_test_votes_score.should == -2
       end
 
-      it "should update cached score votes when a vote up is removed" do
+      it "should update cached score voted_by when a vote up is removed" do
         @votable_cache.vote :voter => @voter, :vote => 'true', :vote_scope => "test"
         @votable_cache.cached_scoped_test_votes_score.should == 1
         @votable_cache.unvote :voter => @voter, :vote_scope => "test"
         @votable_cache.cached_scoped_test_votes_score.should == 0
       end
 
-      it "should update cached score votes when a vote down is removed" do
+      it "should update cached score voted_by when a vote down is removed" do
         @votable_cache.vote :voter => @voter, :vote => 'false', :vote_scope => "test"
         @votable_cache.cached_scoped_test_votes_score.should == -1
         @votable_cache.unvote :voter => @voter, :vote_scope => "test"
         @votable_cache.cached_scoped_test_votes_score.should == 0
       end
 
-      it "should update cached up votes if there is an up vote column" do
+      it "should update cached up voted_by if there is an up vote column" do
         @votable_cache.cached_scoped_test_votes_up = 50
         @votable_cache.vote :voter => @voter, :vote_scope => "test"
         @votable_cache.vote :voter => @voter, :vote_scope => "test"
         @votable_cache.cached_scoped_test_votes_up.should == 1
       end
 
-      it "should update cached down votes if there is a down vote column" do
+      it "should update cached down voted_by if there is a down vote column" do
         @votable_cache.cached_scoped_test_votes_down = 50
         @votable_cache.vote :voter => @voter, :vote => 'false', :vote_scope => "test"
         @votable_cache.cached_scoped_test_votes_down.should == 1
       end
 
-      it "should update cached up votes when a vote up is removed" do
+      it "should update cached up voted_by when a vote up is removed" do
         @votable_cache.vote :voter => @voter, :vote => 'true', :vote_scope => "test"
         @votable_cache.unvote :voter => @voter, :vote_scope => "test"
         @votable_cache.cached_scoped_test_votes_up.should == 0
       end
 
-      it "should update cached down votes when a vote down is removed" do
+      it "should update cached down voted_by when a vote down is removed" do
         @votable_cache.vote :voter => @voter, :vote => 'false', :vote_scope => "test"
         @votable_cache.unvote :voter => @voter, :vote_scope => "test"
         @votable_cache.cached_scoped_test_votes_down.should == 0
       end
 
-      it "should select from cached total votes if there a total column" do
+      it "should select from cached total voted_by if there a total column" do
         @votable_cache.vote :voter => @voter, :vote_scope => "test"
         @votable_cache.cached_scoped_test_votes_total = 50
         @votable_cache.count_votes_total(false, "test").should == 50
       end
 
-      it "should select from cached up votes if there is an up vote column" do
+      it "should select from cached up voted_by if there is an up vote column" do
         @votable_cache.vote :voter => @voter, :vote_scope => "test"
         @votable_cache.cached_scoped_test_votes_up = 50
         @votable_cache.count_votes_up(false, "test").should == 50
       end
 
-      it "should select from cached down votes if there is a down vote column" do
+      it "should select from cached down voted_by if there is a down vote column" do
         @votable_cache.vote :voter => @voter, :vote => 'false', :vote_scope => "test"
         @votable_cache.cached_scoped_test_votes_down = 50
         @votable_cache.count_votes_down(false, "test").should == 50
@@ -417,7 +417,7 @@ describe ActsAsVotable::Votable do
         votable = VotableChildOfStiNotVotable.create(:name => 'sti child')
 
         votable.vote :voter => @voter, :vote => 'yes'
-        votable.votes.size.should == 1
+        votable.voted_by.size.should == 1
       end
 
       it "should not be able to vote on a parent non votable" do
@@ -428,7 +428,7 @@ describe ActsAsVotable::Votable do
         votable = ChildOfStiVotable.create(:name => 'sti child')
 
         votable.vote :voter => @voter, :vote => 'yes'
-        votable.votes.size.should == 1
+        votable.voted_by.size.should == 1
       end
 
     end
