@@ -36,7 +36,7 @@ module ActsAsVotable
 
     # voting
     def vote args
-      args[:votable].vote args.merge({:voter => self})
+      args[:votable].vote_by args.merge({:voter => self})
     end
 
     def vote_up_for model=nil, args={}
@@ -120,15 +120,15 @@ module ActsAsVotable
     end
 
     def get_voted klass, extra_conditions = {}
-      klass.joins(:voted_by).merge find_votes(extra_conditions)
+      klass.joins(:votes_for).merge find_votes(extra_conditions)
     end
 
     def get_up_voted klass
-      klass.joins(:voted_by).merge find_up_votes
+      klass.joins(:votes_for).merge find_up_votes
     end
 
     def get_down_voted klass
-      klass.joins(:voted_by).merge find_down_votes
+      klass.joins(:votes_for).merge find_down_votes
     end
   end
 end

@@ -33,7 +33,7 @@ describe ActsAsVotable::Voter do
     end
 
     it "should be voted on after a voter has voted" do
-      @votable.vote :voter => @voter
+      @votable.vote_by :voter => @voter
       @voter.voted_on?(@votable).should be true
       @voter.voted_for?(@votable).should be true
     end
@@ -43,33 +43,33 @@ describe ActsAsVotable::Voter do
     end
 
     it "should be voted on after a voter has voted under scope" do
-      @votable.vote :voter => @voter, :vote_scope => 'rank'
+      @votable.vote_by :voter => @voter, :vote_scope => 'rank'
       @voter.voted_on?(@votable, :vote_scope => 'rank').should be true
     end
 
     it "should not be voted on other scope after a voter has voted under one scope" do
-      @votable.vote :voter => @voter, :vote_scope => 'rank'
+      @votable.vote_by :voter => @voter, :vote_scope => 'rank'
       @voter.voted_on?(@votable).should be false
     end
 
     it "should be voted as true when a voter has voted true" do
-      @votable.vote :voter => @voter
+      @votable.vote_by :voter => @voter
       @voter.voted_as_when_voted_on(@votable).should be true
       @voter.voted_as_when_voted_for(@votable).should be true
     end
 
     it "should be voted as true when a voter has voted true under scope" do
-      @votable.vote :voter => @voter, :vote_scope => 'rank'
+      @votable.vote_by :voter => @voter, :vote_scope => 'rank'
       @voter.voted_as_when_voted_for(@votable, :vote_scope => 'rank').should be true
     end
 
     it "should be voted as false when a voter has voted false" do
-      @votable.vote :voter => @voter, :vote => false
+      @votable.vote_by :voter => @voter, :vote => false
       @voter.voted_as_when_voted_for(@votable).should be false
     end
 
     it "should be voted as false when a voter has voted false under scope" do
-      @votable.vote :voter => @voter, :vote => false, :vote_scope => 'rank'
+      @votable.vote_by :voter => @voter, :vote => false, :vote_scope => 'rank'
       @voter.voted_as_when_voted_for(@votable, :vote_scope => 'rank').should be false
     end
 
@@ -78,27 +78,27 @@ describe ActsAsVotable::Voter do
     end
 
     it "should be voted as nil when a voter has never voted under the scope" do
-      @votable.vote :voter => @voter, :vote => false, :vote_scope => 'rank'
+      @votable.vote_by :voter => @voter, :vote => false, :vote_scope => 'rank'
       @voter.voted_as_when_voting_on(@votable).should be nil
     end
 
     it "should return true if voter has voted true" do
-      @votable.vote :voter => @voter
+      @votable.vote_by :voter => @voter
       @voter.voted_up_on?(@votable).should be true
     end
 
     it "should return false if voter has not voted true" do
-      @votable.vote :voter => @voter, :vote => false
+      @votable.vote_by :voter => @voter, :vote => false
       @voter.voted_up_on?(@votable).should be false
     end
 
     it "should return true if the voter has voted false" do
-      @votable.vote :voter => @voter, :vote => false
+      @votable.vote_by :voter => @voter, :vote => false
       @voter.voted_down_on?(@votable).should be true
     end
 
     it "should return false if the voter has not voted false" do
-      @votable.vote :voter => @voter, :vote => true
+      @votable.vote_by :voter => @voter, :vote => true
       @voter.voted_down_on?(@votable).should be false
     end
 
@@ -109,21 +109,21 @@ describe ActsAsVotable::Voter do
 
     it "should allow the voter to vote up a model" do
       @voter.vote_up_for @votable
-      @votable.up_votes.first.voter.should == @voter
-      @votable.voted_by.up.first.voter.should == @voter
+      @votable.get_up_votes.first.voter.should == @voter
+      @votable.votes_for.up.first.voter.should == @voter
     end
 
     it "should allow the voter to vote down a model" do
       @voter.vote_down_for @votable
-      @votable.down_votes.first.voter.should == @voter
-      @votable.voted_by.down.first.voter.should == @voter
+      @votable.get_down_votes.first.voter.should == @voter
+      @votable.votes_for.down.first.voter.should == @voter
     end
 
     it "should allow the voter to unvote a model" do
       @voter.vote_up_for @votable
       @voter.unvote_for @votable
-      @votable.find_votes.size.should == 0
-      @votable.voted_by.count.should == 0
+      @votable.find_votes_for.size.should == 0
+      @votable.votes_for.count.should == 0
     end
 
     it "should get all of the voters votes" do
@@ -145,22 +145,22 @@ describe ActsAsVotable::Voter do
     end
 
     it "should get all of the votes votes for a class" do
-      @votable.vote :voter => @voter
-      @votable2.vote :voter => @voter, :vote => false
+      @votable.vote_by :voter => @voter
+      @votable2.vote_by :voter => @voter, :vote => false
       @voter.find_votes_for_class(Votable).size.should == 2
       @voter.votes.for_type(Votable).count.should == 2
     end
 
     it "should get all of the voters up votes for a class" do
-      @votable.vote :voter => @voter
-      @votable2.vote :voter => @voter, :vote => false
+      @votable.vote_by :voter => @voter
+      @votable2.vote_by :voter => @voter, :vote => false
       @voter.find_up_votes_for_class(Votable).size.should == 1
       @voter.votes.up.for_type(Votable).count.should == 1
     end
 
     it "should get all of the voters down votes for a class" do
-      @votable.vote :voter => @voter
-      @votable2.vote :voter => @voter, :vote => false
+      @votable.vote_by :voter => @voter
+      @votable2.vote_by :voter => @voter, :vote => false
       @voter.find_down_votes_for_class(Votable).size.should == 1
       @voter.votes.down.for_type(Votable).count.should == 1
     end
@@ -174,15 +174,15 @@ describe ActsAsVotable::Voter do
 
     describe '#find_voted_items' do
       it 'returns objects that a user has upvoted for' do
-        @votable.vote :voter => @voter
-        @votable2.vote :voter => @voter2
+        @votable.vote_by :voter => @voter
+        @votable2.vote_by :voter => @voter2
         @voter.find_voted_items.should include @votable
         @voter.find_voted_items.size.should == 1
       end
 
       it 'returns objects that a user has upvoted for, using scope' do
-        @votable.vote :voter => @voter, :vote_scope => 'rank'
-        @votable2.vote :voter => @voter2, :vote_scope => 'rank'
+        @votable.vote_by :voter => @voter, :vote_scope => 'rank'
+        @votable2.vote_by :voter => @voter2, :vote_scope => 'rank'
         @voter.find_voted_items(:vote_scope => 'rank').should include @votable
         @voter.find_voted_items(:vote_scope => 'rank').size.should == 1
       end
@@ -204,8 +204,8 @@ describe ActsAsVotable::Voter do
 
     describe '#find_up_voted_items' do
       it 'returns objects that a user has upvoted for' do
-        @votable.vote :voter => @voter
-        @votable2.vote :voter => @voter2
+        @votable.vote_by :voter => @voter
+        @votable2.vote_by :voter => @voter2
         @voter.find_up_voted_items.should include @votable
         @voter.find_up_voted_items.size.should == 1
         @voter.find_liked_items.should include @votable
@@ -213,8 +213,8 @@ describe ActsAsVotable::Voter do
       end
 
       it 'returns objects that a user has upvoted for, using scope' do
-        @votable.vote :voter => @voter, :vote_scope => 'rank'
-        @votable2.vote :voter => @voter2, :vote_scope => 'rank'
+        @votable.vote_by :voter => @voter, :vote_scope => 'rank'
+        @votable2.vote_by :voter => @voter2, :vote_scope => 'rank'
         @voter.find_up_voted_items(:vote_scope => 'rank').should include @votable
         @voter.find_up_voted_items(:vote_scope => 'rank').size.should == 1
       end
@@ -232,12 +232,12 @@ describe ActsAsVotable::Voter do
 
     describe '#find_down_voted_items' do
       it 'does not return objects that a user has upvoted for' do
-        @votable.vote :voter => @voter
+        @votable.vote_by :voter => @voter
         @voter.find_down_voted_items.size.should == 0
       end
 
       it 'does not return objects that a user has upvoted for, using scope' do
-        @votable.vote :voter => @voter, :vote_scope => 'rank'
+        @votable.vote_by :voter => @voter, :vote_scope => 'rank'
         @voter.find_down_voted_items(:vote_scope => 'rank').size.should == 0
       end
 
@@ -263,7 +263,7 @@ describe ActsAsVotable::Voter do
       subject { @voter.get_voted(@votable.class) }
 
       it 'returns objects of a class that a voter has voted for' do
-        @votable.vote :voter => @voter
+        @votable.vote_by :voter => @voter
         @votable2.vote_down @voter
         subject.should include @votable
         subject.should include @votable2
@@ -271,8 +271,8 @@ describe ActsAsVotable::Voter do
       end
 
       it 'does not return objects of a class that a voter has voted for' do
-        @votable.vote :voter => @voter2
-        @votable2.vote :voter => @voter2
+        @votable.vote_by :voter => @voter2
+        @votable2.vote_by :voter => @voter2
         subject.size.should == 0
       end
     end
@@ -281,7 +281,7 @@ describe ActsAsVotable::Voter do
       subject { @voter.get_up_voted(@votable.class) }
 
       it 'returns up voted items that a voter has voted for' do
-        @votable.vote :voter => @voter
+        @votable.vote_by :voter => @voter
         subject.should include @votable
         subject.size.should == 1
       end
@@ -296,7 +296,7 @@ describe ActsAsVotable::Voter do
       subject { @voter.get_down_voted(@votable.class) }
 
       it 'does not return up voted items that a voter has voted for' do
-        @votable.vote :voter => @voter
+        @votable.vote_by :voter => @voter
         subject.size.should == 0
       end
 
