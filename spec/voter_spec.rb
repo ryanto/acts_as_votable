@@ -13,9 +13,9 @@ describe ActsAsVotable::Voter do
 
   it_behaves_like "a voter_model" do
     # TODO Replace with factories
-    let (:voter) { Voter.create(name: 'i can vote!') }
-    let (:voter2) { Voter.create(name: 'a new person') }
-    let (:votable) { Votable.create(name: 'a voting model') }
-    let (:votable2) { Votable.create(name: 'a 2nd voting model') }
+    let (:voter) { Voter.create(:name => 'i can vote!') }
+    let (:voter2) { Voter.create(:name => 'a new person') }
+    let (:votable) { Votable.create(:name => 'a voting model') }
+    let (:votable2) { Votable.create(:name => 'a 2nd voting model') }
   end
 end
