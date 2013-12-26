@@ -35,6 +35,10 @@ ActiveRecord::Schema.define(:version => 1) do
     t.string :name
   end
 
+  create_table :votable_voters do |t|
+    t.string :name
+  end
+
   create_table :sti_votables do |t|
     t.string :name
     t.string :type
@@ -78,6 +82,11 @@ end
 class Votable < ActiveRecord::Base
   acts_as_votable
   validates_presence_of :name
+end
+
+class VotableVoter < ActiveRecord::Base
+  acts_as_votable
+  acts_as_voter
 end
 
 class StiVotable < ActiveRecord::Base
