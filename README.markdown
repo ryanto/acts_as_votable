@@ -48,7 +48,7 @@ end
 @post.save
 
 @post.liked_by @user
-@post.votes.size # => 1
+@post.votes_for.size # => 1
 ```
 
 ### Like/Dislike Yes/No Up/Down
@@ -59,9 +59,9 @@ more natural calls are the first few examples.
 ```ruby
 @post.liked_by @user1
 @post.downvote_from @user2
-@post.vote :voter => @user3
-@post.vote :voter => @user4, :vote => 'bad'
-@post.vote :voter => @user5, :vote => 'like'
+@post.vote_by :voter => @user3
+@post.vote_by :voter => @user4, :vote => 'bad'
+@post.vote_by :voter => @user5, :vote => 'like'
 ```
 
 By default all votes are positive, so `@user3` has cast a 'good' vote for `@post`.
@@ -80,26 +80,26 @@ Revisiting the previous example of code.
 ```ruby
 # positive votes
 @post.liked_by @user1
-@post.vote :voter => @user3
-@post.vote :voter => @user5, :vote => 'like'
+@post.vote_by :voter => @user3
+@post.vote_by :voter => @user5, :vote => 'like'
 
 # negative votes
 @post.downvote_from @user2
-@post.vote :voter => @user2, :vote => 'bad'
+@post.vote_by :voter => @user2, :vote => 'bad'
 
 # tally them up!
-@post.votes.size # => 5
-@post.likes.size # => 3
-@post.upvotes.size # => 3
-@post.dislikes.size # => 2
-@post.downvotes.size # => 2
+@post.votes_for.size # => 5
+@post.get_likes.size # => 3
+@post.get_upvotes.size # => 3
+@post.get_dislikes.size # => 2
+@post.get_downvotes.size # => 2
 ```
 
 Active Record scopes are provided to make life easier.
 
 ```ruby
-@post.votes.up.by_type(User)
-@post.votes.down
+@post.votes_for.up.by_type(User)
+@post.votes_for.down
 @user1.votes.up
 @user1.votes.down
 @user1.votes.up.by_type(Post)
@@ -109,8 +109,8 @@ Once scoping is complete, you can also trigger a get for the
 voter/votable
 
 ```ruby
-@post.votes.up.by_type(User).voters
-@post.votes.down.by_type(User).voters
+@post.votes_for.up.by_type(User).voters
+@post.votes_for.down.by_type(User).voters
 
 @user.votes.up.for_type(Post).votables
 @user.votes.up.votables
@@ -135,28 +135,28 @@ You can add an scope to your vote
 ```ruby
 # positive votes
 @post.liked_by @user1, :vote_scope => 'rank'
-@post.vote :voter => @user3, :vote_scope => 'rank'
-@post.vote :voter => @user5, :vote => 'like', :vote_scope => 'rank'
+@post.vote_by :voter => @user3, :vote_scope => 'rank'
+@post.vote_by :voter => @user5, :vote => 'like', :vote_scope => 'rank'
 
 # negative votes
 @post.downvote_from @user2, :vote_scope => 'rank'
-@post.vote :voter => @user2, :vote => 'bad', :vote_scope => 'rank'
+@post.vote_by :voter => @user2, :vote => 'bad', :vote_scope => 'rank'
 
 # tally them up!
-@post.find_votes(:vote_scope => 'rank').size # => 5
-@post.likes(:vote_scope => 'rank').size # => 3
-@post.upvotes(:vote_scope => 'rank').size # => 3
-@post.dislikes(:vote_scope => 'rank').size # => 2
-@post.downvotes(:vote_scope => 'rank').size # => 2
+@post.find_votes_for(:vote_scope => 'rank').size # => 5
+@post.get_likes(:vote_scope => 'rank').size # => 3
+@post.get_upvotes(:vote_scope => 'rank').size # => 3
+@post.get_dislikes(:vote_scope => 'rank').size # => 2
+@post.get_downvotes(:vote_scope => 'rank').size # => 2
 
 # votable model can be voted under different scopes
 # by the same user
-@post.vote :voter => @user1, :vote_scope => 'week'
-@post.vote :voter => @user1, :vote_scope => 'month'
+@post.vote_by :voter => @user1, :vote_scope => 'week'
+@post.vote_by :voter => @user1, :vote_scope => 'month'
 
-@post.votes.size # => 2
-@post.find_votes(:vote_scope => 'week').size # => 1
-@post.find_votes(:vote_scope => 'month').size # => 1
+@post.votes_for.size # => 2
+@post.find_votes_for(:vote_scope => 'week').size # => 1
+@post.find_votes_for(:vote_scope => 'month').size # => 1
 ```
 ### Adding weights to your votes
 
@@ -165,19 +165,19 @@ You can add weight to your vote. The default value is 1.
 ```ruby
 # positive votes
 @post.liked_by @user1, :vote_weight => 1
-@post.vote :voter => @user3, :vote_weight => 2
-@post.vote :voter => @user5, :vote => 'like', :vote_scope => 'rank', :vote_weight => 3
+@post.vote_by :voter => @user3, :vote_weight => 2
+@post.vote_by :voter => @user5, :vote => 'like', :vote_scope => 'rank', :vote_weight => 3
 
 # negative votes
 @post.downvote_from @user2, :vote_scope => 'rank', :vote_weight => 1
-@post.vote :voter => @user2, :vote => 'bad', :vote_scope => 'rank', :vote_weight => 3
+@post.vote_by :voter => @user2, :vote => 'bad', :vote_scope => 'rank', :vote_weight => 3
 
 # tally them up!
-@post.find_votes(:vote_scope => 'rank').sum(:vote_weight) # => 6
-@post.likes(:vote_scope => 'rank').sum(:vote_weight) # => 6
-@post.upvotes(:vote_scope => 'rank').sum(:vote_weight) # => 6
-@post.dislikes(:vote_scope => 'rank').sum(:vote_weight) # => 4
-@post.downvotes(:vote_scope => 'rank').sum(:vote_weight) # => 4
+@post.find_votes_for(:vote_scope => 'rank').sum(:vote_weight) # => 6
+@post.get_likes(:vote_scope => 'rank').sum(:vote_weight) # => 6
+@post.get_upvotes(:vote_scope => 'rank').sum(:vote_weight) # => 6
+@post.get_dislikes(:vote_scope => 'rank').sum(:vote_weight) # => 4
+@post.get_downvotes(:vote_scope => 'rank').sum(:vote_weight) # => 4
 ```
 
 ### The Voter
@@ -292,7 +292,7 @@ To permit duplicates entries of a same voter, use option duplicate. Also notice 
 will limit some other methods that didn't deal with multiples votes, in this case, the last vote will be considered.
 
 ```ruby
-@hat.vote voter: @user, :duplicate => true
+@hat.vote_by voter: @user, :duplicate => true
 ```
 
 ## Caching
@@ -338,6 +338,23 @@ They can be run with:
 rake spec
 ```
 
+## Changes  
+
+### Fixes for votable voter model  
+
+In version 0.8.0, there is bugs for a model that is both votable and voter.  
+Some name-conflicting methods are renamed:
++ Renamed Votable.votes to votes_for  
++ Renamed Votable.vote to vote_by,
++ Removed Votable.vote_by alias (was an alias for :vote_up)
++ Renamed Votable.unvote_for to unvote_by
++ Renamed Votable.find_votes to find_votes_for
++ Renamed Votable.up_votes to get_upvotes 
+  + and its aliases :get_true_votes, :get_ups, :get_upvotes, :get_likes, :get_positives, :get_for_votes
++ Renamed Votable.down_votes to get_downvotes 
+  + and its aliases :get_false_votes, :get_downs, :get_downvotes, :get_dislikes, :get_negatives
+
+
 ## License
 
 Acts as votable is released under the [MIT
@@ -352,7 +369,6 @@ License](http://www.opensource.org/licenses/MIT).
 that the user likes, while `@user.likes @model` will cast a vote for @model by
 @user.
 
-- Need to test a model that is votable as well as a voter
 
 - The aliased methods are referred to by using the terms 'up/down' and/or
 'true/false'.  Need to come up with guidelines for naming these methods.
