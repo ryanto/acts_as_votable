@@ -2,6 +2,8 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
 require 'sqlite3'
 require 'acts_as_votable'
 
+Dir["./spec/support/**/*.rb"].sort.each {|f| require f}
+
 ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:")
 
 ActiveRecord::Schema.define(:version => 1) do
@@ -30,6 +32,10 @@ ActiveRecord::Schema.define(:version => 1) do
   end
 
   create_table :votables do |t|
+    t.string :name
+  end
+
+  create_table :votable_voters do |t|
     t.string :name
   end
 
@@ -76,6 +82,11 @@ end
 class Votable < ActiveRecord::Base
   acts_as_votable
   validates_presence_of :name
+end
+
+class VotableVoter < ActiveRecord::Base
+  acts_as_votable
+  acts_as_voter
 end
 
 class StiVotable < ActiveRecord::Base
