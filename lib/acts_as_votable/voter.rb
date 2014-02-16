@@ -47,8 +47,8 @@ module ActsAsVotable
       vote :votable => model, :vote_scope => args[:vote_scope], :vote => false
     end
 
-    def unvote_for model
-      model.unvote :voter => self
+    def unvote_for model, args={}
+      model.unvote :voter => self, :vote_scope => args[:vote_scope]
     end
 
     # results
