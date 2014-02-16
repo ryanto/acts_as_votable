@@ -154,7 +154,7 @@ module ActsAsVotable
         "cached_scoped_#{vote_scope}_votes_score="
       when :cached_votes_score
         "cached_scoped_#{vote_scope}_votes_score"
-      when :cached_weighted_scope
+      when :cached_weighted_score
         "cached_weighted_#{vote_scope}_score"
       when :cached_weighted_score=
         "cached_weighted_#{vote_scope}_score="
