@@ -89,8 +89,6 @@ module ActsAsVotable
           :voter => options[:voter],
           :vote_scope => options[:vote_scope]
         )
-        #Allowing for a vote_weight to be associated with every vote. Could change with every voter object
-        vote.vote_weight = (options[:vote_weight].to_i if options[:vote_weight].present?) || 1
       else
         # this voter is potentially changing his vote
         vote = _votes_.last
@@ -99,6 +97,9 @@ module ActsAsVotable
       last_update = vote.updated_at
 
       vote.vote_flag = votable_words.meaning_of(options[:vote])
+
+      #Allowing for a vote_weight to be associated with every vote. Could change with every voter object
+      vote.vote_weight = (options[:vote_weight].to_i if options[:vote_weight].present?) || 1
 
       if vote.save
         self.vote_registered = true if last_update != vote.updated_at
