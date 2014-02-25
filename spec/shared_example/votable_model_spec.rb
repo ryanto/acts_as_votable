@@ -81,9 +81,15 @@ shared_examples "a votable_model" do
     votable.vote_registered?.should be false
   end
 
-  it "should count the vote as registered if the voter has voted and the vote has changed" do
+  it "should count the vote as registered if the voter has voted and the vote flag has changed" do
     votable.vote_by :voter => voter, :vote => true
     votable.vote_by :voter => voter, :vote => 'dislike'
+    votable.vote_registered?.should be true
+  end
+
+  it "should count the vote as registered if the voter has voted and the vote weight has changed" do
+    votable.vote_by :voter => voter, :vote => true, :vote_weight => 1
+    votable.vote_by :voter => voter, :vote => true, :vote_weight => 2
     votable.vote_registered?.should be true
   end
 
