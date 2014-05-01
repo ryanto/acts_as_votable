@@ -80,7 +80,11 @@ module ActsAsVotable
         :voter_id => options[:voter].id,
         :vote_scope => options[:vote_scope],
         :voter_type => options[:voter].class.name
-      })
+      }).order("created_at DESC")
+              
+      ttl = votable_options[:duration] && votable_options[:duration][options[:vote_scope]]
+      ttl = votable_options[:duration] && votable_options[:duration][:default] unless ttl
+      _votes_ = _votes_.where(["created_at > ?", ttl.ago]) if ttl && ttl.respond_to?(:ago)
 
       if _votes_.count == 0 or options[:duplicate]
         # this voter has never voted
