@@ -79,7 +79,7 @@ module ActsAsVotable
       _votes_ = find_votes_for({
         :voter_id => options[:voter].id,
         :vote_scope => options[:vote_scope],
-        :voter_type => options[:voter].class.name
+        :voter_type => options[:voter].class.base_class.name
       })
 
       if _votes_.count == 0 or options[:duplicate]
@@ -114,7 +114,7 @@ module ActsAsVotable
 
     def unvote args = {}
       return false if args[:voter].nil?
-      _votes_ = find_votes_for(:voter_id => args[:voter].id, :vote_scope => args[:vote_scope], :voter_type => args[:voter].class.name)
+      _votes_ = find_votes_for(:voter_id => args[:voter].id, :vote_scope => args[:vote_scope], :voter_type => args[:voter].class.base_class.name)
 
       return true if _votes_.size == 0
       _votes_.each(&:destroy)
@@ -271,7 +271,7 @@ module ActsAsVotable
 
     # voters
     def voted_on_by? voter
-      votes = find_votes_for :voter_id => voter.id, :voter_type => voter.class.name
+      votes = find_votes_for :voter_id => voter.id, :voter_type => voter.class.base_class.name
       votes.count > 0
     end
 

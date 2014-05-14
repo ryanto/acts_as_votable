@@ -53,25 +53,25 @@ module ActsAsVotable
 
     # results
     def voted_on? votable, args={}
-      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.name,
+      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.base_class.name,
                          :vote_scope => args[:vote_scope])
       votes.size > 0
     end
 
     def voted_up_on? votable, args={}
-      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.name,
+      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.base_class.name,
                          :vote_scope => args[:vote_scope], :vote_flag => true)
       votes.size > 0
     end
 
     def voted_down_on? votable, args={}
-      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.name,
+      votes = find_votes(:votable_id => votable.id, :votable_type => votable.class.base_class.name,
                          :vote_scope => args[:vote_scope], :vote_flag => false)
       votes.size > 0
     end
 
     def voted_as_when_voting_on votable, args={}
-      vote = find_votes(:votable_id => votable.id, :votable_type => votable.class.name,
+      vote = find_votes(:votable_id => votable.id, :votable_type => votable.class.base_class.name,
                          :vote_scope => args[:vote_scope]).select(:vote_flag).last
       return nil unless vote
       return vote.vote_flag
@@ -107,7 +107,7 @@ module ActsAsVotable
     end
 
     def find_voted_items extra_conditions = {}
-      options = extra_conditions.merge :voter_id => id, :voter_type => self.class.name
+      options = extra_conditions.merge :voter_id => id, :voter_type => self.class.base_class.name
       include_objects.where(options).collect(&:votable)
     end
 
