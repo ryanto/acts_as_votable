@@ -206,6 +206,28 @@ shared_examples "a votable_model" do
       votable_cache.cached_votes_score.should == 0
     end
 
+    it "should update cached weighted total if there is a weighted total column" do
+      votable_cache.cached_weighted_total = 50
+      votable_cache.vote_by :voter => voter
+      votable_cache.cached_weighted_total.should == 1
+      votable_cache.vote_by :voter => voter2, :vote => 'false'
+      votable_cache.cached_weighted_total.should == 2
+    end
+
+    it "should update cached weighted total votes_for when a vote up is removed" do
+      votable_cache.vote_by :voter => voter, :vote => 'true', :vote_weight => 3
+      votable_cache.cached_weighted_total.should == 3
+      votable_cache.unvote :voter => voter
+      votable_cache.cached_weighted_total.should == 0
+    end
+
+    it "should update cached weighted total votes_for when a vote down is removed" do
+      votable_cache.vote_by :voter => voter, :vote => 'false', :vote_weight => 4
+      votable_cache.cached_weighted_total.should == 4
+      votable_cache.unvote :voter => voter
+      votable_cache.cached_weighted_total.should == 0
+    end
+
     it "should update cached weighted score if there is a weighted score column" do
       votable_cache.cached_weighted_score = 50
       votable_cache.vote_by :voter => voter
@@ -271,6 +293,12 @@ shared_examples "a votable_model" do
       votable_cache.vote_by :voter => voter, :vote => 'false'
       votable_cache.cached_votes_down = 50
       votable_cache.count_votes_down.should == 50
+    end
+
+    it "should select from cached weighted total if there is a weighted total column" do
+      votable_cache.vote_by :voter => voter, :vote => 'false'
+      votable_cache.cached_weighted_total = 50
+      votable_cache.weighted_total.should == 50
     end
 
     it "should select from cached weighted score if there is a weighted score column" do
