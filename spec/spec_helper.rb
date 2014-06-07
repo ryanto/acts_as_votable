@@ -59,12 +59,14 @@ ActiveRecord::Schema.define(:version => 1) do
     t.integer :cached_votes_score
     t.integer :cached_votes_up
     t.integer :cached_votes_down
+    t.integer :cached_weighted_total
     t.integer :cached_weighted_score
 
     t.integer :cached_scoped_test_votes_total
     t.integer :cached_scoped_test_votes_score
     t.integer :cached_scoped_test_votes_up
     t.integer :cached_scoped_test_votes_down
+    t.integer :cached_scoped_weighted_total
     t.integer :cached_scoped_weighted_score
   end
 
