@@ -8,23 +8,23 @@ describe ActsAsVotable::Helpers::Words do
   end
 
   it "should know that like is a true vote" do
-    @vote.votable_words.that_mean_true.should include "like"
+    expect(@vote.votable_words.that_mean_true).to include "like"
   end
 
   it "should know that bad is a false vote" do
-    @vote.votable_words.that_mean_false.should include "bad"
+    expect(@vote.votable_words.that_mean_false).to include "bad"
   end
 
   it "should be a vote for true when word is good" do
-    @vote.votable_words.meaning_of('good').should be true
+    expect(@vote.votable_words.meaning_of('good')).to be true
   end
 
   it "should be a vote for false when word is down" do
-    @vote.votable_words.meaning_of('down').should be false
+    expect(@vote.votable_words.meaning_of('down')).to be false
   end
 
   it "should be a vote for true when the word is unknown" do
-    @vote.votable_words.meaning_of('lsdhklkadhfs').should be true
+    expect(@vote.votable_words.meaning_of('lsdhklkadhfs')).to be true
   end
 
 end
