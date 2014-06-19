@@ -14,6 +14,7 @@ describe ActsAsVotable::Votable do
     # TODO Replace with factories
     let (:voter) { Voter.create(:name =>'i can vote!') }
     let (:voter2) { Voter.create(:name => 'a new person') }
+    let (:voter3) { Voter.create(:name => 'another person') }
     let (:votable) { Votable.create(:name =>'a voting model') }
     let (:votable_cache) { VotableCache.create(:name => 'voting model with cache') }
   end

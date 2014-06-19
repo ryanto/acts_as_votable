@@ -230,12 +230,15 @@ shared_examples "a votable_model" do
 
     it "should update cached weighted score if there is a weighted score column" do
       votable_cache.cached_weighted_score = 50
-      votable_cache.vote_by :voter => voter
-      expect(votable_cache.cached_weighted_score).to eq(1)
-      votable_cache.vote_by :voter => voter2, :vote => 'false'
-      expect(votable_cache.cached_weighted_score).to eq(0)
-      votable_cache.vote_by :voter => voter, :vote => 'false'
+      votable_cache.vote_by :voter => voter, :vote_weight => 3
+      expect(votable_cache.cached_weighted_score).to eq(3)
+      votable_cache.vote_by :voter => voter2, :vote => 'false', :vote_weight => 5
       expect(votable_cache.cached_weighted_score).to eq(-2)
+      # voter changes her vote from 3 to 5
+      votable_cache.vote_by :voter => voter, :vote_weight => 5
+      expect(votable_cache.cached_weighted_score).to eq(0)
+      votable_cache.vote_by :voter => voter3, :vote_weight => 4
+      expect(votable_cache.cached_weighted_score).to eq(4)
     end
 
     it "should update cached weighted score votes_for when a vote up is removed" do
@@ -250,6 +253,27 @@ shared_examples "a votable_model" do
       expect(votable_cache.cached_weighted_score).to eq(-4)
       votable_cache.unvote :voter => voter
       expect(votable_cache.cached_weighted_score).to eq(0)
+    end
+
+    it "should update cached weighted average if there is a weighted average column" do
+      votable_cache.cached_weighted_average = 50.0
+      votable_cache.vote_by :voter => voter, :vote => 'true', :vote_weight => 5
+      expect(votable_cache.cached_weighted_average).to eq(5.0)
+      votable_cache.vote_by :voter => voter2, :vote => 'true', :vote_weight => 3
+      expect(votable_cache.cached_weighted_average).to eq(4.0)
+      # voter changes her vote from 5 to 4
+      votable_cache.vote_by :voter => voter, :vote => 'true', :vote_weight => 4
+      expect(votable_cache.cached_weighted_average).to eq(3.5)
+      votable_cache.vote_by :voter => voter3, :vote => 'true', :vote_weight => 5
+      expect(votable_cache.cached_weighted_average).to eq(4.0)
+    end
+
+    it "should update cached weighted average votes_for when a vote up is removed" do
+      votable_cache.vote_by :voter => voter, :vote => 'true', :vote_weight => 5
+      votable_cache.vote_by :voter => voter2, :vote => 'true', :vote_weight => 3
+      expect(votable_cache.cached_weighted_average).to eq(4)
+      votable_cache.unvote :voter => voter
+      expect(votable_cache.cached_weighted_average).to eq(3)
     end
 
     it "should update cached up votes_for if there is an up vote column" do
@@ -305,6 +329,12 @@ shared_examples "a votable_model" do
       votable_cache.vote_by :voter => voter, :vote => 'false'
       votable_cache.cached_weighted_score = 50
       expect(votable_cache.weighted_score).to eq(50)
+    end
+
+    it "should select from cached weighted average if there is a weighted average column" do
+      votable_cache.vote_by :voter => voter, :vote => 'false'
+      votable_cache.cached_weighted_average = 50
+      expect(votable_cache.weighted_average).to eq(50)
     end
 
   end

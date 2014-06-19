@@ -6,6 +6,7 @@ describe VotableVoter do
     # TODO Replace with factories
     let (:voter) { VotableVoter.create(:name => 'i can vote!') }
     let (:voter2) { VotableVoter.create(:name => 'a new person') }
+    let (:voter3) { Voter.create(:name => 'another person') }
     let (:votable) { VotableVoter.create(:name => 'a voting model') }
     let (:votable_cache) { VotableCache.create(:name => 'voting model with cache') }
   end

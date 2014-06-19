@@ -317,12 +317,14 @@ class AddCachedVotesToPosts < ActiveRecord::Migration
     add_column :posts, :cached_votes_down, :integer, :default => 0
     add_column :posts, :cached_weighted_score, :integer, :default => 0
     add_column :posts, :cached_weighted_total, :integer, :default => 0
+    add_column :posts, :cached_weighted_average, :float, :default => 0.0
     add_index  :posts, :cached_votes_total
     add_index  :posts, :cached_votes_score
     add_index  :posts, :cached_votes_up
     add_index  :posts, :cached_votes_down
     add_index  :posts, :cached_weighted_score
     add_index  :posts, :cached_weighted_total
+    add_index  :posts, :cached_weighted_average
 
     # Uncomment this line to force caching of existing votes
     # Post.find_each(&:update_cached_votes)
@@ -335,8 +337,24 @@ class AddCachedVotesToPosts < ActiveRecord::Migration
     remove_column :posts, :cached_votes_down
     remove_column :posts, :cached_weighted_score
     remove_column :posts, :cached_weighted_total
+    remove_column :posts, :cached_weighted_average
   end
 end
+```
+
+`cached_weighted_average` can be helpful for a rating system, e.g.: 
+
+Order by average rating:
+
+```ruby
+Post.order(:cached_weighted_average => :desc)
+```
+
+Display average rating:
+
+```erb
+<%= post.weighted_average.round(2) %> / 5
+<!-- 3.5 / 5 -->
 ```
 
 ## Testing
