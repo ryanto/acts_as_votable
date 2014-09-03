@@ -137,7 +137,7 @@ Unvoting works for both positive and negative votes.
 
 ### Examples with scopes
 
-You can add an scope to your vote
+You can add a scope to your vote
 
 ```ruby
 # positive votes
@@ -370,7 +370,7 @@ rake spec
 
 ### Fixes for votable voter model  
 
-In version 0.8.0, there is bugs for a model that is both votable and voter.  
+In version 0.8.0, there are bugs for a model that is both votable and voter.  
 Some name-conflicting methods are renamed:
 + Renamed Votable.votes to votes_for  
 + Renamed Votable.vote to vote_by,
