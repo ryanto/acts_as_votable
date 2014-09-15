@@ -11,7 +11,7 @@ module ActsAsVotable
       aliases = {
 
         :vote_up => [
-          :up_by, :upvote_by, :like_by, :liked_by, 
+          :up_by, :upvote_by, :like_by, :liked_by,
           :up_from, :upvote_from, :upvote_by, :like_from, :liked_from, :vote_from
         ],
 
@@ -254,11 +254,13 @@ module ActsAsVotable
     end
 
     def get_up_votes options={}
-      find_votes_for(:vote_flag => true, :vote_scope => options[:vote_scope])
+      vote_scope_hash = scope_or_empty_hash(options[:vote_scope])
+      find_votes_for({:vote_flag => true}.merge(vote_scope_hash))
     end
 
     def get_down_votes options={}
-      find_votes_for(:vote_flag => false, :vote_scope => options[:vote_scope])
+      vote_scope_hash = scope_or_empty_hash(options[:vote_scope])
+      find_votes_for({:vote_flag => false}.merge(vote_scope_hash))
     end
 
 
@@ -267,7 +269,7 @@ module ActsAsVotable
       if !skip_cache && self.respond_to?(scope_cache_field :cached_votes_total, vote_scope)
         return self.send(scope_cache_field :cached_votes_total, vote_scope)
       end
-      find_votes_for(:vote_scope => vote_scope).count
+      find_votes_for(scope_or_empty_hash(vote_scope)).count
     end
 
     def count_votes_up skip_cache = false, vote_scope = nil
@@ -321,5 +323,10 @@ module ActsAsVotable
       votes.count > 0
     end
 
+    private
+
+    def scope_or_empty_hash(vote_scope)
+      vote_scope ? { :vote_scope => vote_scope } : {}
+    end
   end
 end
