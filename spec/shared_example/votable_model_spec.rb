@@ -337,10 +337,43 @@ shared_examples "a votable_model" do
       expect(votable_cache.weighted_average).to eq(50)
     end
 
+    it "should update cached total votes_for when voting under an scope" do
+      votable_cache.vote_by :voter => voter, :vote => 'true', :vote_scope => 'rank'
+      expect(votable_cache.cached_votes_total).to eq(1)
+    end
+
+    it "should update cached up votes_for when voting under an scope" do
+      votable_cache.vote_by :voter => voter, :vote => 'true', :vote_scope => 'rank'
+      expect(votable_cache.cached_votes_up).to eq(1)
+    end
+
+    it "should update cached total votes_for when a scoped vote down is removed" do
+      votable_cache.vote_by :voter => voter, :vote => 'true', :vote_scope => 'rank'
+      votable_cache.unvote :voter => voter, :vote_scope => 'rank'
+      expect(votable_cache.cached_votes_total).to eq(0)
+    end
+
+    it "should update cached up votes_for when a scoped vote down is removed" do
+      votable_cache.vote_by :voter => voter, :vote => 'true', :vote_scope => 'rank'
+      votable_cache.unvote :voter => voter, :vote_scope => 'rank'
+      expect(votable_cache.cached_votes_up).to eq(0)
+    end
+
+    it "should update cached down votes_for when downvoting under a scope" do
+      votable_cache.vote_by :voter => voter, :vote => 'false', :vote_scope => 'rank'
+      expect(votable_cache.cached_votes_down).to eq(1)
+    end
+
+    it "should update cached down votes_for when a scoped vote down is removed" do
+      votable_cache.vote_by :voter => voter, :vote => 'false', :vote_scope => 'rank'
+      votable_cache.unvote :voter => voter, :vote_scope => 'rank'
+      expect(votable_cache.cached_votes_down).to eq(0)
+    end
+
   end
 
   describe "with scoped cached votes_for" do
-    
+
     it "should update cached total votes_for if there is a total column" do
       votable_cache.cached_scoped_test_votes_total = 50
       votable_cache.vote_by :voter => voter, :vote_scope => "test"
