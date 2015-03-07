@@ -109,7 +109,7 @@ Active Record scopes are provided to make life easier.
 @post.votes_for.down
 @user1.votes.up
 @user1.votes.down
-@user1.votes.up.by_type(Post)
+@user1.votes.up.for_type(Post)
 ```
 
 Once scoping is complete, you can also trigger a get for the
