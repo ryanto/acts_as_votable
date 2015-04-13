@@ -18,11 +18,11 @@ module ActsAsVotable::Helpers
   class VotableWords
 
     def self.that_mean_true
-      ['up', 'upvote', 'like', 'liked', 'positive', 'yes', 'good', 'true', 1, true]
+      ['up', 'upvote', 'like', 'liked', 'positive', 'yes', 'good', 'agree', 'true', 1, true]
     end
 
     def self.that_mean_false
-      ['down', 'downvote', 'dislike', 'disliked', 'negative', 'no', 'bad', 'false', 0, false]
+      ['down', 'downvote', 'dislike', 'disliked', 'negative', 'no', 'bad', 'disagree', 'false', 0, false]
     end
 
     # check is word is a true or bad vote
