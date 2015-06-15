@@ -215,9 +215,9 @@ check how the voter voted by using ``voted_as_when_voted_for``.
 @user.voted_for? @comment2 # => true
 @user.voted_for? @comment3 # => false
 
-@user.voted_as_when_voted_for @comment1 # => true, he liked it
-@user.voted_as_when_voted_for @comment2 # => false, he didnt like it
-@user.voted_as_when_voted_for @comment3 # => nil, he has yet to vote
+@user.voted_as_when_voted_for @comment1 # => true, user liked it
+@user.voted_as_when_voted_for @comment2 # => false, user didnt like it
+@user.voted_as_when_voted_for @comment3 # => nil, user has yet to vote
 ```
 
 You can also check whether the voter has voted up or down.
