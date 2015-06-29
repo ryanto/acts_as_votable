@@ -166,11 +166,9 @@ You can add a scope to your vote
 @post.find_votes_for(:vote_scope => 'month').size # => 1
 
 # To remove a vote with a scope, simply do:
-
-# Short Hand Version
 @post.unvote_by @user1, vote_scope: 'week'
 
-# Long Hand Version
+# Note that the following will NOT work:
 @post.unvote_by voter: @user2, vote_scope: 'month'
 ```
 ### Adding weights to your votes
