@@ -250,7 +250,7 @@ module ActsAsVotable
 
     # results
     def find_votes_for extra_conditions = {}
-      votes_for.where(extra_conditions)
+      votes_for.where(extra_conditions.compact)
     end
 
     def get_up_votes options={}
