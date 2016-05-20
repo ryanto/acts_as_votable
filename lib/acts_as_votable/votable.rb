@@ -286,6 +286,15 @@ module ActsAsVotable
       get_down_votes(:vote_scope => vote_scope).count
     end
 
+    def count_votes_score skip_cache = false, vote_scope = nil
+      if !skip_cache && self.respond_to?(scope_cache_field :cached_votes_score, vote_scope)
+        return self.send(scope_cache_field :cached_votes_score, vote_scope)
+      end
+      ups = count_votes_up(true, vote_scope)
+      downs = count_votes_down(true, vote_scope)
+      ups - downs
+    end
+
     def weighted_total skip_cache = false, vote_scope = nil
       if !skip_cache && self.respond_to?(scope_cache_field :cached_weighted_total, vote_scope)
         return self.send(scope_cache_field :cached_weighted_total, vote_scope)
