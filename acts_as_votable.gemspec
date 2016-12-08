@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.homepage    = "http://rubygems.org/gems/acts_as_votable"
   s.summary     = %q{Rails gem to allowing records to be votable}
   s.description = %q{Rails gem to allowing records to be votable}
+  s.license     = "MIT"
 
   s.rubyforge_project = "acts_as_votable"
 
