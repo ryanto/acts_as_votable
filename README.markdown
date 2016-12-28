@@ -127,10 +127,10 @@ You can also 'unvote' a model to remove a previous vote.
 
 ```ruby
 @post.liked_by @user1
-@post.unliked_by @user1
+@post.unliked_by :voter => @user1
 
 @post.disliked_by @user1
-@post.undisliked_by @user1
+@post.undisliked_by :voter => @user1
 ```
 
 Unvoting works for both positive and negative votes.
