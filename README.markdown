@@ -16,14 +16,13 @@ The main goals of this gem are:
 
 ### Supported Ruby and Rails versions
 
-* Ruby 1.8.7, 1.9.2, 1.9.3
-* Ruby 2.0.0, 2.1.0
+* Ruby 2.0.0, 2.1.0, 2.2.0, 2.3.0 and 2.4.0
 * Rails 3.0, 3.1, 3.2
 * Rails 4.0, 4.1+
 
 ### Install
 
-Just add the following to your Gemfile.
+Just add the following to your Gemfile to install the latest release.
 
 ```ruby
 gem 'acts_as_votable', '~> 0.10.0'
