@@ -350,6 +350,12 @@ Order by average rating:
 Post.order(:cached_weighted_average => :desc)
 ```
 
+Order by average rating with .each for index method:
+
+```ruby
+<% @posts.order(cached_weighted_average: :desc).each do |post| %>
+```
+
 Display average rating:
 
 ```erb
