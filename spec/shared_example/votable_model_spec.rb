@@ -319,6 +319,12 @@ shared_examples "a votable_model" do
       expect(votable_cache.count_votes_down).to eq(50)
     end
 
+    it "should select from cached votes score if there is a votes score column" do
+      votable_cache.vote_by :voter => voter, :vote => 'false'
+      votable_cache.cached_votes_score = 50
+      expect(votable_cache.count_votes_score).to eq(50)
+    end
+
     it "should select from cached weighted total if there is a weighted total column" do
       votable_cache.vote_by :voter => voter, :vote => 'false'
       votable_cache.cached_weighted_total = 50
