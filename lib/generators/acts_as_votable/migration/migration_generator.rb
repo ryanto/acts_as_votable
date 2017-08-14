@@ -18,7 +18,7 @@ module ActsAsVotable
       [:active_record].include? orm
     end
 
-    def self.next_migration_number(path)
+    def self.next_migration_number(_path)
       Time.now.utc.strftime("%Y%m%d%H%M%S")
     end
 
