@@ -7,7 +7,7 @@ module ActsAsVotable
         false
       end
 
-      def acts_as_voter(*args)
+      def acts_as_voter(*_args)
         require 'acts_as_votable/voter'
         include ActsAsVotable::Voter
 
