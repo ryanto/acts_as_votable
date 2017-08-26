@@ -1,39 +1,39 @@
-require 'acts_as_votable/helpers/words'
+# frozen_string_literal: true
+
+require "acts_as_votable/helpers/words"
 
 module ActsAsVotable
   module Votable
-
     include Helpers::Words
 
-    def self.included base
-
+    def self.included(base)
       # allow the user to define these himself
       aliases = {
 
-        :vote_up => [
+        vote_up: [
           :up_by, :upvote_by, :like_by, :liked_by,
           :up_from, :upvote_from, :upvote_by, :like_from, :liked_from, :vote_from
         ],
 
-        :vote_down => [
+        vote_down: [
           :down_by, :downvote_by, :dislike_by, :disliked_by,
           :down_from, :downvote_from, :downvote_by, :dislike_by, :disliked_by
         ],
 
-        :get_up_votes => [
+        get_up_votes: [
           :get_true_votes, :get_ups, :get_upvotes, :get_likes, :get_positives, :get_for_votes,
         ],
 
-        :get_down_votes => [
+        get_down_votes: [
           :get_false_votes, :get_downs, :get_downvotes, :get_dislikes, :get_negatives
         ],
-        :unvote_by => [
+        unvote_by: [
           :unvote_up, :unvote_down, :unliked_by, :undisliked_by
         ]
       }
 
       base.class_eval do
-        has_many :votes_for, :class_name => 'ActsAsVotable::Vote', :as => :votable, :dependent => :destroy do
+        has_many :votes_for, class_name: "ActsAsVotable::Vote", as: :votable, dependent: :destroy do
           def voters
             includes(:voter).map(&:voter)
           end
@@ -56,17 +56,16 @@ module ActsAsVotable
 
     def default_conditions
       {
-        :votable_id => self.id,
-        :votable_type => self.class.base_class.name.to_s
+        votable_id: self.id,
+        votable_type: self.class.base_class.name.to_s
       }
     end
 
     # voting
-    def vote_by args = {}
-
+    def vote_by(args = {})
       options = {
-        :vote => true,
-        :vote_scope => nil
+        vote: true,
+        vote_scope: nil
       }.merge(args)
 
       self.vote_registered = false
@@ -76,18 +75,16 @@ module ActsAsVotable
       end
 
       # find the vote
-      votes = find_votes_for({
-        :voter_id => options[:voter].id,
-        :vote_scope => options[:vote_scope],
-        :voter_type => options[:voter].class.base_class.name
-      })
+      votes = find_votes_for(voter_id: options[:voter].id,
+        vote_scope: options[:vote_scope],
+        voter_type: options[:voter].class.base_class.name)
 
-      if votes.count == 0 or options[:duplicate]
+      if votes.count == (0) || options[:duplicate]
         # this voter has never voted
         vote = ActsAsVotable::Vote.new(
-          :votable => self,
-          :voter => options[:voter],
-          :vote_scope => options[:vote_scope]
+          votable: self,
+          voter: options[:voter],
+          vote_scope: options[:vote_scope]
         )
       else
         # this voter is potentially changing his vote
@@ -109,12 +106,11 @@ module ActsAsVotable
         self.vote_registered = false
         return false
       end
-
     end
 
-    def unvote args = {}
+    def unvote(args = {})
       return false if args[:voter].nil?
-      votes = find_votes_for(:voter_id => args[:voter].id, :vote_scope => args[:vote_scope], :voter_type => args[:voter].class.base_class.name)
+      votes = find_votes_for(voter_id: args[:voter].id, vote_scope: args[:vote_scope], voter_type: args[:voter].class.base_class.name)
 
       return true if votes.size == 0
       votes.each(&:destroy)
@@ -123,19 +119,19 @@ module ActsAsVotable
       return true
     end
 
-    def vote_up voter, options={}
-      self.vote_by :voter => voter, :vote => true, :vote_scope => options[:vote_scope], :vote_weight => options[:vote_weight]
+    def vote_up(voter, options = {})
+      self.vote_by voter: voter, vote: true, vote_scope: options[:vote_scope], vote_weight: options[:vote_weight]
     end
 
-    def vote_down voter, options={}
-      self.vote_by :voter => voter, :vote => false, :vote_scope => options[:vote_scope], :vote_weight => options[:vote_weight]
+    def vote_down(voter, options = {})
+      self.vote_by voter: voter, vote: false, vote_scope: options[:vote_scope], vote_weight: options[:vote_weight]
     end
 
-    def unvote_by  voter, options = {}
-      self.unvote :voter => voter, :vote_scope => options[:vote_scope] #Does not need vote_weight since the votes_for are anyway getting destroyed
+    def unvote_by(voter, options = {})
+      self.unvote voter: voter, vote_scope: options[:vote_scope] #Does not need vote_weight since the votes_for are anyway getting destroyed
     end
 
-    def scope_cache_field field, vote_scope
+    def scope_cache_field(field, vote_scope)
       return field if vote_scope.nil?
 
       case field
@@ -171,8 +167,7 @@ module ActsAsVotable
     end
 
     # caching
-    def update_cached_votes vote_scope = nil
-
+    def update_cached_votes(vote_scope = nil)
       updates = {}
 
       if self.respond_to?(:cached_votes_total=)
@@ -240,53 +235,52 @@ module ActsAsVotable
       end
 
       if (::ActiveRecord::VERSION::MAJOR == 3) && (::ActiveRecord::VERSION::MINOR != 0)
-        self.update_attributes(updates, :without_protection => true) if updates.size > 0
+        self.update_attributes(updates, without_protection: true) if updates.size > 0
       else
         self.update_attributes(updates) if updates.size > 0
       end
-
     end
 
 
     # results
-    def find_votes_for extra_conditions = {}
+    def find_votes_for(extra_conditions = {})
       votes_for.where(extra_conditions)
     end
 
-    def get_up_votes options={}
+    def get_up_votes(options = {})
       vote_scope_hash = scope_or_empty_hash(options[:vote_scope])
-      find_votes_for({:vote_flag => true}.merge(vote_scope_hash))
+      find_votes_for({ vote_flag: true }.merge(vote_scope_hash))
     end
 
-    def get_down_votes options={}
+    def get_down_votes(options = {})
       vote_scope_hash = scope_or_empty_hash(options[:vote_scope])
-      find_votes_for({:vote_flag => false}.merge(vote_scope_hash))
+      find_votes_for({ vote_flag: false }.merge(vote_scope_hash))
     end
 
 
     # counting
-    def count_votes_total skip_cache = false, vote_scope = nil
+    def count_votes_total(skip_cache = false, vote_scope = nil)
       if !skip_cache && self.respond_to?(scope_cache_field :cached_votes_total, vote_scope)
         return self.send(scope_cache_field :cached_votes_total, vote_scope)
       end
       find_votes_for(scope_or_empty_hash(vote_scope)).count
     end
 
-    def count_votes_up skip_cache = false, vote_scope = nil
+    def count_votes_up(skip_cache = false, vote_scope = nil)
       if !skip_cache && self.respond_to?(scope_cache_field :cached_votes_up, vote_scope)
         return self.send(scope_cache_field :cached_votes_up, vote_scope)
       end
-      get_up_votes(:vote_scope => vote_scope).count
+      get_up_votes(vote_scope: vote_scope).count
     end
 
-    def count_votes_down skip_cache = false, vote_scope = nil
+    def count_votes_down(skip_cache = false, vote_scope = nil)
       if !skip_cache && self.respond_to?(scope_cache_field :cached_votes_down, vote_scope)
         return self.send(scope_cache_field :cached_votes_down, vote_scope)
       end
-      get_down_votes(:vote_scope => vote_scope).count
+      get_down_votes(vote_scope: vote_scope).count
     end
 
-    def count_votes_score skip_cache = false, vote_scope = nil
+    def count_votes_score(skip_cache = false, vote_scope = nil)
       if !skip_cache && self.respond_to?(scope_cache_field :cached_votes_score, vote_scope)
         return self.send(scope_cache_field :cached_votes_score, vote_scope)
       end
@@ -295,25 +289,25 @@ module ActsAsVotable
       ups - downs
     end
 
-    def weighted_total skip_cache = false, vote_scope = nil
+    def weighted_total(skip_cache = false, vote_scope = nil)
       if !skip_cache && self.respond_to?(scope_cache_field :cached_weighted_total, vote_scope)
         return self.send(scope_cache_field :cached_weighted_total, vote_scope)
       end
-      ups = get_up_votes(:vote_scope => vote_scope).sum(:vote_weight)
-      downs = get_down_votes(:vote_scope => vote_scope).sum(:vote_weight)
+      ups = get_up_votes(vote_scope: vote_scope).sum(:vote_weight)
+      downs = get_down_votes(vote_scope: vote_scope).sum(:vote_weight)
       ups + downs
     end
 
-    def weighted_score skip_cache = false, vote_scope = nil
+    def weighted_score(skip_cache = false, vote_scope = nil)
       if !skip_cache && self.respond_to?(scope_cache_field :cached_weighted_score, vote_scope)
         return self.send(scope_cache_field :cached_weighted_score, vote_scope)
       end
-      ups = get_up_votes(:vote_scope => vote_scope).sum(:vote_weight)
-      downs = get_down_votes(:vote_scope => vote_scope).sum(:vote_weight)
+      ups = get_up_votes(vote_scope: vote_scope).sum(:vote_weight)
+      downs = get_down_votes(vote_scope: vote_scope).sum(:vote_weight)
       ups - downs
     end
 
-    def weighted_average skip_cache = false, vote_scope = nil
+    def weighted_average(skip_cache = false, vote_scope = nil)
       if !skip_cache && self.respond_to?(scope_cache_field :cached_weighted_average, vote_scope)
         return self.send(scope_cache_field :cached_weighted_average, vote_scope)
       end
@@ -327,15 +321,15 @@ module ActsAsVotable
     end
 
     # voters
-    def voted_on_by? voter
-      votes = find_votes_for :voter_id => voter.id, :voter_type => voter.class.base_class.name
+    def voted_on_by?(voter)
+      votes = find_votes_for voter_id: voter.id, voter_type: voter.class.base_class.name
       votes.count > 0
     end
 
     private
 
     def scope_or_empty_hash(vote_scope)
-      vote_scope ? { :vote_scope => vote_scope } : {}
+      vote_scope ? { vote_scope: vote_scope } : {}
     end
   end
 end
