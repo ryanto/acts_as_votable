@@ -423,7 +423,7 @@ Some name-conflicting methods are renamed:
 Acts as votable is released under the [MIT
 License](http://www.opensource.org/licenses/MIT).
 
-## TODO
+## Next steps
 
 - Pass in a block of options when creating acts_as.  Allow for things
   like disabling the aliasing
@@ -432,8 +432,7 @@ License](http://www.opensource.org/licenses/MIT).
 that the user likes, while `@user.likes @model` will cast a vote for @model by
 @user.
 
-
 - The aliased methods are referred to by using the terms 'up/down' and/or
-'true/false'.  Need to come up with guidelines for naming these methods.
+'true/false'. Need to come up with guidelines for naming these methods.
 
 - Create more aliases. Specifically for counting votes and finding votes.
