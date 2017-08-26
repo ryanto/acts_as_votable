@@ -2,10 +2,13 @@
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), "..", "lib")
 require "sqlite3"
+require "simplecov"
 require "acts_as_votable"
 
 Dir["./spec/shared_example/**/*.rb"].sort.each { |f| require f }
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
+
+SimpleCov.start
 
 ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
 
