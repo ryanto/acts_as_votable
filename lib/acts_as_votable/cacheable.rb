@@ -54,8 +54,8 @@ module ActsAsVotable
 
       if self.respond_to?(:cached_votes_score=)
         updates[:cached_votes_score] = (
-        (updates[:cached_votes_up] || count_votes_up(true)) -
-        (updates[:cached_votes_down] || count_votes_down(true))
+          (updates[:cached_votes_up] || count_votes_up(true)) -
+          (updates[:cached_votes_down] || count_votes_down(true))
         )
       end
 
@@ -94,8 +94,8 @@ module ActsAsVotable
 
         if self.respond_to?(scope_cache_field :cached_votes_score=, vote_scope)
           updates[scope_cache_field :cached_votes_score, vote_scope] = (
-          (updates[scope_cache_field :cached_votes_up, vote_scope] || count_votes_up(true, vote_scope)) -
-          (updates[scope_cache_field :cached_votes_down, vote_scope] || count_votes_down(true, vote_scope))
+            (updates[scope_cache_field :cached_votes_up, vote_scope] || count_votes_up(true, vote_scope)) -
+            (updates[scope_cache_field :cached_votes_down, vote_scope] || count_votes_down(true, vote_scope))
           )
         end
 
@@ -113,63 +113,65 @@ module ActsAsVotable
 
     # counting
     def count_votes_total(skip_cache = false, vote_scope = nil)
-      if !skip_cache && self.respond_to?(scope_cache_field :cached_votes_total, vote_scope)
-        return self.send(scope_cache_field :cached_votes_total, vote_scope)
+      from_cache(skip_cache, :cached_votes_total, vote_scope) do
+        find_votes_for(scope_or_empty_hash(vote_scope)).count
       end
-      find_votes_for(scope_or_empty_hash(vote_scope)).count
     end
 
     def count_votes_up(skip_cache = false, vote_scope = nil)
-      if !skip_cache && self.respond_to?(scope_cache_field :cached_votes_up, vote_scope)
-        return self.send(scope_cache_field :cached_votes_up, vote_scope)
+      from_cache(skip_cache, :cached_votes_up, vote_scope) do
+        get_up_votes(vote_scope: vote_scope).count
       end
-      get_up_votes(vote_scope: vote_scope).count
     end
 
     def count_votes_down(skip_cache = false, vote_scope = nil)
-      if !skip_cache && self.respond_to?(scope_cache_field :cached_votes_down, vote_scope)
-        return self.send(scope_cache_field :cached_votes_down, vote_scope)
+      from_cache(skip_cache, :cached_votes_down, vote_scope) do
+        get_down_votes(vote_scope: vote_scope).count
       end
-      get_down_votes(vote_scope: vote_scope).count
     end
 
     def count_votes_score(skip_cache = false, vote_scope = nil)
-      if !skip_cache && self.respond_to?(scope_cache_field :cached_votes_score, vote_scope)
-        return self.send(scope_cache_field :cached_votes_score, vote_scope)
+      from_cache(skip_cache, :cached_votes_score, vote_scope) do
+        ups = count_votes_up(true, vote_scope)
+        downs = count_votes_down(true, vote_scope)
+        ups - downs
       end
-      ups = count_votes_up(true, vote_scope)
-      downs = count_votes_down(true, vote_scope)
-      ups - downs
     end
 
     def weighted_total(skip_cache = false, vote_scope = nil)
-      if !skip_cache && self.respond_to?(scope_cache_field :cached_weighted_total, vote_scope)
-        return self.send(scope_cache_field :cached_weighted_total, vote_scope)
+      from_cache(skip_cache, :cached_weighted_total, vote_scope) do
+        ups = get_up_votes(vote_scope: vote_scope).sum(:vote_weight)
+        downs = get_down_votes(vote_scope: vote_scope).sum(:vote_weight)
+        ups + downs
       end
-      ups = get_up_votes(vote_scope: vote_scope).sum(:vote_weight)
-      downs = get_down_votes(vote_scope: vote_scope).sum(:vote_weight)
-      ups + downs
     end
 
     def weighted_score(skip_cache = false, vote_scope = nil)
-      if !skip_cache && self.respond_to?(scope_cache_field :cached_weighted_score, vote_scope)
-        return self.send(scope_cache_field :cached_weighted_score, vote_scope)
+      from_cache(skip_cache, :cached_weighted_score, vote_scope) do
+        ups = get_up_votes(vote_scope: vote_scope).sum(:vote_weight)
+        downs = get_down_votes(vote_scope: vote_scope).sum(:vote_weight)
+        ups - downs
       end
-      ups = get_up_votes(vote_scope: vote_scope).sum(:vote_weight)
-      downs = get_down_votes(vote_scope: vote_scope).sum(:vote_weight)
-      ups - downs
     end
 
     def weighted_average(skip_cache = false, vote_scope = nil)
-      if !skip_cache && self.respond_to?(scope_cache_field :cached_weighted_average, vote_scope)
-        return self.send(scope_cache_field :cached_weighted_average, vote_scope)
+      from_cache(skip_cache, :cached_weighted_average, vote_scope) do
+        count = count_votes_total(skip_cache, vote_scope).to_i
+        if count > 0
+          weighted_score(skip_cache, vote_scope).to_f / count
+        else
+          0.0
+        end
       end
+    end
 
-      count = count_votes_total(skip_cache, vote_scope).to_i
-      if count > 0
-        weighted_score(skip_cache, vote_scope).to_f / count
+    private
+
+    def from_cache(skip_cache, cached_method, vote_scope)
+      if !skip_cache && respond_to?(scope_cache_field(cached_method, vote_scope))
+        send(scope_cache_field(cached_method, vote_scope))
       else
-        0.0
+        yield
       end
     end
   end
