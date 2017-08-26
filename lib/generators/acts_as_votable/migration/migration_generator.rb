@@ -1,4 +1,6 @@
-require 'rails/generators/migration'
+# frozen_string_literal: true
+
+require "rails/generators/migration"
 
 module ActsAsVotable
   class MigrationGenerator < Rails::Generators::Base
@@ -11,7 +13,7 @@ module ActsAsVotable
     end
 
     def self.source_root
-      File.join(File.dirname(__FILE__), 'templates', (orm.to_s unless orm.class.eql?(String)) )
+      File.join(File.dirname(__FILE__), "templates", (orm.to_s unless orm.class.eql?(String)))
     end
 
     def self.orm_has_migration?
@@ -24,7 +26,7 @@ module ActsAsVotable
 
     def create_migration_file
       if self.class.orm_has_migration?
-        migration_template 'migration.rb', 'db/migrate/acts_as_votable_migration.rb'
+        migration_template "migration.rb", "db/migrate/acts_as_votable_migration.rb"
       end
     end
   end

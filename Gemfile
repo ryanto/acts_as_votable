@@ -1,17 +1,20 @@
-source 'https://rubygems.org'
+# frozen_string_literal: true
+
+source "https://rubygems.org"
 
 # Specify your gem's dependencies in acts_as_votable.gemspec
 gemspec
 
-rails_version = ENV['RAILS_VERSION'] || 'default'
+env_rails = ENV["RAILS_VERSION"] || "default"
+def set_rails_version(env_rails)
+  case env_rails
+  when "master"
+    { github: "rails/rails" }
+  when "default"
+    "~> 4.2.9"
+  else
+    "~> #{env_rails}"
+  end
+end
 
-rails = case rails_version
-        when 'master'
-          { :github => 'rails/rails'}
-        when 'default'
-          '~> 4.2.9'
-        else
-          "~> #{rails_version}"
-        end
-
-gem 'rails', rails
+gem "rails", set_rails_version(env_rails)

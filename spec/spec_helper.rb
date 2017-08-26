@@ -1,16 +1,18 @@
-$LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
-require 'sqlite3'
-require 'acts_as_votable'
+# frozen_string_literal: true
 
-Dir["./spec/shared_example/**/*.rb"].sort.each {|f| require f}
-Dir["./spec/support/**/*.rb"].sort.each {|f| require f}
+$LOAD_PATH << File.join(File.dirname(__FILE__), "..", "lib")
+require "sqlite3"
+require "acts_as_votable"
 
-ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:")
+Dir["./spec/shared_example/**/*.rb"].sort.each { |f| require f }
+Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
 
-ActiveRecord::Schema.define(:version => 1) do
+ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
+
+ActiveRecord::Schema.define(version: 1) do
   create_table :votes do |t|
-    t.references :votable, :polymorphic => true
-    t.references :voter, :polymorphic => true
+    t.references :votable, polymorphic: true
+    t.references :voter, polymorphic: true
 
     t.boolean :vote_flag
     t.string :vote_scope
@@ -81,7 +83,6 @@ class Voter < ActiveRecord::Base
 end
 
 class NotVoter < ActiveRecord::Base
-  
 end
 
 class Votable < ActiveRecord::Base
@@ -119,7 +120,7 @@ end
 
 class ABoringClass
   def self.hw
-    'hello world'
+    "hello world"
   end
 end
 

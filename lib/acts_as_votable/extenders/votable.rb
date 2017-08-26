@@ -1,14 +1,14 @@
+# frozen_string_literal: true
+
 module ActsAsVotable
   module Extenders
-
     module Votable
-
       def votable?
         false
       end
 
       def acts_as_votable
-        require 'acts_as_votable/votable'
+        require "acts_as_votable/votable"
         include ActsAsVotable::Votable
 
         class_eval do
@@ -16,10 +16,7 @@ module ActsAsVotable
             true
           end
         end
-
       end
-
     end
-
   end
 end

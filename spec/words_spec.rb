@@ -1,5 +1,7 @@
-require 'acts_as_votable'
-require 'spec_helper'
+# frozen_string_literal: true
+
+require "acts_as_votable"
+require "spec_helper"
 
 describe ActsAsVotable::Helpers::Words do
 
@@ -16,15 +18,15 @@ describe ActsAsVotable::Helpers::Words do
   end
 
   it "should be a vote for true when word is good" do
-    expect(@vote.votable_words.meaning_of('good')).to be true
+    expect(@vote.votable_words.meaning_of("good")).to be true
   end
 
   it "should be a vote for false when word is down" do
-    expect(@vote.votable_words.meaning_of('down')).to be false
+    expect(@vote.votable_words.meaning_of("down")).to be false
   end
 
   it "should be a vote for true when the word is unknown" do
-    expect(@vote.votable_words.meaning_of('lsdhklkadhfs')).to be true
+    expect(@vote.votable_words.meaning_of("lsdhklkadhfs")).to be true
   end
 
 end
