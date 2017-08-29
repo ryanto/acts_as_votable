@@ -402,6 +402,8 @@ class Post < ActiveRecord::Base
 end
 ```
 
+NOTE: this option does not work for ActiveRecord < 3.1
+
 
 ## Testing
 
