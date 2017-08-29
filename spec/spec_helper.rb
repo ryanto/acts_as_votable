@@ -4,7 +4,9 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), "..", "lib")
 require "sqlite3"
 require "simplecov"
 require "acts_as_votable"
-require "pry-byebug"
+if RUBY_VERSION >= '2.1'
+  require "pry-byebug"
+end
 
 Dir["./spec/shared_example/**/*.rb"].sort.each { |f| require f }
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f }

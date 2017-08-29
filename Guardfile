@@ -14,5 +14,4 @@ guard :rspec, cmd: "bundle exec rspec --color --format documentation" do
   # Ruby files
   ruby = dsl.ruby
   dsl.watch_spec_files_for(ruby.lib_files)
-
 end
