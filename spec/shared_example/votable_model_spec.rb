@@ -374,43 +374,45 @@ shared_examples "a votable_model" do
       expect(votable_cache.cached_votes_down).to eq(0)
     end
 
-    describe 'with acts_as_votable_options' do
-      describe 'cacheable_strategy' do
-        let(:updated_at) { 3.days.ago }
-        before { votable_cache.vote_by voter: voter }
+    unless (::ActiveRecord::VERSION::MAJOR == 3) && (::ActiveRecord::VERSION::MINOR != 0)
+      describe 'with acts_as_votable_options' do
+        describe 'cacheable_strategy' do
+          let(:updated_at) { 3.days.ago }
+          before { votable_cache.vote_by voter: voter }
 
-        context 'update_attributes' do
-          class VotableCacheUpdateAttributes < VotableCache
-            acts_as_votable cacheable_strategy: :update_attributes
-          end
-          let!(:votable_cache) do
-            VotableCacheUpdateAttributes.create(
-              name: "voting model with cache",
-              updated_at: updated_at
-            )
-          end
+          context 'update_attributes' do
+            class VotableCacheUpdateAttributes < VotableCache
+              acts_as_votable cacheable_strategy: :update_attributes
+            end
+            let!(:votable_cache) do
+              VotableCacheUpdateAttributes.create(
+                name: "voting model with cache",
+                updated_at: updated_at
+              )
+            end
 
-          it do
-            expect(votable_cache.cached_votes_total).to eq(1)
-            expect(votable_cache.updated_at).to_not eq updated_at
-          end
-        end
-
-        context 'update_columns' do
-          class VotableCacheUpdateColumns < VotableCache
-            acts_as_votable cacheable_strategy: :update_columns
+            it do
+              expect(votable_cache.cached_votes_total).to eq(1)
+              expect(votable_cache.updated_at).to_not eq updated_at
+            end
           end
 
-          let!(:votable_cache) do
-            VotableCacheUpdateColumns.create(
-              name: "voting model with cache",
-              updated_at: updated_at
-            )
-          end
+          context 'update_columns' do
+            class VotableCacheUpdateColumns < VotableCache
+              acts_as_votable cacheable_strategy: :update_columns
+            end
 
-          it do
-            expect(votable_cache.cached_votes_total).to eq(1)
-            expect(votable_cache.updated_at).to eq updated_at
+            let!(:votable_cache) do
+              VotableCacheUpdateColumns.create(
+                name: "voting model with cache",
+                updated_at: updated_at
+              )
+            end
+
+            it do
+              expect(votable_cache.cached_votes_total).to eq(1)
+              expect(votable_cache.updated_at).to eq updated_at
+            end
           end
         end
       end
