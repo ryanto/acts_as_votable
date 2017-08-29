@@ -389,7 +389,18 @@ Display average rating:
 <%= post.weighted_average.round(2) %> / 5
 <!-- 3.5 / 5 -->
 ```
+## updated_at at Votable model
 
+You can control whether `updated_at` field of votable model will be touched or
+not by passing `cacheable_strategy` option to `acts_as_votable` method.
+
+By default, `update_attributes` strategy is used. Pass `:update_columns` as
+`cacheable_strategy` if you don't want to touch model's `updated_at` column.
+```ruby
+class Post < ActiveRecord::Base
+  acts_as_votable cacheable_strategy: :update_columns
+end
+```
 
 
 ## Testing

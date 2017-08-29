@@ -82,6 +82,8 @@ ActiveRecord::Schema.define(version: 1) do
     t.integer :cached_scoped_weighted_total
     t.integer :cached_scoped_weighted_score
     t.float :cached_scoped_weighted_average
+
+    t.timestamps
   end
 
 end

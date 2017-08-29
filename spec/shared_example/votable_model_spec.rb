@@ -152,15 +152,11 @@ shared_examples "a votable_model" do
 
     before(:each) do
       clean_database
-      voter = Voter.new(name: "i can vote!")
-      voter.save
-
-      votable = Votable.new(name: "a voting model without a cache")
-      votable.save
-
-      votable_cache = VotableCache.new(name: "voting model with cache")
-      votable_cache.save
     end
+
+    let!(:voter) { Voter.create(name: "i can vote!") }
+    let!(:votable) { Votable.create(name: "a voting model without a cache") }
+    let!(:votable_cache) { VotableCache.create(name: "voting model with cache") }
 
     it "should not update cached votes_for if there are no columns" do
       votable.vote_by voter: voter
@@ -378,6 +374,47 @@ shared_examples "a votable_model" do
       expect(votable_cache.cached_votes_down).to eq(0)
     end
 
+    describe 'with acts_as_votable_options' do
+      describe 'cacheable_strategy' do
+        let(:updated_at) { 3.days.ago }
+        before { votable_cache.vote_by voter: voter }
+
+        context 'update_attributes' do
+          class VotableCacheUpdateAttributes < VotableCache
+            acts_as_votable cacheable_strategy: :update_attributes
+          end
+          let!(:votable_cache) do
+            VotableCacheUpdateAttributes.create(
+              name: "voting model with cache",
+              updated_at: updated_at
+            )
+          end
+
+          it do
+            expect(votable_cache.cached_votes_total).to eq(1)
+            expect(votable_cache.updated_at).to_not eq updated_at
+          end
+        end
+
+        context 'update_columns' do
+          class VotableCacheUpdateColumns < VotableCache
+            acts_as_votable cacheable_strategy: :update_columns
+          end
+
+          let!(:votable_cache) do
+            VotableCacheUpdateColumns.create(
+              name: "voting model with cache",
+              updated_at: updated_at
+            )
+          end
+
+          it do
+            expect(votable_cache.cached_votes_total).to eq(1)
+            expect(votable_cache.updated_at).to eq updated_at
+          end
+        end
+      end
+    end
   end
 
   describe "with scoped cached votes_for" do
