@@ -8,8 +8,13 @@ rvm:
 env:
   - "RAILS_VERSION=3.2.22.5"
   - "RAILS_VERSION=4.2.9"
+  - "RAILS_VERSION=5.1.3"
 matrix:
   exclude:
+    - rvm: 2.0.0
+      env: "RAILS_VERSION=5.1.3"
+    - rvm: 2.1.9
+      env: "RAILS_VERSION=5.1.3"
     - rvm: 2.0.0
       env: "RAILS_VERSION=4.2.9"
     - rvm: 2.4.1
