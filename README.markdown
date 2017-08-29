@@ -391,7 +391,7 @@ Display average rating:
 ```
 ## updated_at at Votable model
 
-You can control whether `updated_at` field of votable model will be touched or
+You can control whether `updated_at` column of votable model will be touched or
 not by passing `cacheable_strategy` option to `acts_as_votable` method.
 
 By default, `update_attributes` strategy is used. Pass `:update_columns` as
