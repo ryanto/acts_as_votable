@@ -11,6 +11,11 @@ Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
 
 SimpleCov.start
 
+RSpec.configure do |config|
+  config.filter_run focus: true
+  config.run_all_when_everything_filtered = true
+end
+
 ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
 
 ActiveRecord::Schema.define(version: 1) do
