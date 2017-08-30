@@ -23,10 +23,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_development_dependency "rspec"
-  if RUBY_VERSION >= '2.1'
-    s.add_development_dependency "pry-byebug"
-    s.add_development_dependency "guard-rspec"
-  end
   s.add_development_dependency "sqlite3", "~> 1.3.9"
   s.add_development_dependency "rubocop"
   s.add_development_dependency "simplecov"

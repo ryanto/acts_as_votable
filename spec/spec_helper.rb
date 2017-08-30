@@ -4,19 +4,11 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), "..", "lib")
 require "sqlite3"
 require "simplecov"
 require "acts_as_votable"
-if RUBY_VERSION >= '2.1'
-  require "pry-byebug"
-end
 
 Dir["./spec/shared_example/**/*.rb"].sort.each { |f| require f }
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
 
 SimpleCov.start
-
-RSpec.configure do |config|
-  config.filter_run focus: true
-  config.run_all_when_everything_filtered = true
-end
 
 ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
 
