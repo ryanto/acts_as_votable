@@ -375,12 +375,12 @@ shared_examples "a votable_model" do
     end
 
     unless (::ActiveRecord::VERSION::MAJOR == 3) && (::ActiveRecord::VERSION::MINOR != 0)
-      describe 'with acts_as_votable_options' do
-        describe 'cacheable_strategy' do
+      describe "with acts_as_votable_options" do
+        describe "cacheable_strategy" do
           let(:updated_at) { 3.days.ago }
           before { votable_cache.vote_by voter: voter }
 
-          context 'update_attributes' do
+          context "update_attributes" do
             class VotableCacheUpdateAttributes < VotableCache
               acts_as_votable cacheable_strategy: :update_attributes
             end
@@ -397,7 +397,7 @@ shared_examples "a votable_model" do
             end
           end
 
-          context 'update_columns' do
+          context "update_columns" do
             class VotableCacheUpdateColumns < VotableCache
               acts_as_votable cacheable_strategy: :update_columns
             end

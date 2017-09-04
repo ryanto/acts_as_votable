@@ -1,7 +1,9 @@
-require 'acts_as_votable'
-require 'spec_helper'
+# frozen_string_literal: true
 
-require 'rails/generators'
+require "acts_as_votable"
+require "spec_helper"
+
+require "rails/generators"
 require "generators/acts_as_votable/migration/migration_generator"
 
 module ActsAsVotable

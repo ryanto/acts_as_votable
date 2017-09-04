@@ -18,7 +18,7 @@ module ActsAsVotable
         end
 
         define_method :acts_as_votable_options do
-          self.class.instance_variable_get('@acts_as_votable_options')
+          self.class.instance_variable_get("@acts_as_votable_options")
         end
 
         class_eval do

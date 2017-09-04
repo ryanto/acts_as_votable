@@ -40,7 +40,7 @@ module ActsAsVotable
     end
 
     def rails5?
-      Rails.version.start_with? '5'
+      Rails.version.start_with? "5"
     end
   end
 end
