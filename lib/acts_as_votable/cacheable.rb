@@ -104,10 +104,12 @@ module ActsAsVotable
         end
       end
 
-      if (::ActiveRecord::VERSION::MAJOR == 3) && (::ActiveRecord::VERSION::MINOR != 0)
-        self.update_attributes(updates, without_protection: true) if updates.size > 0
-      else
-        self.update_attributes(updates) if updates.size > 0
+      if updates.size > 0
+        if (::ActiveRecord::VERSION::MAJOR == 3) && (::ActiveRecord::VERSION::MINOR != 0)
+          self.update_attributes(updates, without_protection: true)
+        else
+          self.send(acts_as_votable_options[:cacheable_strategy], updates)
+        end
       end
     end
 
