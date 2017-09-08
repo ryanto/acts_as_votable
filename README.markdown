@@ -16,9 +16,9 @@ The main goals of this gem are:
 
 ### Supported Ruby and Rails versions
 
-* Ruby 2.0.0, 2.1.0, 2.2.0, 2.3.0 and 2.4.0
-* Rails 3.0, 3.1, 3.2
+* Ruby 2.2.0, 2.3.0 and 2.4.0
 * Rails 4.0, 4.1+
+* Rails 5.0
 
 ### Install
 
