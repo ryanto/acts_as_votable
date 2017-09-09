@@ -4,6 +4,7 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), "..", "lib")
 require "sqlite3"
 require "simplecov"
 require "acts_as_votable"
+require "factory_girl"
 
 Dir["./spec/shared_example/**/*.rb"].sort.each { |f| require f }
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
