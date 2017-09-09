@@ -137,4 +137,3 @@ class ABoringClass
     "hello world"
   end
 end
-
