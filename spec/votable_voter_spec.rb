@@ -1,23 +1,20 @@
 # frozen_string_literal: true
 
-require "acts_as_votable"
 require "spec_helper"
 
 describe VotableVoter do
   it_behaves_like "a votable_model" do
-    # TODO Replace with factories
-    let (:voter) { VotableVoter.create(name: "i can vote!") }
-    let (:voter2) { VotableVoter.create(name: "a new person") }
-    let (:voter3) { Voter.create(name: "another person") }
-    let (:votable) { VotableVoter.create(name: "a voting model") }
-    let (:votable_cache) { VotableCache.create(name: "voting model with cache") }
+    let (:voter)         { create(:votable_voter, name: "i can vote!") }
+    let (:voter2)        { create(:votable_voter, name: "a new person") }
+    let (:voter3)        { create(:voter, name: "another person") }
+    let (:votable)       { create(:votable_voter, name: "a voting model") }
+    let (:votable_cache) { create(:votable_cache, name: "voting model with cache") }
   end
 
   it_behaves_like "a voter_model" do
-    # TODO Replace with factories
-    let (:voter) { VotableVoter.create(name: "i can vote!") }
-    let (:voter2) { VotableVoter.create(name: "a new person") }
-    let (:votable) { VotableVoter.create(name: "a voting model") }
-    let (:votable2) { VotableVoter.create(name: "a 2nd voting model") }
+    let (:voter)    { create(:votable_voter, name: "i can vote!") }
+    let (:voter2)   { create(:votable_voter, name: "a new person") }
+    let (:votable)  { create(:votable_voter, name: "a voting model") }
+    let (:votable2) { create(:votable_voter, name: "a 2nd voting model") }
   end
 end
