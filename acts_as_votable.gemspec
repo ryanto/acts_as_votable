@@ -22,10 +22,10 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_development_dependency "rspec"
-  s.add_development_dependency "sqlite3", "~> 1.3.9"
-  s.add_development_dependency "rubocop"
-  s.add_development_dependency "simplecov"
-  s.add_development_dependency "appraisal"
-  s.add_development_dependency "factory_girl"
+  s.add_development_dependency "rspec", "~> 3.6"
+  s.add_development_dependency "sqlite3", "~> 1.3"
+  s.add_development_dependency "rubocop", "~> 0.49.1"
+  s.add_development_dependency "simplecov", "~> 0.15.0"
+  s.add_development_dependency "appraisal", "~> 2.2"
+  s.add_development_dependency "factory_girl", "~> 4.8"
 end
