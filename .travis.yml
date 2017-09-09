@@ -1,16 +1,13 @@
 language: ruby
+
+cache: bundler
+
 rvm:
-  - 2.0.0
-  - 2.1.9
   - 2.2.7
   - 2.3.4
   - 2.4.1
-env:
-  - "RAILS_VERSION=3.2.22.5"
-  - "RAILS_VERSION=4.2.9"
-matrix:
-  exclude:
-    - rvm: 2.0.0
-      env: "RAILS_VERSION=4.2.9"
-    - rvm: 2.4.1
-      env: "RAILS_VERSION=3.2.22.5"
+
+gemfile:
+  - gemfiles/rails_4.gemfile
+  - gemfiles/rails_5.gemfile
+
