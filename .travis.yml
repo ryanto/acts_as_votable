@@ -10,4 +10,5 @@ rvm:
 gemfile:
   - gemfiles/rails_4.gemfile
   - gemfiles/rails_5.gemfile
+  - gemfiles/rails_5_1.gemfile
 

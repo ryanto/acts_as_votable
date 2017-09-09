@@ -4,6 +4,7 @@ $LOAD_PATH << File.join(File.dirname(__FILE__), "..", "lib")
 require "sqlite3"
 require "simplecov"
 require "acts_as_votable"
+require "factory_girl"
 
 Dir["./spec/shared_example/**/*.rb"].sort.each { |f| require f }
 Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
@@ -111,7 +112,7 @@ class StiNotVotable < ActiveRecord::Base
   validates_presence_of :name
 end
 
-class VotableChildOfStiNotVotable < StiNotVotable
+class ChildOfStiNotVotable < StiNotVotable
   acts_as_votable
 end
 
@@ -123,16 +124,16 @@ class VotableCache < ActiveRecord::Base
   validates_presence_of :name
 end
 
+class VotableCacheUpdateAttributes < VotableCache
+  acts_as_votable cacheable_strategy: :update_attributes
+end
+
+class VotableCacheUpdateColumns < VotableCache
+  acts_as_votable cacheable_strategy: :update_columns
+end
+
 class ABoringClass
   def self.hw
     "hello world"
-  end
-end
-
-
-def clean_database
-  models = [ActsAsVotable::Vote, Voter, NotVoter, Votable, NotVotable, VotableCache]
-  models.each do |model|
-    ActiveRecord::Base.connection.execute "DELETE FROM #{model.table_name}"
   end
 end

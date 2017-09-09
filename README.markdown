@@ -18,7 +18,7 @@ The main goals of this gem are:
 
 * Ruby 2.2.0, 2.3.0 and 2.4.0
 * Rails 4.0, 4.1+
-* Rails 5.0
+* Rails 5.0, 5.1
 
 ### Install
 
