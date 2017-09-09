@@ -104,13 +104,7 @@ module ActsAsVotable
         end
       end
 
-      if updates.size > 0
-        if (::ActiveRecord::VERSION::MAJOR == 3) && (::ActiveRecord::VERSION::MINOR != 0)
-          self.update_attributes(updates, without_protection: true)
-        else
-          self.send(acts_as_votable_options[:cacheable_strategy], updates)
-        end
-      end
+      self.send(acts_as_votable_options[:cacheable_strategy], updates) if updates.size > 0
     end
 
     # counting

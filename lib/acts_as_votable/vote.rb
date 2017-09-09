@@ -6,7 +6,7 @@ module ActsAsVotable
   class Vote < ::ActiveRecord::Base
     include Helpers::Words
 
-    if defined?(ProtectedAttributes) || ::ActiveRecord::VERSION::MAJOR < 4
+    if defined?(ProtectedAttributes)
       attr_accessible :votable_id, :votable_type,
         :voter_id, :voter_type,
         :votable, :voter,
