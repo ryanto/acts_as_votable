@@ -132,7 +132,7 @@ shared_examples "a votable_model" do
   end
 
   it "should be contained to instances" do
-    votable2 = Votable.new(name: "2nd votable")
+    votable2 = build(:votable, name: "2nd votable")
     votable2.save
 
     votable.vote_by voter: voter, vote: false
@@ -149,14 +149,9 @@ shared_examples "a votable_model" do
   end
 
   describe "with cached votes_for" do
-
-    before(:each) do
-      clean_database
-    end
-
-    let!(:voter) { Voter.create(name: "i can vote!") }
-    let!(:votable) { Votable.create(name: "a voting model without a cache") }
-    let!(:votable_cache) { VotableCache.create(name: "voting model with cache") }
+    let!(:voter)         { create(:voter, name: "i can vote!") }
+    let!(:votable)       { create(:votable, name: "a voting model without a cache") }
+    let!(:votable_cache) { create(:votable_cache, name: "voting model with cache") }
 
     it "should not update cached votes_for if there are no columns" do
       votable.vote_by voter: voter
@@ -374,45 +369,27 @@ shared_examples "a votable_model" do
       expect(votable_cache.cached_votes_down).to eq(0)
     end
 
-    unless (::ActiveRecord::VERSION::MAJOR == 3) && (::ActiveRecord::VERSION::MINOR != 0)
-      describe "with acts_as_votable_options" do
-        describe "cacheable_strategy" do
-          let(:updated_at) { 3.days.ago }
-          before { votable_cache.vote_by voter: voter }
+    describe "with acts_as_votable_options" do
+      describe "cacheable_strategy" do
+        let(:updated_at) { 3.days.ago }
 
-          context "update_attributes" do
-            class VotableCacheUpdateAttributes < VotableCache
-              acts_as_votable cacheable_strategy: :update_attributes
-            end
-            let!(:votable_cache) do
-              VotableCacheUpdateAttributes.create(
-                name: "voting model with cache",
-                updated_at: updated_at
-              )
-            end
+        before { votable_cache.vote_by voter: voter }
 
-            it do
-              expect(votable_cache.cached_votes_total).to eq(1)
-              expect(votable_cache.updated_at).to_not eq updated_at
-            end
+        context "update_attributes" do
+          let(:votable_cache) { create(:votable_cache_update_attributes, name: "voting model with cache", updated_at: updated_at) }
+
+          it do
+            expect(votable_cache.cached_votes_total).to eq(1)
+            expect(votable_cache.updated_at).to_not eq updated_at
           end
+        end
 
-          context "update_columns" do
-            class VotableCacheUpdateColumns < VotableCache
-              acts_as_votable cacheable_strategy: :update_columns
-            end
+        context "update_columns" do
+          let(:votable_cache) { create(:votable_cache_update_columns, name: "voting model with cache", updated_at: updated_at) }
 
-            let!(:votable_cache) do
-              VotableCacheUpdateColumns.create(
-                name: "voting model with cache",
-                updated_at: updated_at
-              )
-            end
-
-            it do
-              expect(votable_cache.cached_votes_total).to eq(1)
-              expect(votable_cache.updated_at).to eq updated_at
-            end
+          it do
+            expect(votable_cache.cached_votes_total).to eq(1)
+            expect(votable_cache.updated_at).to eq updated_at
           end
         end
       end
@@ -509,11 +486,12 @@ shared_examples "a votable_model" do
   end
 
   describe "sti models" do
-    it "should be able to vote on a votable child of a non votable sti model" do
-      votable = VotableChildOfStiNotVotable.create(name: "sti child")
+    let(:child_sti_not_votable) { create(:child_of_sti_not_votable, name: "sti child") }
+    let(:child_sti_votable)     { create(:child_of_sti_votable, name: "sti child") }
 
-      votable.vote_by voter: voter, vote: "yes"
-      expect(votable.votes_for.size).to eq(1)
+    it "should be able to vote on a votable child of a non votable sti model" do
+      child_sti_not_votable.vote_by voter: voter, vote: "yes"
+      expect(child_sti_not_votable.votes_for.size).to eq(1)
     end
 
     it "should not be able to vote on a parent non votable" do
@@ -521,10 +499,8 @@ shared_examples "a votable_model" do
     end
 
     it "should be able to vote on a child when its parent is votable" do
-      votable = ChildOfStiVotable.create(name: "sti child")
-
-      votable.vote_by voter: voter, vote: "yes"
-      expect(votable.votes_for.size).to eq(1)
+      child_sti_votable.vote_by voter: voter, vote: "yes"
+      expect(child_sti_votable.votes_for.size).to eq(1)
     end
   end
 end
