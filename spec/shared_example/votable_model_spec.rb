@@ -509,7 +509,6 @@ shared_examples "a votable_model" do
   end
 
   describe "sti models" do
-
     it "should be able to vote on a votable child of a non votable sti model" do
       votable = VotableChildOfStiNotVotable.create(name: "sti child")
 

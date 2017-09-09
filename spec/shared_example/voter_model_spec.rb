@@ -202,33 +202,33 @@ shared_examples "a voter_model" do
   end
 
   describe "#find_down_voted_items" do
-   it "does not return objects that a user has upvoted for" do
-     votable.vote_by voter: voter
-     expect(voter.find_down_voted_items.size).to eq(0)
-   end
+    it "does not return objects that a user has upvoted for" do
+      votable.vote_by voter: voter
+      expect(voter.find_down_voted_items.size).to eq(0)
+    end
 
-   it "does not return objects that a user has upvoted for, using scope" do
-     votable.vote_by voter: voter, vote_scope: "rank"
-     expect(voter.find_down_voted_items(vote_scope: "rank").size).to eq(0)
-   end
+    it "does not return objects that a user has upvoted for, using scope" do
+      votable.vote_by voter: voter, vote_scope: "rank"
+      expect(voter.find_down_voted_items(vote_scope: "rank").size).to eq(0)
+    end
 
-   it "returns objects that a user has downvoted for" do
-     votable.vote_down voter
-     votable2.vote_down voter2
-     expect(voter.find_down_voted_items).to include votable
-     expect(voter.find_down_voted_items.size).to eq(1)
-     expect(voter.find_disliked_items).to include votable
-     expect(voter.find_disliked_items.size).to eq(1)
-   end
+    it "returns objects that a user has downvoted for" do
+      votable.vote_down voter
+      votable2.vote_down voter2
+      expect(voter.find_down_voted_items).to include votable
+      expect(voter.find_down_voted_items.size).to eq(1)
+      expect(voter.find_disliked_items).to include votable
+      expect(voter.find_disliked_items.size).to eq(1)
+    end
 
-   it "returns objects that a user has downvoted for, using scope" do
-     votable.vote_down voter, vote_scope: "rank"
-     votable2.vote_down voter2, vote_scope: "rank"
-     expect(voter.find_down_voted_items(vote_scope: "rank")).to include votable
-     expect(voter.find_down_voted_items(vote_scope: "rank").size).to eq(1)
-   end
+    it "returns objects that a user has downvoted for, using scope" do
+      votable.vote_down voter, vote_scope: "rank"
+      votable2.vote_down voter2, vote_scope: "rank"
+      expect(voter.find_down_voted_items(vote_scope: "rank")).to include votable
+      expect(voter.find_down_voted_items(vote_scope: "rank").size).to eq(1)
+    end
 
- end
+  end
 
   describe "#get_voted" do
     subject { voter.get_voted(votable.class) }
@@ -277,5 +277,4 @@ shared_examples "a voter_model" do
       expect(subject.size).to eq(1)
     end
   end
-
 end
