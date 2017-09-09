@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "acts_as_votable"
 require "spec_helper"
 
 describe ActsAsVotable::Votable do
@@ -13,11 +12,10 @@ describe ActsAsVotable::Votable do
   end
 
   it_behaves_like "a votable_model" do
-    # TODO Replace with factories
-    let (:voter) { Voter.create(name: "i can vote!") }
-    let (:voter2) { Voter.create(name: "a new person") }
-    let (:voter3) { Voter.create(name: "another person") }
-    let (:votable) { Votable.create(name: "a voting model") }
-    let (:votable_cache) { VotableCache.create(name: "voting model with cache") }
+    let (:voter)         { create(:voter, name: "i can vote!") }
+    let (:voter2)        { create(:voter, name: "a new person") }
+    let (:voter3)        { create(:voter, name: "another person") }
+    let (:votable)       { create(:votable, name: "a voting model") }
+    let (:votable_cache) { create(:votable_cache, name: "voting model with cache") }
   end
 end
