@@ -18,8 +18,8 @@ module ActsAsVotable
 
     scope :up, -> { where(vote_flag: true) }
     scope :down, -> { where(vote_flag: false) }
-    scope :for_type, ->(klass) { where(votable_type: klass) }
-    scope :by_type, ->(klass) { where(voter_type: klass) }
+    scope :for_type, ->(klass) { where(votable_type: klass.to_s) }
+    scope :by_type, ->(klass) { where(voter_type: klass.to_s) }
 
     validates_presence_of :votable_id
     validates_presence_of :voter_id
