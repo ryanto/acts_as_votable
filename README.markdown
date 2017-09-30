@@ -96,10 +96,12 @@ Revisiting the previous example of code.
 
 # tally them up!
 @post.votes_for.size # => 5
+@post.weighted_total => 5
 @post.get_likes.size # => 3
 @post.get_upvotes.size # => 3
 @post.get_dislikes.size # => 2
 @post.get_downvotes.size # => 2
+@post.weighted_score => 1
 ```
 
 Active Record scopes are provided to make life easier.
