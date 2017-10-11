@@ -163,6 +163,22 @@ shared_examples "a votable_model" do
       expect(votable_cache.cached_votes_total).to eq(1)
     end
 
+    describe "with ActiveRecord::StaleObjectError" do
+      before(:each) do
+        allow_any_instance_of(ActsAsVotable::Cacheable)
+          .to(receive(:update_cached_votes)
+          .and_raise(ActiveRecord::StaleObjectError))
+      end
+
+      it "should rollback vote if cache update fails" do
+        votable_cache.cached_votes_total = 50
+
+        expect { votable_cache.vote_by voter: voter }.to raise_error ActiveRecord::StaleObjectError
+        expect(votable_cache.cached_votes_total).to eq(50)
+        expect(votable_cache.voted_on_by?(voter)).to be false
+      end
+    end
+
     it "should update cached total votes_for when a vote up is removed" do
       votable_cache.vote_by voter: voter, vote: "true"
       votable_cache.unvote voter: voter
