@@ -6,6 +6,13 @@ module ActsAsVotable
   class Vote < ::ActiveRecord::Base
     include Helpers::Words
 
+    after_save :update_cache
+    after_destroy :update_cache
+
+    def update_cache
+      self.votable.update_cached_votes self.vote_scope
+    end
+
     if defined?(ProtectedAttributes)
       attr_accessible :votable_id, :votable_type,
         :voter_id, :voter_type,

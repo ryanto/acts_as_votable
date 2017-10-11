@@ -163,16 +163,32 @@ shared_examples "a votable_model" do
       expect(votable_cache.cached_votes_total).to eq(1)
     end
 
+    describe "with ActiveRecord::StaleObjectError" do
+      before(:each) do
+        allow_any_instance_of(ActsAsVotable::Cacheable)
+          .to(receive(:update_cached_votes)
+          .and_raise(ActiveRecord::StaleObjectError))
+      end
+
+      it "should rollback vote if cache update fails" do
+        votable_cache.cached_votes_total = 50
+
+        expect { votable_cache.vote_by voter: voter }.to raise_error ActiveRecord::StaleObjectError
+        expect(votable_cache.cached_votes_total).to eq(50)
+        expect(votable_cache.voted_on_by?(voter)).to be false
+      end
+    end
+
     it "should update cached total votes_for when a vote up is removed" do
       votable_cache.vote_by voter: voter, vote: "true"
       votable_cache.unvote voter: voter
-      expect(votable_cache.cached_votes_total).to eq(0)
+      expect(votable_cache.reload.cached_votes_total).to eq(0)
     end
 
     it "should update cached total votes_for when a vote down is removed" do
       votable_cache.vote_by voter: voter, vote: "false"
       votable_cache.unvote voter: voter
-      expect(votable_cache.cached_votes_total).to eq(0)
+      expect(votable_cache.reload.cached_votes_total).to eq(0)
     end
 
     it "should update cached score votes_for if there is a score column" do
@@ -182,21 +198,21 @@ shared_examples "a votable_model" do
       votable_cache.vote_by voter: voter2, vote: "false"
       expect(votable_cache.cached_votes_score).to eq(0)
       votable_cache.vote_by voter: voter, vote: "false"
-      expect(votable_cache.cached_votes_score).to eq(-2)
+      expect(votable_cache.reload.cached_votes_score).to eq(-2)
     end
 
     it "should update cached score votes_for when a vote up is removed" do
       votable_cache.vote_by voter: voter, vote: "true"
       expect(votable_cache.cached_votes_score).to eq(1)
       votable_cache.unvote voter: voter
-      expect(votable_cache.cached_votes_score).to eq(0)
+      expect(votable_cache.reload.cached_votes_score).to eq(0)
     end
 
     it "should update cached score votes_for when a vote down is removed" do
       votable_cache.vote_by voter: voter, vote: "false"
       expect(votable_cache.cached_votes_score).to eq(-1)
       votable_cache.unvote voter: voter
-      expect(votable_cache.cached_votes_score).to eq(0)
+      expect(votable_cache.reload.cached_votes_score).to eq(0)
     end
 
     it "should update cached weighted total if there is a weighted total column" do
@@ -211,14 +227,14 @@ shared_examples "a votable_model" do
       votable_cache.vote_by voter: voter, vote: "true", vote_weight: 3
       expect(votable_cache.cached_weighted_total).to eq(3)
       votable_cache.unvote voter: voter
-      expect(votable_cache.cached_weighted_total).to eq(0)
+      expect(votable_cache.reload.cached_weighted_total).to eq(0)
     end
 
     it "should update cached weighted total votes_for when a vote down is removed" do
       votable_cache.vote_by voter: voter, vote: "false", vote_weight: 4
       expect(votable_cache.cached_weighted_total).to eq(4)
       votable_cache.unvote voter: voter
-      expect(votable_cache.cached_weighted_total).to eq(0)
+      expect(votable_cache.reload.cached_weighted_total).to eq(0)
     end
 
     it "should update cached weighted score if there is a weighted score column" do
@@ -229,7 +245,7 @@ shared_examples "a votable_model" do
       expect(votable_cache.cached_weighted_score).to eq(-2)
       # voter changes her vote from 3 to 5
       votable_cache.vote_by voter: voter, vote_weight: 5
-      expect(votable_cache.cached_weighted_score).to eq(0)
+      expect(votable_cache.reload.cached_weighted_score).to eq(0)
       votable_cache.vote_by voter: voter3, vote_weight: 4
       expect(votable_cache.cached_weighted_score).to eq(4)
     end
@@ -238,14 +254,14 @@ shared_examples "a votable_model" do
       votable_cache.vote_by voter: voter, vote: "true", vote_weight: 3
       expect(votable_cache.cached_weighted_score).to eq(3)
       votable_cache.unvote voter: voter
-      expect(votable_cache.cached_weighted_score).to eq(0)
+      expect(votable_cache.reload.cached_weighted_score).to eq(0)
     end
 
     it "should update cached weighted score votes_for when a vote down is removed" do
       votable_cache.vote_by voter: voter, vote: "false", vote_weight: 4
       expect(votable_cache.cached_weighted_score).to eq(-4)
       votable_cache.unvote voter: voter
-      expect(votable_cache.cached_weighted_score).to eq(0)
+      expect(votable_cache.reload.cached_weighted_score).to eq(0)
     end
 
     it "should update cached weighted average if there is a weighted average column" do
@@ -256,7 +272,7 @@ shared_examples "a votable_model" do
       expect(votable_cache.cached_weighted_average).to eq(4.0)
       # voter changes her vote from 5 to 4
       votable_cache.vote_by voter: voter, vote: "true", vote_weight: 4
-      expect(votable_cache.cached_weighted_average).to eq(3.5)
+      expect(votable_cache.reload.cached_weighted_average).to eq(3.5)
       votable_cache.vote_by voter: voter3, vote: "true", vote_weight: 5
       expect(votable_cache.cached_weighted_average).to eq(4.0)
     end
@@ -266,7 +282,7 @@ shared_examples "a votable_model" do
       votable_cache.vote_by voter: voter2, vote: "true", vote_weight: 3
       expect(votable_cache.cached_weighted_average).to eq(4)
       votable_cache.unvote voter: voter
-      expect(votable_cache.cached_weighted_average).to eq(3)
+      expect(votable_cache.reload.cached_weighted_average).to eq(3)
     end
 
     it "should update cached up votes_for if there is an up vote column" do
@@ -285,13 +301,13 @@ shared_examples "a votable_model" do
     it "should update cached up votes_for when a vote up is removed" do
       votable_cache.vote_by voter: voter, vote: "true"
       votable_cache.unvote voter: voter
-      expect(votable_cache.cached_votes_up).to eq(0)
+      expect(votable_cache.reload.cached_votes_up).to eq(0)
     end
 
     it "should update cached down votes_for when a vote down is removed" do
       votable_cache.vote_by voter: voter, vote: "false"
       votable_cache.unvote voter: voter
-      expect(votable_cache.cached_votes_down).to eq(0)
+      expect(votable_cache.reload.cached_votes_down).to eq(0)
     end
 
     it "should select from cached total votes_for if there a total column" do
@@ -349,13 +365,13 @@ shared_examples "a votable_model" do
     it "should update cached total votes_for when a scoped vote down is removed" do
       votable_cache.vote_by voter: voter, vote: "true", vote_scope: "rank"
       votable_cache.unvote voter: voter, vote_scope: "rank"
-      expect(votable_cache.cached_votes_total).to eq(0)
+      expect(votable_cache.reload.cached_votes_total).to eq(0)
     end
 
     it "should update cached up votes_for when a scoped vote down is removed" do
       votable_cache.vote_by voter: voter, vote: "true", vote_scope: "rank"
       votable_cache.unvote voter: voter, vote_scope: "rank"
-      expect(votable_cache.cached_votes_up).to eq(0)
+      expect(votable_cache.reload.cached_votes_up).to eq(0)
     end
 
     it "should update cached down votes_for when downvoting under a scope" do
@@ -366,7 +382,7 @@ shared_examples "a votable_model" do
     it "should update cached down votes_for when a scoped vote down is removed" do
       votable_cache.vote_by voter: voter, vote: "false", vote_scope: "rank"
       votable_cache.unvote voter: voter, vote_scope: "rank"
-      expect(votable_cache.cached_votes_down).to eq(0)
+      expect(votable_cache.reload.cached_votes_down).to eq(0)
     end
 
     describe "with acts_as_votable_options" do
@@ -407,13 +423,13 @@ shared_examples "a votable_model" do
     it "should update cached total votes_for when a vote up is removed" do
       votable_cache.vote_by voter: voter, vote: "true", vote_scope: "test"
       votable_cache.unvote voter: voter, vote_scope: "test"
-      expect(votable_cache.cached_scoped_test_votes_total).to eq(0)
+      expect(votable_cache.reload.cached_scoped_test_votes_total).to eq(0)
     end
 
     it "should update cached total votes_for when a vote down is removed" do
       votable_cache.vote_by voter: voter, vote: "false", vote_scope: "test"
       votable_cache.unvote voter: voter, vote_scope: "test"
-      expect(votable_cache.cached_scoped_test_votes_total).to eq(0)
+      expect(votable_cache.reload.cached_scoped_test_votes_total).to eq(0)
     end
 
     it "should update cached score votes_for if there is a score column" do
@@ -423,21 +439,21 @@ shared_examples "a votable_model" do
       votable_cache.vote_by voter: voter2, vote: "false", vote_scope: "test"
       expect(votable_cache.cached_scoped_test_votes_score).to eq(0)
       votable_cache.vote_by voter: voter, vote: "false", vote_scope: "test"
-      expect(votable_cache.cached_scoped_test_votes_score).to eq(-2)
+      expect(votable_cache.reload.cached_scoped_test_votes_score).to eq(-2)
     end
 
     it "should update cached score votes_for when a vote up is removed" do
       votable_cache.vote_by voter: voter, vote: "true", vote_scope: "test"
       expect(votable_cache.cached_scoped_test_votes_score).to eq(1)
       votable_cache.unvote voter: voter, vote_scope: "test"
-      expect(votable_cache.cached_scoped_test_votes_score).to eq(0)
+      expect(votable_cache.reload.cached_scoped_test_votes_score).to eq(0)
     end
 
     it "should update cached score votes_for when a vote down is removed" do
       votable_cache.vote_by voter: voter, vote: "false", vote_scope: "test"
       expect(votable_cache.cached_scoped_test_votes_score).to eq(-1)
       votable_cache.unvote voter: voter, vote_scope: "test"
-      expect(votable_cache.cached_scoped_test_votes_score).to eq(0)
+      expect(votable_cache.reload.cached_scoped_test_votes_score).to eq(0)
     end
 
     it "should update cached up votes_for if there is an up vote column" do
@@ -456,13 +472,13 @@ shared_examples "a votable_model" do
     it "should update cached up votes_for when a vote up is removed" do
       votable_cache.vote_by voter: voter, vote: "true", vote_scope: "test"
       votable_cache.unvote voter: voter, vote_scope: "test"
-      expect(votable_cache.cached_scoped_test_votes_up).to eq(0)
+      expect(votable_cache.reload.cached_scoped_test_votes_up).to eq(0)
     end
 
     it "should update cached down votes_for when a vote down is removed" do
       votable_cache.vote_by voter: voter, vote: "false", vote_scope: "test"
       votable_cache.unvote voter: voter, vote_scope: "test"
-      expect(votable_cache.cached_scoped_test_votes_down).to eq(0)
+      expect(votable_cache.reload.cached_scoped_test_votes_down).to eq(0)
     end
 
     it "should select from cached total votes_for if there a total column" do

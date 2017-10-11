@@ -102,7 +102,6 @@ module ActsAsVotable
 
       if vote.save
         self.vote_registered = true if last_update != vote.updated_at
-        update_cached_votes options[:vote_scope]
         return true
       else
         self.vote_registered = false
@@ -116,7 +115,6 @@ module ActsAsVotable
 
       return true if votes.size == 0
       votes.each(&:destroy)
-      update_cached_votes args[:vote_scope]
       self.vote_registered = false if votes_for.count == 0
       return true
     end
