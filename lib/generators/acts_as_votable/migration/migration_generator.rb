@@ -26,7 +26,7 @@ module ActsAsVotable
 
     def create_migration_file
       if self.class.orm_has_migration?
-        migration_template "migration.rb", "db/migrate/acts_as_votable_migration.rb", migration_version: migration_version
+        migration_template "migration.erb", "db/migrate/acts_as_votable_migration.rb", migration_version: migration_version
       end
     end
 
