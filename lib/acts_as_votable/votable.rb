@@ -77,9 +77,7 @@ module ActsAsVotable
       end
 
       # find the vote
-      votes = find_votes_for(voter_id: options[:voter].id,
-        vote_scope: options[:vote_scope],
-        voter_type: options[:voter].class.base_class.name)
+      votes = find_votes_by(options[:voter], options[:vote_scope])
 
       if votes.count == (0) || options[:duplicate]
         # this voter has never voted
@@ -112,7 +110,7 @@ module ActsAsVotable
 
     def unvote(args = {})
       return false if args[:voter].nil?
-      votes = find_votes_for(voter_id: args[:voter].id, vote_scope: args[:vote_scope], voter_type: args[:voter].class.base_class.name)
+      votes = find_votes_by(args[:voter], args[:vote_scope])
 
       return true if votes.size == 0
       votes.each(&:destroy)
@@ -136,6 +134,12 @@ module ActsAsVotable
     # results
     def find_votes_for(extra_conditions = {})
       votes_for.where(extra_conditions)
+    end
+
+    def find_votes_by(voter, vote_scope)
+      find_votes_for(voter_id:   voter.id,
+                     vote_scope: vote_scope,
+                     voter_type: voter.class.base_class.name)
     end
 
     def get_up_votes(options = {})
