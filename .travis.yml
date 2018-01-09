@@ -8,6 +8,9 @@ rvm:
   - 2.4.1
   - 2.5.0
 
+before_install:
+  - gem update --system
+
 gemfile:
   - gemfiles/rails_4.gemfile
   - gemfiles/rails_5.gemfile
