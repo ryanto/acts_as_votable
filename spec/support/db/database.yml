@@ -1,0 +1,16 @@
+sqlite:
+  adapter: sqlite3
+  database: ":memory:"
+
+postgresql:
+  adapter: postgresql
+  username: postgres
+  password:
+  database: acts_as_votable_test
+
+mysql:
+  adapter: mysql2
+  host: localhost
+  username: root
+  password:
+  database: acts_as_votable_test
