@@ -106,6 +106,16 @@ shared_examples "a votable_model" do
     expect(votable.voted_on_by?(voter)).to be false
   end
 
+  it "should be voted up by a voter" do
+    votable.liked_by voter
+    expect(votable.voted_up_by?(voter)).to be true
+  end
+
+  it "should be voted down by a voter" do
+    votable.disliked_by voter
+    expect(votable.voted_down_by?(voter)).to be true
+  end
+
   it "should unvote a positive vote" do
     votable.vote_by voter: voter
     votable.unvote voter: voter
