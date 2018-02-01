@@ -312,34 +312,19 @@ to speed up @post we would use the following migration:
 
 ```ruby
 class AddCachedVotesToPosts < ActiveRecord::Migration
-  def self.up
-    add_column :posts, :cached_votes_total, :integer, :default => 0
-    add_column :posts, :cached_votes_score, :integer, :default => 0
-    add_column :posts, :cached_votes_up, :integer, :default => 0
-    add_column :posts, :cached_votes_down, :integer, :default => 0
-    add_column :posts, :cached_weighted_score, :integer, :default => 0
-    add_column :posts, :cached_weighted_total, :integer, :default => 0
-    add_column :posts, :cached_weighted_average, :float, :default => 0.0
-    add_index  :posts, :cached_votes_total
-    add_index  :posts, :cached_votes_score
-    add_index  :posts, :cached_votes_up
-    add_index  :posts, :cached_votes_down
-    add_index  :posts, :cached_weighted_score
-    add_index  :posts, :cached_weighted_total
-    add_index  :posts, :cached_weighted_average
+  def change
+    change_table :posts do |t|
+      t.integer :cached_votes_total, default: 0
+      t.integer :cached_votes_score, default: 0
+      t.integer :cached_votes_up, default: 0
+      t.integer :cached_votes_down, default: 0
+      t.integer :cached_weighted_score, default: 0
+      t.integer :cached_weighted_total, default: 0
+      t.float :cached_weighted_average, default: 0.0
+    end
 
     # Uncomment this line to force caching of existing votes
     # Post.find_each(&:update_cached_votes)
-  end
-
-  def self.down
-    remove_column :posts, :cached_votes_total
-    remove_column :posts, :cached_votes_score
-    remove_column :posts, :cached_votes_up
-    remove_column :posts, :cached_votes_down
-    remove_column :posts, :cached_weighted_score
-    remove_column :posts, :cached_weighted_total
-    remove_column :posts, :cached_weighted_average
   end
 end
 ```
@@ -348,36 +333,21 @@ If you have a scope for your vote, let's say `subscribe`, your migration will be
 
 ```ruby
 class AddCachedVotesToPosts < ActiveRecord::Migration
-  def self.up
-    add_column :posts, :cached_scoped_subscribe_votes_total, :integer, :default => 0
-    add_column :posts, :cached_scoped_subscribe_votes_score, :integer, :default => 0
-    add_column :posts, :cached_scoped_subscribe_votes_up, :integer, :default => 0
-    add_column :posts, :cached_scoped_subscribe_votes_down, :integer, :default => 0
-    add_column :posts, :cached_weighted_subscribe_score, :integer, :default => 0
-    add_column :posts, :cached_weighted_subscribe_total, :integer, :default => 0
-    add_column :posts, :cached_weighted_subscribe_average, :float, :default => 0.0
-    add_index  :posts, :cached_scoped_subscribe_votes_total
-    add_index  :posts, :cached_scoped_subscribe_votes_score
-    add_index  :posts, :cached_scoped_subscribe_votes_up
-    add_index  :posts, :cached_scoped_subscribe_votes_down
-    add_index  :posts, :cached_weighted_subscribe_score
-    add_index  :posts, :cached_weighted_subscribe_total
-    add_index  :posts, :cached_weighted_subscribe_average
-  end
-
-  def self.down
-    remove_column :posts, :cached_scoped_subscribe_votes_total
-    remove_column :posts, :cached_scoped_subscribe_votes_score
-    remove_column :posts, :cached_scoped_subscribe_votes_up
-    remove_column :posts, :cached_scoped_subscribe_votes_down
-    remove_column :posts, :cached_weighted_subscribe_score
-    remove_column :posts, :cached_weighted_subscribe_total
-    remove_column :posts, :cached_weighted_subscribe_average
+  def change
+    change_table :posts do |t|
+      t.integer :cached_scoped_subscribe_votes_total, default: 0
+      t.integer :cached_scoped_subscribe_votes_score, default: 0
+      t.integer :cached_scoped_subscribe_votes_up, default: 0
+      t.integer :cached_scoped_subscribe_votes_down, default: 0
+      t.integer :cached_weighted_subscribe_score, default: 0
+      t.integer :cached_weighted_subscribe_total, default: 0
+      t.float :cached_weighted_subscribe_average, default: 0.0
+    end
   end
 end
 ```
 
-`cached_weighted_average` can be helpful for a rating system, e.g.: 
+`cached_weighted_average` can be helpful for a rating system, e.g.:
 
 Order by average rating:
 
@@ -416,20 +386,20 @@ They can be run with:
 rake spec
 ```
 
-## Changes  
+## Changes
 
-### Fixes for votable voter model  
+### Fixes for votable voter model
 
-In version 0.8.0, there are bugs for a model that is both votable and voter.  
+In version 0.8.0, there are bugs for a model that is both votable and voter.
 Some name-conflicting methods are renamed:
-+ Renamed Votable.votes to votes_for  
++ Renamed Votable.votes to votes_for
 + Renamed Votable.vote to vote_by,
 + Removed Votable.vote_by alias (was an alias for :vote_up)
 + Renamed Votable.unvote_for to unvote_by
 + Renamed Votable.find_votes to find_votes_for
-+ Renamed Votable.up_votes to get_upvotes 
++ Renamed Votable.up_votes to get_upvotes
   + and its aliases :get_true_votes, :get_ups, :get_upvotes, :get_likes, :get_positives, :get_for_votes
-+ Renamed Votable.down_votes to get_downvotes 
++ Renamed Votable.down_votes to get_downvotes
   + and its aliases :get_false_votes, :get_downs, :get_downvotes, :get_dislikes, :get_negatives
 
 
