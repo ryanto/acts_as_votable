@@ -27,5 +27,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rubocop", "~> 0.49.1"
   s.add_development_dependency "simplecov", "~> 0.15.0"
   s.add_development_dependency "appraisal", "~> 2.2"
-  s.add_development_dependency "factory_girl", "~> 4.8"
+  s.add_development_dependency "factory_bot", "~> 4.8"
 end
