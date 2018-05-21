@@ -162,6 +162,20 @@ module ActsAsVotable
       votes.count > 0
     end
 
+    def voted_up_by?(voter)
+      votes = find_votes_for(voter_id: voter.id,
+                             vote_flag: true,
+                             voter_type: voter.class.base_class.name)
+      votes.count > 0
+    end
+
+    def voted_down_by?(voter)
+      votes = find_votes_for(voter_id: voter.id,
+                             vote_flag: false,
+                             voter_type: voter.class.base_class.name)
+      votes.count > 0
+    end
+
     private
 
     def scope_or_empty_hash(vote_scope)
