@@ -65,21 +65,16 @@ module ActsAsVotable
 
     # voting
     def vote_by(args = {})
-      options = {
-        vote: true,
-        vote_scope: nil
-      }.merge(args)
+      return false if args[:voter].nil?
+
+      options = { vote: true, vote_scope: nil }.merge(args)
 
       self.vote_registered = false
-
-      if options[:voter].nil?
-        return false
-      end
 
       # find the vote
       votes = find_votes_by(options[:voter], options[:vote_scope])
 
-      if votes.count == (0) || options[:duplicate]
+      if votes.count.zero? || options[:duplicate]
         # this voter has never voted
         vote = ActsAsVotable::Vote.new(
           votable: self,
@@ -99,14 +94,12 @@ module ActsAsVotable
       vote.vote_weight = (options[:vote_weight].to_i if options[:vote_weight].present?) || 1
 
       ActiveRecord::Base.transaction do
-        if vote.save
-          self.vote_registered = true if last_update != vote.updated_at
-          update_cached_votes options[:vote_scope]
-          return true
-        else
-          self.vote_registered = false
-          return false
-        end
+        self.vote_registered = false
+        return false unless vote.save
+
+        self.vote_registered = true if last_update != vote.updated_at
+        update_cached_votes(options[:vote_scope])
+        return true
       end
     end
 
