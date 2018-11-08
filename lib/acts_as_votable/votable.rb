@@ -74,7 +74,7 @@ module ActsAsVotable
       # find the vote
       votes = find_votes_by(options[:voter], options[:vote_scope])
 
-      if votes.count.zero? || options[:duplicate]
+      if votes.empty? || options[:duplicate]
         # this voter has never voted
         vote = ActsAsVotable::Vote.new(
           votable: self,
@@ -107,12 +107,12 @@ module ActsAsVotable
       return false if args[:voter].nil?
       votes = find_votes_by(args[:voter], args[:vote_scope])
 
-      return true if votes.size == 0
+      return true if votes.empty?
       ActiveRecord::Base.transaction do
         votes.each(&:destroy)
         update_cached_votes args[:vote_scope]
       end
-      self.vote_registered = false if votes_for.count == 0
+      self.vote_registered = false if votes_for.empty?
       return true
     end
 
@@ -152,21 +152,21 @@ module ActsAsVotable
     # voters
     def voted_on_by?(voter)
       votes = find_votes_for voter_id: voter.id, voter_type: voter.class.base_class.name
-      votes.count > 0
+      votes.exists?
     end
 
     def voted_up_by?(voter)
       votes = find_votes_for(voter_id: voter.id,
                              vote_flag: true,
                              voter_type: voter.class.base_class.name)
-      votes.count > 0
+      votes.exists?
     end
 
     def voted_down_by?(voter)
       votes = find_votes_for(voter_id: voter.id,
                              vote_flag: false,
                              voter_type: voter.class.base_class.name)
-      votes.count > 0
+      votes.exists?
     end
 
     private
