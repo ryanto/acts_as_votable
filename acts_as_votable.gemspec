@@ -24,6 +24,8 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rspec", "~> 3.6"
   s.add_development_dependency "sqlite3", "~> 1.3"
+  s.add_development_dependency "mysql2", "~> 0.4"
+  s.add_development_dependency "pg", "~> 0.15"
   s.add_development_dependency "rubocop", "~> 0.49.1"
   s.add_development_dependency "simplecov", "~> 0.15.0"
   s.add_development_dependency "appraisal", "~> 2.2"

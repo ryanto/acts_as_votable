@@ -10,6 +10,16 @@ rvm:
 before_install:
   - gem update --system
 
+env:
+  - DB=sqlite
+  - DB=postgresql
+  - DB=mysql
+
+services:
+  - mysql
+addons:
+  postgresql: "9.3"
+
 gemfile:
   - gemfiles/rails_4.gemfile
   - gemfiles/rails_5.gemfile
