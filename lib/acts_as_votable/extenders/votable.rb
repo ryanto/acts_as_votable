@@ -10,7 +10,6 @@ module ActsAsVotable
       end
 
       def acts_as_votable(args = {})
-        require "acts_as_votable/votable"
         include ActsAsVotable::Votable
 
         if args.key?(:cacheable_strategy) && !ALLOWED_CACHEABLE_STRATEGIES.include?(args[:cacheable_strategy])
