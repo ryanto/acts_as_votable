@@ -365,7 +365,7 @@ Display average rating:
 You can control whether `updated_at` column of votable model will be touched or
 not by passing `cacheable_strategy` option to `acts_as_votable` method.
 
-By default, `update_attributes` strategy is used. Pass `:update_columns` as
+By default, `update` strategy is used. Pass `:update_columns` as
 `cacheable_strategy` if you don't want to touch model's `updated_at` column.
 ```ruby
 class Post < ActiveRecord::Base

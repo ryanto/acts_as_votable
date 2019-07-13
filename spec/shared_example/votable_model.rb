@@ -411,8 +411,8 @@ shared_examples "a votable_model" do
 
         before { votable_cache.vote_by voter: voter }
 
-        context "update_attributes" do
-          let(:votable_cache) { create(:votable_cache_update_attributes, name: "voting model with cache", updated_at: updated_at) }
+        context "update" do
+          let(:votable_cache) { create(:votable_cache_update, name: "voting model with cache", updated_at: updated_at) }
 
           it do
             expect(votable_cache.cached_votes_total).to eq(1)
