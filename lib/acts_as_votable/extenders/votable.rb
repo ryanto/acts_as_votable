@@ -3,7 +3,7 @@
 module ActsAsVotable
   module Extenders
     module Votable
-      ALLOWED_CACHEABLE_STRATEGIES = %i[update_attributes update_columns]
+      ALLOWED_CACHEABLE_STRATEGIES = %i[update update_columns]
 
       def votable?
         false
@@ -23,7 +23,7 @@ module ActsAsVotable
 
         class_eval do
           @acts_as_votable_options = {
-            cacheable_strategy: :update_attributes
+            cacheable_strategy: :update
           }.merge(args)
 
           def self.votable?

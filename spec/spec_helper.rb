@@ -124,8 +124,8 @@ class VotableCache < ActiveRecord::Base
   validates_presence_of :name
 end
 
-class VotableCacheUpdateAttributes < VotableCache
-  acts_as_votable cacheable_strategy: :update_attributes
+class VotableCacheUpdate < VotableCache
+  acts_as_votable cacheable_strategy: :update
 end
 
 class VotableCacheUpdateColumns < VotableCache
