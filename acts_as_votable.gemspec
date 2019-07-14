@@ -15,8 +15,6 @@ Gem::Specification.new do |s|
   s.description = "Rails gem to allowing records to be votable"
   s.license     = "MIT"
 
-  s.rubyforge_project = "acts_as_votable"
-
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
