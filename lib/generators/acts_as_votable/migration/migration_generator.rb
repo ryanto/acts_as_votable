@@ -36,11 +36,17 @@ module ActsAsVotable
     def migration_version
       if rails5?
         "[4.2]"
+      elsif rails6?
+        "[6.0]"
       end
     end
 
     def rails5?
       Rails.version.start_with? "5"
+    end
+
+    def rails6?
+      Rails.version.start_with? "6"
     end
   end
 end
