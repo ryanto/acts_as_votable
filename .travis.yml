@@ -3,9 +3,9 @@ language: ruby
 cache: bundler
 
 rvm:
-  - 2.3.4
-  - 2.4.2
-  - 2.5.1
+  - 2.3.8
+  - 2.4.6
+  - 2.5.5
 
 before_install:
   - gem update --system
@@ -19,3 +19,11 @@ gemfile:
   - gemfiles/rails_5.gemfile
   - gemfiles/rails_5_1.gemfile
   - gemfiles/rails_5_2.gemfile
+  - gemfiles/rails_6_rc1.gemfile
+
+matrix:
+  exclude:
+    - gemfile: gemfiles/rails_6_rc1.gemfile
+      rvm: 2.3.8
+    - gemfile: gemfiles/rails_6_rc1.gemfile
+      rvm: 2.4.6

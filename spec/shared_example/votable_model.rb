@@ -416,7 +416,7 @@ shared_examples "a votable_model" do
 
           it do
             expect(votable_cache.cached_votes_total).to eq(1)
-            expect(votable_cache.updated_at).to_not eq updated_at
+            expect(votable_cache.updated_at.to_i).to_not eq updated_at.to_i
           end
         end
 
@@ -425,7 +425,7 @@ shared_examples "a votable_model" do
 
           it do
             expect(votable_cache.cached_votes_total).to eq(1)
-            expect(votable_cache.updated_at).to eq updated_at
+            expect(votable_cache.updated_at.to_i).to eq updated_at.to_i
           end
         end
       end
