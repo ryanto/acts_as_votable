@@ -35,7 +35,7 @@ Acts As Votable uses a votes table to store all voting information.  To
 generate and run the migration just use.
 
     rails generate acts_as_votable:migration
-    rake db:migrate
+    rails db:migrate
 
 You will get a performance increase by adding in cached columns to your model's
 tables.  You will have to do this manually through your own migrations.  See the
@@ -46,7 +46,7 @@ caching section of this document for more information.
 ### Votable Models
 
 ```ruby
-class Post < ActiveRecord::Base
+class Post < ApplicationRecord
   acts_as_votable
 end
 
@@ -193,7 +193,7 @@ You can add weight to your vote. The default value is 1.
 You can have your voters `acts_as_voter` to provide some reserve functionality.
 
 ```ruby
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   acts_as_voter
 end
 
@@ -368,7 +368,7 @@ not by passing `cacheable_strategy` option to `acts_as_votable` method.
 By default, `update` strategy is used. Pass `:update_columns` as
 `cacheable_strategy` if you don't want to touch model's `updated_at` column.
 ```ruby
-class Post < ActiveRecord::Base
+class Post < ApplicationRecord
   acts_as_votable cacheable_strategy: :update_columns
 end
 ```
