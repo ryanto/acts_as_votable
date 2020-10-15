@@ -93,14 +93,16 @@ module ActsAsVotable
       #Allowing for a vote_weight to be associated with every vote. Could change with every voter object
       vote.vote_weight = (options[:vote_weight].to_i if options[:vote_weight].present?) || 1
 
+      vote_saved = false
       ActiveRecord::Base.transaction do
         self.vote_registered = false
-        return false unless vote.save
-
-        self.vote_registered = true if last_update != vote.updated_at
-        update_cached_votes(options[:vote_scope])
-        return true
+        vote_saved = vote.save
+        if vote_saved
+          self.vote_registered = true if last_update != vote.updated_at
+          update_cached_votes(options[:vote_scope])
+        end
       end
+      vote_saved
     end
 
     def unvote(args = {})
