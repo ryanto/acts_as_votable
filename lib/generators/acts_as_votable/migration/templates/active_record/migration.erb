@@ -1,22 +1,20 @@
 class ActsAsVotableMigration < ActiveRecord::Migration<%= migration_version %>
-  def self.up
+  def change
     create_table :votes do |t|
+      t.references :votable, null: false, polymorphic: true, index: false
+      t.references :voter, null: false, polymorphic: true, index: false
 
-      t.references :votable, :polymorphic => true
-      t.references :voter, :polymorphic => true
-
-      t.boolean :vote_flag
+      t.boolean :vote_flag, null: false, default: true
       t.string :vote_scope
-      t.integer :vote_weight
+      t.integer :vote_weight, null: false, default: 1
+      t.string :uniqueness_token, null: false # used for 'duplicate' feature
 
       t.timestamps
+
+      t.index [:voter_id, :voter_type, :vote_scope, :votable_id, :votable_type, :uniqueness_token],
+        name: "index_votes_uniqueness", unique: true
+
+      t.index [:votable_id, :votable_type, :vote_scope]
     end
-
-    add_index :votes, [:voter_id, :voter_type, :vote_scope]
-    add_index :votes, [:votable_id, :votable_type, :vote_scope]
-  end
-
-  def self.down
-    drop_table :votes
   end
 end

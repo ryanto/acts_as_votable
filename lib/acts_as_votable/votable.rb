@@ -63,6 +63,9 @@ module ActsAsVotable
       }
     end
 
+    UNIQUE_VOTE_TOKEN = "unique vote"
+    private_constant :UNIQUE_VOTE_TOKEN
+
     # voting
     def vote_by(args = {})
       return false if args[:voter].nil?
@@ -81,6 +84,13 @@ module ActsAsVotable
           voter: options[:voter],
           vote_scope: options[:vote_scope]
         )
+
+        if options[:duplicate]
+          require "securerandom"
+          vote.uniqueness_token = SecureRandom.hex
+        else
+          vote.uniqueness_token = UNIQUE_VOTE_TOKEN
+        end
       else
         # this voter is potentially changing his vote
         vote = votes.last
