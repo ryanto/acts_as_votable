@@ -1,0 +1,44 @@
+name: CI
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu
+        ruby:
+          - 2.5
+          - 2.6
+          - 2.7
+        gemfile:
+          - gemfiles/rails_5_1.gemfile
+          - gemfiles/rails_5_2.gemfile
+          - gemfiles/rails_6.gemfile
+          - gemfiles/rails_6_1.gemfile
+        continue-on-error:
+          - false
+
+    env:
+      BUNDLE_GEMFILE: "${{ matrix.gemfile }}"
+    runs-on: ${{ matrix.os }}-latest
+    continue-on-error: ${{ matrix.continue-on-error }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Test
+        run: bundle exec rake spec
+
+# use this
