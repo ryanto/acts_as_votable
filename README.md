@@ -15,8 +15,8 @@ The main goals of this gem are:
 
 ### Supported Ruby and Rails versions
 
-* Ruby >= 2.5.0
-* Rails >= 5.1
+- Ruby >= 2.5.0
+- Rails >= 5.1
 
 ### Install
 
@@ -33,8 +33,10 @@ And follow that up with a ``bundle install``.
 Acts As Votable uses a votes table to store all voting information.  To
 generate and run the migration just use.
 
-    rails generate acts_as_votable:migration
-    rails db:migrate
+```bash
+rails generate acts_as_votable:migration
+rails db:migrate
+```
 
 You will get a performance increase by adding in cached columns to your model's
 tables.  You will have to do this manually through your own migrations.  See the
@@ -74,7 +76,6 @@ By default all votes are positive, so `@user3` has cast a 'good' vote for `@post
 `@user1`, `@user3`, and `@user5` all voted in favor of `@post`.
 
 `@user2` and `@user4` on the other had has voted against `@post`.
-
 
 Just about any word works for casting a vote in favor or against post.  Up/Down,
 Like/Dislike, Positive/Negative... the list goes on-and-on.  Boolean flags `true` and
@@ -165,6 +166,7 @@ You can add a scope to your vote
 @post.find_votes_for(:vote_scope => 'week').size # => 1
 @post.find_votes_for(:vote_scope => 'month').size # => 1
 ```
+
 ### Adding weights to your votes
 
 You can add weight to your vote. The default value is 1.
@@ -359,63 +361,30 @@ Display average rating:
 <%= post.weighted_average.round(2) %> / 5
 <!-- 3.5 / 5 -->
 ```
-## updated_at at Votable model
+
+## Votable model's `updated_at`
 
 You can control whether `updated_at` column of votable model will be touched or
 not by passing `cacheable_strategy` option to `acts_as_votable` method.
 
 By default, `update` strategy is used. Pass `:update_columns` as
 `cacheable_strategy` if you don't want to touch model's `updated_at` column.
+
 ```ruby
 class Post < ApplicationRecord
   acts_as_votable cacheable_strategy: :update_columns
 end
 ```
 
-NOTE: this option does not work for ActiveRecord < 3.1
-
-
 ## Testing
 
 All tests follow the RSpec format and are located in the spec directory.
 They can be run with:
 
-```
+```bash
 rake spec
 ```
 
-## Changes
-
-### Fixes for votable voter model
-
-In version 0.8.0, there are bugs for a model that is both votable and voter.
-Some name-conflicting methods are renamed:
-+ Renamed Votable.votes to votes_for
-+ Renamed Votable.vote to vote_by,
-+ Removed Votable.vote_by alias (was an alias for :vote_up)
-+ Renamed Votable.unvote_for to unvote_by
-+ Renamed Votable.find_votes to find_votes_for
-+ Renamed Votable.up_votes to get_upvotes
-  + and its aliases :get_true_votes, :get_ups, :get_upvotes, :get_likes, :get_positives, :get_for_votes
-+ Renamed Votable.down_votes to get_downvotes
-  + and its aliases :get_false_votes, :get_downs, :get_downvotes, :get_dislikes, :get_negatives
-
-
 ## License
 
-Acts as votable is released under the [MIT
-License](http://www.opensource.org/licenses/MIT).
-
-## Next steps
-
-- Pass in a block of options when creating acts_as.  Allow for things
-  like disabling the aliasing
-
-- Smarter language syntax.  Example: `@user.likes` will return all of the votables
-that the user likes, while `@user.likes @model` will cast a vote for @model by
-@user.
-
-- The aliased methods are referred to by using the terms 'up/down' and/or
-'true/false'. Need to come up with guidelines for naming these methods.
-
-- Create more aliases. Specifically for counting votes and finding votes.
+Acts as votable is released under the [MIT License](http://www.opensource.org/licenses/MIT).
