@@ -35,7 +35,7 @@ module ActsAsVotable
       }
 
       base.class_eval do
-        has_many :votes_for, class_name: "ActsAsVotable::Vote", as: :votable, dependent: :destroy do
+        has_many :votes_for, class_name: "ActsAsVotable::Vote", as: :votable, dependent: :delete_all do
           def voters
             includes(:voter).map(&:voter)
           end
@@ -74,7 +74,7 @@ module ActsAsVotable
       # find the vote
       votes = find_votes_by(options[:voter], options[:vote_scope])
 
-      if votes.empty? || options[:duplicate]
+      if options[:duplicate] || !votes.exists?
         # this voter has never voted
         vote = ActsAsVotable::Vote.new(
           votable: self,
@@ -109,12 +109,11 @@ module ActsAsVotable
       return false if args[:voter].nil?
       votes = find_votes_by(args[:voter], args[:vote_scope])
 
-      return true if votes.empty?
       ActiveRecord::Base.transaction do
-        votes.each(&:destroy)
-        update_cached_votes args[:vote_scope]
+        deleted_count = votes.delete_all
+        update_cached_votes(args[:vote_scope]) if deleted_count > 0
       end
-      self.vote_registered = false if votes_for.empty?
+      self.vote_registered = false
       return true
     end
 

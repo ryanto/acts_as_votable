@@ -40,16 +40,19 @@ module ActsAsVotable
     def update_cached_votes(vote_scope = nil)
       updates = {}
 
-      if self.respond_to?(:cached_votes_total=)
-        updates[:cached_votes_total] = count_votes_total(true)
-      end
-
       if self.respond_to?(:cached_votes_up=)
         updates[:cached_votes_up] = count_votes_up(true)
       end
 
       if self.respond_to?(:cached_votes_down=)
         updates[:cached_votes_down] = count_votes_down(true)
+      end
+
+      if self.respond_to?(:cached_votes_total=)
+        updates[:cached_votes_total] = (
+          (updates[:cached_votes_up] || count_votes_up(true)) +
+          (updates[:cached_votes_down] || count_votes_down(true))
+        )
       end
 
       if self.respond_to?(:cached_votes_score=)
@@ -72,16 +75,19 @@ module ActsAsVotable
       end
 
       if vote_scope
-        if self.respond_to?(scope_cache_field :cached_votes_total=, vote_scope)
-          updates[scope_cache_field :cached_votes_total, vote_scope] = count_votes_total(true, vote_scope)
-        end
-
         if self.respond_to?(scope_cache_field :cached_votes_up=, vote_scope)
           updates[scope_cache_field :cached_votes_up, vote_scope] = count_votes_up(true, vote_scope)
         end
 
         if self.respond_to?(scope_cache_field :cached_votes_down=, vote_scope)
           updates[scope_cache_field :cached_votes_down, vote_scope] = count_votes_down(true, vote_scope)
+        end
+
+        if self.respond_to?(scope_cache_field :cached_votes_total=, vote_scope)
+          updates[scope_cache_field :cached_votes_total, vote_scope] = (
+            (updates[scope_cache_field :cached_votes_up, vote_scope] || count_votes_up(true, vote_scope)) +
+            (updates[scope_cache_field :cached_votes_down, vote_scope] || count_votes_down(true, vote_scope))
+          )
         end
 
         if self.respond_to?(scope_cache_field :cached_weighted_total=, vote_scope)
@@ -136,9 +142,7 @@ module ActsAsVotable
 
     def weighted_total(skip_cache = false, vote_scope = nil)
       from_cache(skip_cache, :cached_weighted_total, vote_scope) do
-        ups = get_up_votes(vote_scope: vote_scope).sum(:vote_weight)
-        downs = get_down_votes(vote_scope: vote_scope).sum(:vote_weight)
-        ups + downs
+        find_votes_for(scope_or_empty_hash(vote_scope)).sum(:vote_weight)
       end
     end
 
