@@ -198,9 +198,9 @@ end
 
 @user.likes @article
 
-@article.votes.size # => 1
-@article.likes.size # => 1
-@article.dislikes.size # => 0
+@article.votes_for.size # => 1
+@article.get_likes.size # => 1
+@article.get_dislikes.size # => 0
 ```
 
 To check if a voter has voted on a model, you can use ``voted_for?``.  You can
@@ -273,8 +273,8 @@ because `@user` has already voted for `@shoe`.
 @user.likes @shoe
 @user.likes @shoe
 
-@shoe.votes # => 1
-@shoe.likes # => 1
+@shoe.votes_for.size # => 1
+@shoe.get_likes.size # => 1
 ```
 
 To check if a vote counted, or registered, use `vote_registered?` on your model
@@ -290,9 +290,9 @@ after voting.  For example:
 @hat.disliked_by @user
 @hat.vote_registered? # => true, because user changed their vote
 
-@hat.votes.size # => 1
-@hat.positives.size # => 0
-@hat.negatives.size # => 1
+@hat.votes_for.size # => 1
+@hat.get_positives.size # => 0
+@hat.get_negatives.size # => 1
 ```
 
 To permit duplicates entries of a same voter, use option duplicate. Also notice that this
