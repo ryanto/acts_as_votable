@@ -21,7 +21,8 @@ module ActsAsVotable
     scope :for_type, ->(klass) { where(votable_type: klass.to_s) }
     scope :by_type, ->(klass) { where(voter_type: klass.to_s) }
 
-    validates_presence_of :votable_id
-    validates_presence_of :voter_id
+    validates :votable_id, presence: true
+    validates :voter_id, presence: true,
+      uniqueness: { scope: [:voter_type, :vote_scope, :votable, :uniqueness_token] }
   end
 end
