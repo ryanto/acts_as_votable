@@ -19,6 +19,7 @@ jobs:
           - 2.6
           - 2.7
         gemfile:
+          - gemfiles/rails_5_1.gemfile
           - gemfiles/rails_5_2.gemfile
         continue-on-error:
           - false
