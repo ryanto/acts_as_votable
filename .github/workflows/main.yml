@@ -19,7 +19,6 @@ jobs:
           - 2.6
           - 2.7
         gemfile:
-          - gemfiles/rails_4.gemfile
           - gemfiles/rails_5_1.gemfile
           - gemfiles/rails_5_2.gemfile
           - gemfiles/rails_6_0.gemfile
