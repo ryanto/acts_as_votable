@@ -38,6 +38,8 @@ module ActsAsVotable
         "[4.2]"
       elsif rails6?
         "[6.0]"
+      elsif rails7?
+        "[7.0]"
       end
     end
 
@@ -47,6 +49,10 @@ module ActsAsVotable
 
     def rails6?
       Rails.version.start_with? "6"
+    end
+
+    def rails7?
+      Rails.version.start_with? "7"
     end
   end
 end
