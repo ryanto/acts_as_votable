@@ -51,7 +51,7 @@ class Post < ApplicationRecord
   acts_as_votable
 end
 
-@post = Post.new(:name => 'my post!')
+@post = Post.new(name: 'my post!')
 @post.save
 
 @post.liked_by @user
@@ -66,9 +66,9 @@ more natural calls are the first few examples.
 ```ruby
 @post.liked_by @user1
 @post.downvote_from @user2
-@post.vote_by :voter => @user3
-@post.vote_by :voter => @user4, :vote => 'bad'
-@post.vote_by :voter => @user5, :vote => 'like'
+@post.vote_by voter: @user3
+@post.vote_by voter: @user4, vote: 'bad'
+@post.vote_by voter: @user5, vote: 'like'
 ```
 
 By default all votes are positive, so `@user3` has cast a 'good' vote for `@post`.
@@ -86,12 +86,12 @@ Revisiting the previous example of code.
 ```ruby
 # positive votes
 @post.liked_by @user1
-@post.vote_by :voter => @user3
-@post.vote_by :voter => @user5, :vote => 'like'
+@post.vote_by voter: @user3
+@post.vote_by voter: @user5, vote: 'like'
 
 # negative votes
 @post.downvote_from @user2
-@post.vote_by :voter => @user2, :vote => 'bad'
+@post.vote_by voter: @user2, vote: 'bad'
 
 # tally them up!
 @post.votes_for.size # => 5
@@ -142,29 +142,29 @@ You can add a scope to your vote
 
 ```ruby
 # positive votes
-@post.liked_by @user1, :vote_scope => 'rank'
-@post.vote_by :voter => @user3, :vote_scope => 'rank'
-@post.vote_by :voter => @user5, :vote => 'like', :vote_scope => 'rank'
+@post.liked_by @user1, vote_scope: 'rank'
+@post.vote_by voter: @user3, vote_scope: 'rank'
+@post.vote_by voter: @user5, vote: 'like', vote_scope: 'rank'
 
 # negative votes
-@post.downvote_from @user2, :vote_scope => 'rank'
-@post.vote_by :voter => @user2, :vote => 'bad', :vote_scope => 'rank'
+@post.downvote_from @user2, vote_scope: 'rank'
+@post.vote_by voter: @user2, vote: 'bad', vote_scope: 'rank'
 
 # tally them up!
-@post.find_votes_for(:vote_scope => 'rank').size # => 5
-@post.get_likes(:vote_scope => 'rank').size # => 3
-@post.get_upvotes(:vote_scope => 'rank').size # => 3
-@post.get_dislikes(:vote_scope => 'rank').size # => 2
-@post.get_downvotes(:vote_scope => 'rank').size # => 2
+@post.find_votes_for(vote_scope: 'rank').size # => 5
+@post.get_likes(vote_scope: 'rank').size # => 3
+@post.get_upvotes(vote_scope: 'rank').size # => 3
+@post.get_dislikes(vote_scope: 'rank').size # => 2
+@post.get_downvotes(vote_scope: 'rank').size # => 2
 
 # votable model can be voted under different scopes
 # by the same user
-@post.vote_by :voter => @user1, :vote_scope => 'week'
-@post.vote_by :voter => @user1, :vote_scope => 'month'
+@post.vote_by voter: @user1, vote_scope: 'week'
+@post.vote_by voter: @user1, vote_scope: 'month'
 
 @post.votes_for.size # => 2
-@post.find_votes_for(:vote_scope => 'week').size # => 1
-@post.find_votes_for(:vote_scope => 'month').size # => 1
+@post.find_votes_for(vote_scope: 'week').size # => 1
+@post.find_votes_for(vote_scope: 'month').size # => 1
 ```
 
 ### Adding weights to your votes
@@ -173,20 +173,20 @@ You can add weight to your vote. The default value is 1.
 
 ```ruby
 # positive votes
-@post.liked_by @user1, :vote_weight => 1
-@post.vote_by :voter => @user3, :vote_weight => 2
-@post.vote_by :voter => @user5, :vote => 'like', :vote_scope => 'rank', :vote_weight => 3
+@post.liked_by @user1, vote_weight: 1
+@post.vote_by voter: @user3, vote_weight: 2
+@post.vote_by voter: @user5, vote: 'like', vote_scope: 'rank', vote_weight: 3
 
 # negative votes
-@post.downvote_from @user2, :vote_scope => 'rank', :vote_weight => 1
-@post.vote_by :voter => @user2, :vote => 'bad', :vote_scope => 'rank', :vote_weight => 3
+@post.downvote_from @user2, vote_scope: 'rank', vote_weight: 1
+@post.vote_by voter: @user2, vote: 'bad', vote_scope: 'rank', vote_weight: 3
 
 # tally them up!
-@post.find_votes_for(:vote_scope => 'rank').sum(:vote_weight) # => 6
-@post.get_likes(:vote_scope => 'rank').sum(:vote_weight) # => 6
-@post.get_upvotes(:vote_scope => 'rank').sum(:vote_weight) # => 6
-@post.get_dislikes(:vote_scope => 'rank').sum(:vote_weight) # => 4
-@post.get_downvotes(:vote_scope => 'rank').sum(:vote_weight) # => 4
+@post.find_votes_for(vote_scope: 'rank').sum(:vote_weight) # => 6
+@post.get_likes(vote_scope: 'rank').sum(:vote_weight) # => 6
+@post.get_upvotes(vote_scope: 'rank').sum(:vote_weight) # => 6
+@post.get_dislikes(vote_scope: 'rank').sum(:vote_weight) # => 4
+@post.get_downvotes(vote_scope: 'rank').sum(:vote_weight) # => 4
 ```
 
 ### The Voter
@@ -301,7 +301,7 @@ To permit duplicates entries of a same voter, use option duplicate. Also notice 
 will limit some other methods that didn't deal with multiples votes, in this case, the last vote will be considered.
 
 ```ruby
-@hat.vote_by voter: @user, :duplicate => true
+@hat.vote_by voter: @user, duplicate: true
 ```
 
 ## Caching
@@ -352,7 +352,7 @@ end
 Order by average rating:
 
 ```ruby
-Post.order(:cached_weighted_average => :desc)
+Post.order(cached_weighted_average: :desc)
 ```
 
 Display average rating:
