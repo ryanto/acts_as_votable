@@ -344,7 +344,7 @@ class AddCachedVotesToPosts < ActiveRecord::Migration
       t.float :cached_weighted_subscribe_average, default: 0.0
 
       # Uncomment this line to force caching of existing scoped votes
-      # Post.each { |p| p.update_cached_votes("subscribe") }
+      # Post.find_each { |p| p.update_cached_votes("subscribe") }
     end
   end
 end
