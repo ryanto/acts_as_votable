@@ -25,6 +25,15 @@ jobs:
           - gemfiles/rails_6_1.gemfile
         continue-on-error:
           - false
+        include:
+          - ruby: "3.0"
+            gemfile: gemfiles/rails_6_1.gemfile
+            os: ubuntu
+            continue-on-error: false
+          - ruby: 3.1
+            gemfile: gemfiles/rails_7_0.gemfile
+            os: ubuntu
+            continue-on-error: false
 
     env:
       BUNDLE_GEMFILE: "${{ matrix.gemfile }}"
