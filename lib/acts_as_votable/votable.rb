@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "acts_as_votable/helpers/words"
-require "acts_as_votable/cacheable"
 
 module ActsAsVotable
   module Votable

@@ -8,7 +8,6 @@ module ActsAsVotable
       end
 
       def acts_as_voter(*_args)
-        require "acts_as_votable/voter"
         include ActsAsVotable::Voter
 
         class_eval do
