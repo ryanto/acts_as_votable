@@ -75,7 +75,7 @@ By default all votes are positive, so `@user3` has cast a 'good' vote for `@post
 
 `@user1`, `@user3`, and `@user5` all voted in favor of `@post`.
 
-`@user2` and `@user4` on the other have voted against `@post`.
+`@user2` and `@user4` voted against `@post`.
 
 Just about any word works for casting a vote in favor or against post.  Up/Down,
 Like/Dislike, Positive/Negative... the list goes on-and-on.  Boolean flags `true` and
