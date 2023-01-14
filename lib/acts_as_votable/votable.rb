@@ -34,7 +34,7 @@ module ActsAsVotable
       }
 
       base.class_eval do
-        has_many :votes_for, class_name: "ActsAsVotable::Vote", as: :votable, dependent: :delete_all do
+        has_many :votes_for, class_name: "ActsAsVotable::Vote", as: :votable, dependent: acts_as_votable_options[:dependent_strategy] do
           def voters
             includes(:voter).map(&:voter)
           end
@@ -109,7 +109,7 @@ module ActsAsVotable
       votes = find_votes_by(args[:voter], args[:vote_scope])
 
       ActiveRecord::Base.transaction do
-        deleted_count = votes.delete_all
+        deleted_count = votes.send(acts_as_votable_options[:dependent_strategy])
         update_cached_votes(args[:vote_scope]) if deleted_count > 0
       end
       self.vote_registered = false
